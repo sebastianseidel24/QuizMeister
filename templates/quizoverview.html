@@ -8,6 +8,10 @@
 </head>
 <body>
     <h1>Übersicht über alle erstellten Quizzes</h1>
-    <!-- Hier gibt es später Links zu den Quizzes -->
+    <ul>
+        {% for quiz in quizzes %}
+            <li><a href="{{ url_for('quiz', quiz_id=quiz['id']) }}">{{ quiz['title'] }}</a></li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

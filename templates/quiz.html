@@ -3,12 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quizzy - Quiz</title>
+    <title>Quizzy - {{ quiz['title'] }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Pub-Quiz</h1>
-    <p>Hier erscheinen die Quizfragen.</p>
-    <!-- Hier werden wir später die Fragen dynamisch einfügen -->
+    <h1>{{ quiz['title'] }}</h1>
+    <form action="{{ url_for('results', quiz_id=quiz['id']) }}" method="POST">
+        {% for question in quiz['questions'] %}
+            <fieldset>
+                <legend>{{ question['question'] }}</legend>
+                {% for option in question['options'] %}
+                    <label>
+                        <input type="radio" name="answer_{{ loop.index }}" value="{{ option }}"> {{ option }}
+                    </label><br>
+                {% endfor %}
+            </fieldset>
+        {% endfor %}
+        <button type="submit">Ergebnisse anzeigen</button>
+    </form>
 </body>
 </html>

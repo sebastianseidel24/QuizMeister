@@ -8,6 +8,11 @@
 </head>
 <body>
     <h1>Neues Quiz erstellen</h1>
-    <p>Erstelle hier ein neues Quiz:</p>
+    <p>Erstelle hier ein neues Quiz.</p>
+    <form action="{{ url_for('createquiz') }}" method="POST">
+        <label>Quiz-Titel: <input type="text" name="title" required></label><br><br>
+        <!-- Später können hier dynamisch Fragen hinzugefügt werden -->
+        <button type="submit">Quiz erstellen</button>
+    </form>
 </body>
 </html>
