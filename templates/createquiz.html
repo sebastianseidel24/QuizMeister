@@ -13,12 +13,13 @@
         <label>Quiz-Titel: <input type="text" name="title" required></label><br><br>
 
         <div id="questions">
-            <div class="question">
+            <div class="question" id=0>
                 <label>Frage 1: <input type="text" name="questions[0][question]" required></label><br>
                 <label>Kategorie: <input type="text" name="questions[0][category]" required></label><br>
                 <label>Beschreibung: <input type="text" name="questions[0][description]"></label><br>
                 <label>Antwort: <input type="text" name="questions[0][answer]" required></label><br>
                 <br>
+                <button type="button" onclick="deleteQuestion(0)">Diese Frage entfernen</button><br><br>
             </div>
         </div>
 
@@ -34,6 +35,7 @@
         function addQuestion() {
             const questionsDiv = document.getElementById("questions");
             const newQuestionDiv = document.createElement("div");
+            newQuestionDiv.setAttribute("id", questionIndex)
             newQuestionDiv.className = "question";
             newQuestionDiv.innerHTML = `
                 <label>Frage ${questionIndex + 1}: <input type="text" name="questions[${questionIndex}][question]" required></label><br>
@@ -41,9 +43,17 @@
                 <label>Beschreibung: <input type="text" name="questions[${questionIndex}][description]"></label><br>
                 <label>Antwort: <input type="text" name="questions[${questionIndex}][answer]" required></label><br>
                 <br>
+                <button type="button" onclick="deleteQuestion(${questionIndex})">Diese Frage entfernen</button><br><br>
             `;
             questionsDiv.appendChild(newQuestionDiv);
             questionIndex++;
+        }
+
+        function deleteQuestion(qid) {
+            const question_to_delete = document.getElementById(qid);
+            if (question_to_delete.parentNode) {
+                question_to_delete.parentNode.removeChild(question_to_delete);
+            }
         }
     </script>
 

@@ -36,9 +36,9 @@ def quizoverview():
 @app.route("/createquiz", methods=["GET", "POST"])
 def createquiz():
     if request.method == "POST":
-        # Formulardaten abrufen
+
+        # Titel abrufen
         title = request.form.get("title")
-        questions = request.form.getlist("questions")
         
         # Neue Quiz-ID berechnen
         new_quiz_id = len(quizzes) + 1
@@ -49,15 +49,23 @@ def createquiz():
             "title": title,
             "questions": []
         }
-        
+
         # Fragen und Antwortoptionen hinzufügen
-        for i in range(len(questions)):
+        i = 0
+        while f"questions[{i}][question]" in request.form:
             qid = i + 1
             question_text = request.form.get(f"questions[{i}][question]")
             category = request.form.get(f"questions[{i}][category]")
             description = request.form.get(f"questions[{i}][description]")
             answer = request.form.get(f"questions[{i}][answer]")
             
+        # Ausgabe zur Überprüfung
+            print(f"Frage {i + 1}:")
+            print("  Frage:", question_text)
+            print("  Kategorie:", category)
+            print("  Beschreibung:", description)
+            print("  Antwort:", answer)
+
             new_quiz["questions"].append({
                 "qid": qid,
                 "question": question_text,
@@ -65,10 +73,12 @@ def createquiz():
                 "description": description,
                 "answer": answer,
             })
-        
+
+            i += 1
+
         # Neues Quiz zur Liste der Quizzes hinzufügen
         quizzes.append(new_quiz)
-        
+
         # Umleitung zur Quiz-Übersicht
         return redirect(url_for("quizoverview"))
     

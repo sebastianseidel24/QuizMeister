@@ -12,7 +12,9 @@
             <h2>Frage {{ question['qid'] }}</h2>
             <p>Kategorie: {{ question['category'] }}</p>
             <p>Frage: {{ question['question'] }}</p>
-            <p>Beschreibung: {{ question['description'] }}</p>
+            {% if question['description'] != "" %}
+                <p>Beschreibung: {{ question['description'] }}</p>
+            {% endif %}
             <p>Antwort: {{ question['answer'] }}</p><br>
         {% endfor %}
 
