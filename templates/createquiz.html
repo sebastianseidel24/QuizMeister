@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quizzy - Neues Quiz erstellen</title>
+    <title>Neues Quiz erstellen</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -15,8 +15,10 @@
         <div id="questions">
             <div class="question">
                 <label>Frage 1: <input type="text" name="questions[0][question]" required></label><br>
+                <label>Kategorie: <input type="text" name="questions[0][category]" required></label><br>
+                <label>Beschreibung: <input type="text" name="questions[0][description]"></label><br>
                 <label>Antwort: <input type="text" name="questions[0][answer]" required></label><br>
-                <label>Kategorie: <input type="text" name="questions[0][category]" required></label><br><br>
+                <br>
             </div>
         </div>
 
@@ -35,8 +37,10 @@
             newQuestionDiv.className = "question";
             newQuestionDiv.innerHTML = `
                 <label>Frage ${questionIndex + 1}: <input type="text" name="questions[${questionIndex}][question]" required></label><br>
-                <label>Korrekte Antwort: <input type="text" name="questions[${questionIndex}][answer]" required></label><br>
-                <label>Kategorie: <input type="text" name="questions[${questionIndex}][category]" required></label><br><br>
+                <label>Kategorie: <input type="text" name="questions[${questionIndex}][category]" required></label><br>
+                <label>Beschreibung: <input type="text" name="questions[${questionIndex}][description]"></label><br>
+                <label>Antwort: <input type="text" name="questions[${questionIndex}][answer]" required></label><br>
+                <br>
             `;
             questionsDiv.appendChild(newQuestionDiv);
             questionIndex++;

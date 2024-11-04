@@ -8,12 +8,13 @@
 </head>
 <body>
     <h1>{{ quiz['title'] }}</h1>
-    <form action="{{ url_for('results', quiz_id=quiz['id']) }}" method="POST">
         {% for question in quiz['questions'] %}
-            <p>{{ question['question'] }}</p>
-            <!--Textfeld-->
+            <h2>Frage {{ question['qid'] }}</h2>
+            <p>Kategorie: {{ question['category'] }}</p>
+            <p>Frage: {{ question['question'] }}</p>
+            <p>Beschreibung: {{ question['description'] }}</p>
+            <p>Antwort: {{ question['answer'] }}</p><br>
         {% endfor %}
-        <button type="submit">Ergebnisse anzeigen</button>
-    </form>
+
 </body>
 </html>

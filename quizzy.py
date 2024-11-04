@@ -10,16 +10,16 @@ quizzes = [
         "id": 1,
         "title": "Quiz 1",
         "questions": [
-            {"question": "Wie viele Kontinente gibt es?", "category": "Geografie", "answer": "7"},
-            {"question": "Wer hat die Relativitätstheorie entwickelt?", "category": "Physik", "answer": "Einstein"},
+            {"qid": "1", "question": "Wie viele Kontinente gibt es?", "category": "Geografie", "description": "Europa, Afrika, Nordamerika, Südamerika, Australien, Asien, Arktis", "answer": "7"},
+            {"qid": "2", "question": "Wer hat die Relativitätstheorie entwickelt?", "category": "Physik", "description": "", "answer": "Einstein"},
         ]
     },
     {
         "id": 2,
         "title": "Quiz 2",
         "questions": [
-            {"question": "Wer spielt Iron Man im Marvel-Universum?", "category": "Film & TV", "answer": "Robert Downey Jr."},
-            {"question": "In welchem Jahr wurde der erste Star Wars-Film veröffentlicht?", "category": "Film & TV", "answer": "1977"},
+            {"qid": "1", "question": "Wer spielt Iron Man im Marvel-Universum?", "category": "Film & TV", "description": "", "answer": "Robert Downey Jr."},
+            {"qid": "2", "question": "In welchem Jahr wurde der erste Star Wars-Film veröffentlicht?", "category": "Film & TV", "description": "", "answer": "1977"},
         ]
     },
 ]
@@ -52,14 +52,18 @@ def createquiz():
         
         # Fragen und Antwortoptionen hinzufügen
         for i in range(len(questions)):
+            qid = i + 1
             question_text = request.form.get(f"questions[{i}][question]")
-            answer = request.form.get(f"questions[{i}][answer]")
             category = request.form.get(f"questions[{i}][category]")
+            description = request.form.get(f"questions[{i}][description]")
+            answer = request.form.get(f"questions[{i}][answer]")
             
             new_quiz["questions"].append({
+                "qid": qid,
                 "question": question_text,
-                "answer": answer,
                 "category": category,
+                "description": description,
+                "answer": answer,
             })
         
         # Neues Quiz zur Liste der Quizzes hinzufügen
