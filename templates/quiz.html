@@ -10,14 +10,8 @@
     <h1>{{ quiz['title'] }}</h1>
     <form action="{{ url_for('results', quiz_id=quiz['id']) }}" method="POST">
         {% for question in quiz['questions'] %}
-            <fieldset>
-                <legend>{{ question['question'] }}</legend>
-                {% for option in question['options'] %}
-                    <label>
-                        <input type="radio" name="answer_{{ loop.index }}" value="{{ option }}"> {{ option }}
-                    </label><br>
-                {% endfor %}
-            </fieldset>
+            <p>{{ question['question'] }}</p>
+            <!--Textfeld-->
         {% endfor %}
         <button type="submit">Ergebnisse anzeigen</button>
     </form>

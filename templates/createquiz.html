@@ -11,8 +11,37 @@
     <p>Erstelle hier ein neues Quiz.</p>
     <form action="{{ url_for('createquiz') }}" method="POST">
         <label>Quiz-Titel: <input type="text" name="title" required></label><br><br>
-        <!-- Später können hier dynamisch Fragen hinzugefügt werden -->
+
+        <div id="questions">
+            <div class="question">
+                <label>Frage 1: <input type="text" name="questions[0][question]" required></label><br>
+                <label>Antwort: <input type="text" name="questions[0][answer]" required></label><br>
+                <label>Kategorie: <input type="text" name="questions[0][category]" required></label><br><br>
+            </div>
+        </div>
+
+        <!-- Button zum Hinzufügen weiterer Fragen -->
+        <button type="button" onclick="addQuestion()">Weitere Frage hinzufügen</button><br><br>
+
         <button type="submit">Quiz erstellen</button>
     </form>
+
+    <script>
+        // JavaScript zum Hinzufügen weiterer Fragenfelder
+        let questionIndex = 1;
+        function addQuestion() {
+            const questionsDiv = document.getElementById("questions");
+            const newQuestionDiv = document.createElement("div");
+            newQuestionDiv.className = "question";
+            newQuestionDiv.innerHTML = `
+                <label>Frage ${questionIndex + 1}: <input type="text" name="questions[${questionIndex}][question]" required></label><br>
+                <label>Korrekte Antwort: <input type="text" name="questions[${questionIndex}][answer]" required></label><br>
+                <label>Kategorie: <input type="text" name="questions[${questionIndex}][category]" required></label><br><br>
+            `;
+            questionsDiv.appendChild(newQuestionDiv);
+            questionIndex++;
+        }
+    </script>
+
 </body>
 </html>
