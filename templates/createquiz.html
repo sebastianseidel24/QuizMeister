@@ -12,9 +12,16 @@
     <form action="{{ url_for('createquiz') }}" method="POST">
         <label>Quiz-Titel: <input type="text" name="title" required></label><br><br>
 
+        <!-- Counter-Anzeige für die Anzahl der Fragen -->
+        <div>
+            <strong>Fragenanzahl: <span id="question-counter">1</span></strong>
+        </div>
+        <br>
+
+        <!-- Hinzufügen der Fragen -->
         <div id="questions">
-            <div class="question" id=0>
-                <label>Frage 1: <input type="text" name="questions[0][question]" required></label><br>
+            <div class="question" id="question-0">
+                <label>Frage: <input type="text" name="questions[0][question]" required></label><br>
                 <label>Kategorie: <input type="text" name="questions[0][category]" required></label><br>
                 <label>Beschreibung: <input type="text" name="questions[0][description]"></label><br>
                 <label>Antwort: <input type="text" name="questions[0][answer]" required></label><br>
@@ -30,15 +37,23 @@
     </form>
 
     <script>
-        // JavaScript zum Hinzufügen weiterer Fragenfelder
+        // JavaScript zum Hinzufügen und Entfernen von Fragenfeldern
         let questionIndex = 1;
+
+        function updateQuestionCounter() {
+            const questionCounter = document.getElementById("question-counter");
+            const questionsDiv = document.getElementById("questions");
+            const questionDivs = questionsDiv.getElementsByClassName("question");
+            questionCounter.innerText = questionDivs.length;
+        }
+
         function addQuestion() {
             const questionsDiv = document.getElementById("questions");
             const newQuestionDiv = document.createElement("div");
-            newQuestionDiv.setAttribute("id", questionIndex)
+            newQuestionDiv.setAttribute("id", `question-${questionIndex}`);
             newQuestionDiv.className = "question";
             newQuestionDiv.innerHTML = `
-                <label>Frage ${questionIndex + 1}: <input type="text" name="questions[${questionIndex}][question]" required></label><br>
+                <label>Frage: <input type="text" name="questions[${questionIndex}][question]" required></label><br>
                 <label>Kategorie: <input type="text" name="questions[${questionIndex}][category]" required></label><br>
                 <label>Beschreibung: <input type="text" name="questions[${questionIndex}][description]"></label><br>
                 <label>Antwort: <input type="text" name="questions[${questionIndex}][answer]" required></label><br>
@@ -47,13 +62,37 @@
             `;
             questionsDiv.appendChild(newQuestionDiv);
             questionIndex++;
+            updateQuestionCounter();
         }
 
         function deleteQuestion(qid) {
-            const question_to_delete = document.getElementById(qid);
-            if (question_to_delete.parentNode) {
+            // Entferne die Frage
+            const question_to_delete = document.getElementById(`question-${qid}`);
+            if (question_to_delete) {
                 question_to_delete.parentNode.removeChild(question_to_delete);
             }
+
+            // Alle verbleibenden Fragen neu nummerieren
+            const questionsDiv = document.getElementById("questions");
+            const questionDivs = questionsDiv.getElementsByClassName("question");
+
+            Array.from(questionDivs).forEach((questionDiv, index) => {
+                // Aktualisiere die ID des Frage-Divs
+                questionDiv.id = `question-${index}`;
+
+                // Aktualisiere die Nummerierung und Name-Attribute der Felder
+                questionDiv.querySelectorAll("input")[0].setAttribute("name", `questions[${index}][question]`);
+                questionDiv.querySelectorAll("input")[1].setAttribute("name", `questions[${index}][category]`);
+                questionDiv.querySelectorAll("input")[2].setAttribute("name", `questions[${index}][description]`);
+                questionDiv.querySelectorAll("input")[3].setAttribute("name", `questions[${index}][answer]`);
+
+                // Aktualisiere den "Diese Frage entfernen"-Button
+                questionDiv.querySelector("button").setAttribute("onclick", `deleteQuestion(${index})`);
+            });
+
+            // Frageindex zurücksetzen, falls erforderlich
+            questionIndex = questionDivs.length;
+            updateQuestionCounter();
         }
     </script>
 
