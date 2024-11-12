@@ -21,10 +21,11 @@
         <!-- Hinzufügen der Fragen -->
         <div id="questions">
             <div class="question" id="question-0">
-                <label>Frage: <input type="text" name="questions[0][question]" required></label><br>
+                <label>Frage: <textarea type="text" name="questions[0][question]" required></textarea></label><br>
                 <label>Kategorie: <input type="text" name="questions[0][category]" required></label><br>
-                <label>Beschreibung: <input type="text" name="questions[0][description]"></label><br>
-                <label>Antwort: <input type="text" name="questions[0][answer]" required></label><br>
+                <label>Beschreibung: <textarea type="text" name="questions[0][description]"></textarea></label><br>
+                <label>Antwort: <textarea type="text" name="questions[0][answer]" required></textarea></label><br>
+                <label>Punkte: <input type="float" name="questions[0][points]" value="1"></label><br>
                 <br>
                 <button type="button" onclick="deleteQuestion(0)">Diese Frage entfernen</button><br><br>
             </div>
@@ -53,10 +54,11 @@
             newQuestionDiv.setAttribute("id", `question-${questionIndex}`);
             newQuestionDiv.className = "question";
             newQuestionDiv.innerHTML = `
-                <label>Frage: <input type="text" name="questions[${questionIndex}][question]" required></label><br>
+                <label>Frage: <textarea type="text" name="questions[${questionIndex}][question]" required></textarea></label><br>
                 <label>Kategorie: <input type="text" name="questions[${questionIndex}][category]" required></label><br>
-                <label>Beschreibung: <input type="text" name="questions[${questionIndex}][description]"></label><br>
-                <label>Antwort: <input type="text" name="questions[${questionIndex}][answer]" required></label><br>
+                <label>Beschreibung: <textarea type="text" name="questions[${questionIndex}][description]"></textarea></label><br>
+                <label>Antwort: <textarea type="text" name="questions[${questionIndex}][answer]" required></textarea></label><br>
+                <label>Punkte: <input type="float" name="questions[${questionIndex}][points]" value="1"></label><br>
                 <br>
                 <button type="button" onclick="deleteQuestion(${questionIndex})">Diese Frage entfernen</button><br><br>
             `;
@@ -85,6 +87,7 @@
                 questionDiv.querySelectorAll("input")[1].setAttribute("name", `questions[${index}][category]`);
                 questionDiv.querySelectorAll("input")[2].setAttribute("name", `questions[${index}][description]`);
                 questionDiv.querySelectorAll("input")[3].setAttribute("name", `questions[${index}][answer]`);
+                questionDiv.querySelectorAll("input")[4].setAttribute("name", `questions[${index}][points]`);
 
                 // Aktualisiere den "Diese Frage entfernen"-Button
                 questionDiv.querySelector("button").setAttribute("onclick", `deleteQuestion(${index})`);

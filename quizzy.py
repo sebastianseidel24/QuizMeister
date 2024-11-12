@@ -1,3 +1,4 @@
+import sqlite3
 from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
@@ -5,24 +6,24 @@ app = Flask(__name__)
 
 
 # Beispiel-Datenstruktur für Quizzes und Fragen
-quizzes = [
-    {
-        "id": 1,
-        "title": "Quiz 1",
-        "questions": [
-            {"qid": "1", "question": "Wie viele Kontinente gibt es?", "category": "Geografie", "description": "Europa, Afrika, Nordamerika, Südamerika, Australien, Asien, Arktis", "answer": "7"},
-            {"qid": "2", "question": "Wer hat die Relativitätstheorie entwickelt?", "category": "Physik", "description": "", "answer": "Einstein"},
-        ]
-    },
-    {
-        "id": 2,
-        "title": "Quiz 2",
-        "questions": [
-            {"qid": "1", "question": "Wer spielt Iron Man im Marvel-Universum?", "category": "Film & TV", "description": "", "answer": "Robert Downey Jr."},
-            {"qid": "2", "question": "In welchem Jahr wurde der erste Star Wars-Film veröffentlicht?", "category": "Film & TV", "description": "", "answer": "1977"},
-        ]
-    },
-]
+# quizzes = [
+#     {
+#         "id": 1,
+#         "title": "Quiz 1",
+#         "questions": [
+#             {"qid": "1", "question": "Wie viele Kontinente gibt es?", "category": "Geografie", "description": "Europa, Afrika, Nordamerika, Südamerika, Australien, Asien, Arktis", "answer": "7"},
+#             {"qid": "2", "question": "Wer hat die Relativitätstheorie entwickelt?", "category": "Physik", "description": "", "answer": "Einstein"},
+#         ]
+#     },
+#     {
+#         "id": 2,
+#         "title": "Quiz 2",
+#         "questions": [
+#             {"qid": "1", "question": "Wer spielt Iron Man im Marvel-Universum?", "category": "Film & TV", "description": "", "answer": "Robert Downey Jr."},
+#             {"qid": "2", "question": "In welchem Jahr wurde der erste Star Wars-Film veröffentlicht?", "category": "Film & TV", "description": "", "answer": "1977"},
+#         ]
+#     },
+# ]
 
 #Seiten
 @app.route("/")
@@ -31,62 +32,93 @@ def index():
 
 @app.route("/quizoverview")
 def quizoverview():
+
+    con = sqlite3.connect('quizzy.db')
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    cur.execute("SELECT * FROM quizzes")
+    quizzes = cur.fetchall()
+    con.close()
+
     return render_template("quizoverview.html", quizzes=quizzes)
 
 @app.route("/createquiz", methods=["GET", "POST"])
 def createquiz():
+
     if request.method == "POST":
+        try:  
+            # Titel abrufen
+            title = request.form.get("title")
 
-        # Titel abrufen
-        title = request.form.get("title")
-        
-        # Neue Quiz-ID berechnen
-        new_quiz_id = len(quizzes) + 1
-        
-        # Quiz-Daten erstellen
-        new_quiz = {
-            "id": new_quiz_id,
-            "title": title,
-            "questions": []
-        }
+            with sqlite3.connect('quizzy.db') as con:
+                cur = con.cursor()
 
-        # Fragen und Antwortoptionen hinzufügen
-        i = 0
-        while f"questions[{i}][question]" in request.form:
-            qid = i + 1
-            question_text = request.form.get(f"questions[{i}][question]")
-            category = request.form.get(f"questions[{i}][category]")
-            description = request.form.get(f"questions[{i}][description]")
-            answer = request.form.get(f"questions[{i}][answer]")
+            # Neue Quiz-ID berechnen
+                #new_quiz_id = cur.execute("SELECT COUNT(*) FROM quizzes")
             
-        # Ausgabe zur Überprüfung
-            print(f"Frage {i + 1}:")
-            print("  Frage:", question_text)
-            print("  Kategorie:", category)
-            print("  Beschreibung:", description)
-            print("  Antwort:", answer)
+            # # Quiz-Daten erstellen
+            #     new_quiz = {
+            #         "id": new_quiz_id,
+            #         "title": title,
+            #         "questions": []
+            #     }
 
-            new_quiz["questions"].append({
-                "qid": qid,
-                "question": question_text,
-                "category": category,
-                "description": description,
-                "answer": answer,
-            })
+                cur.execute("INSERT INTO quizzes (title) VALUES (?)", (title))
+                con.commit()
+                msg1 = "Quiz zu Datenbank hinzugefügt"
+        
 
-            i += 1
 
-        # Neues Quiz zur Liste der Quizzes hinzufügen
-        quizzes.append(new_quiz)
+                """
+                ??? Hier komme ich nicht weiter? Es werden keine Daten hinzugefügt, vmlt. da die QuizID nicht korrekt berechnet wird...
+                cur.execute("SELECT * FROM quizzes")
+                records = cur.fetchall()
+                new_quiz_id = len(records)
+                """
+                
 
-        # Umleitung zur Quiz-Übersicht
-        return redirect(url_for("quizoverview"))
-    
+
+
+            # Fragen und Antwortoptionen hinzufügen
+            i = 0
+            while f"questions[{i}][question]" in request.form:
+                qid = i + 1
+                question_text = request.form.get(f"questions[{i}][question]")
+                category = request.form.get(f"questions[{i}][category]")
+                description = request.form.get(f"questions[{i}][description]")
+                answer = request.form.get(f"questions[{i}][answer]")
+                points = request.form.get(f"questions[{i}][points]")
+                
+            # Ausgabe zur Überprüfung
+                # print(f"Frage {i + 1}:")
+                # print("  Frage:", question_text)
+                # print("  Kategorie:", category)
+                # print("  Beschreibung:", description)
+                # print("  Antwort:", answer)
+                # print("  Punkte:", points)
+
+                cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) VALUES (?,?,?,?,?,?,?)", (qid, new_quiz_id, question_text, category, description, answer, points))
+                con.commit()
+                msg2 = f"{i + 1} Fragen zur Datenbank hinzugefügt"
+
+                i += 1
+        except:
+            con.rollback()
+            msg1 = "Fehler beim Hinzufügen des Quizzes zur Datenbank"
+            msg2 = "Fehler beim Hinufügen der Fragen zur Datenbank"
+
+        finally:
+            con.close()
+            print(msg1 + " | " + msg2)
+
+            # Umleitung zur Quiz-Übersicht
+            return redirect(url_for("quizoverview"))
+
     return render_template("createquiz.html")
 
 @app.route("/quiz/<int:quiz_id>")
 def quiz(quiz_id):
-    quiz = next((q for q in quizzes if q["id"] == quiz_id), None)
+    quiz = next((q for q in quizzes if q["quiz_id"] == quiz_id), None)
     if quiz != None:
         return render_template("quiz.html", quiz=quiz)
     else:
