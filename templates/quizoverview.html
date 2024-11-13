@@ -10,7 +10,7 @@
     <h1>Übersicht über alle erstellten Quizzes</h1>
     <ul>
         {% for quiz in quizzes %}
-            <li><a href="{{ url_for('quiz', quiz_id=quiz['quiz_id']) }}">{{ quiz['title'] }}</a></li>
+            <li><a href="{{ url_for('quiz', quiz_id=quiz['rowid']) }}">{{ quiz['title'] }}</a></li>
         {% endfor %}
     </ul>
 </body>

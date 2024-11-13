@@ -33,13 +33,12 @@ def index():
 @app.route("/quizoverview")
 def quizoverview():
 
-    con = sqlite3.connect('quizzy.db')
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    cur.execute("SELECT * FROM quizzes")
-    quizzes = cur.fetchall()
-    con.close()
-
+    with sqlite3.connect('quizzy.db') as con:
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+        cur.execute("SELECT rowid, * FROM quizzes")
+        quizzes = cur.fetchall()
+    
     return render_template("quizoverview.html", quizzes=quizzes)
 
 @app.route("/createquiz", methods=["GET", "POST"])
@@ -99,7 +98,16 @@ def createquiz():
 
 @app.route("/quiz/<int:quiz_id>")
 def quiz(quiz_id):
-    quiz = next((q for q in quizzes if q["quiz_id"] == quiz_id), None)
+
+    with sqlite3.connect('quizzy.db') as con:
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+        cur.execute("SELECT rowid, * FROM quizzes")
+        quizzes = cur.fetchall()
+
+    #Quizinhalt ausgeben
+
+    quiz = next((q for q in quizzes if q["rowid"] == quiz_id), None)
     if quiz != None:
         return render_template("quiz.html", quiz=quiz)
     else:
