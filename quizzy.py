@@ -53,31 +53,12 @@ def createquiz():
             with sqlite3.connect('quizzy.db') as con:
                 cur = con.cursor()
 
-            # Neue Quiz-ID berechnen
-                #new_quiz_id = cur.execute("SELECT COUNT(*) FROM quizzes")
-            
-            # # Quiz-Daten erstellen
-            #     new_quiz = {
-            #         "id": new_quiz_id,
-            #         "title": title,
-            #         "questions": []
-            #     }
-
-                cur.execute("INSERT INTO quizzes (title) VALUES (?)", (title))
+                cur.execute("INSERT INTO quizzes (title) VALUES (?)", (title,))
                 con.commit()
                 msg1 = "Quiz zu Datenbank hinzugefügt"
-        
 
-
-                """
-                ??? Hier komme ich nicht weiter? Es werden keine Daten hinzugefügt, vmlt. da die QuizID nicht korrekt berechnet wird...
-                cur.execute("SELECT * FROM quizzes")
-                records = cur.fetchall()
-                new_quiz_id = len(records)
-                """
-                
-
-
+                #Neue Quiz ID erstellen
+                new_quiz_id = cur.lastrowid
 
             # Fragen und Antwortoptionen hinzufügen
             i = 0
