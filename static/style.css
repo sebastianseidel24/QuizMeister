@@ -1,15 +1,40 @@
 body {
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
     text-align: center;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
+    /* margin: 0;
+    padding: 0; */
+    background-color: #ccccfd;
 }
 
 h1 {
-    color: #333;
+    color: indigo;
+    padding-top: 25px;
+    padding-bottom: 25px;
+ }
+
+.navbar-expand-lg {
+    background-color: indigo !important;
 }
 
+.btn-primary:hover {
+    background-color: indigo;
+    border-color: indigo;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #ccccfd;
+    border-color: indigo;
+    border-width: 2px;
+    color: indigo;
+    font-weight: 500;
+}
+
+.icon-bright {
+    color: aliceblue;
+  }
+
+/* 
 a {
     display: inline-block;
     padding: 10px 20px;
@@ -17,9 +42,12 @@ a {
     background-color: #007bff;
     text-decoration: none;
     border-radius: 5px;
-    margin-top: 20px;
+    margin-top: 20px; 
 }
+*/
 
+/*
 a:hover {
     background-color: #0056b3;
 }
+*/
