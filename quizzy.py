@@ -68,14 +68,6 @@ def createquiz():
                 description = request.form.get(f"questions[{i}][description]")
                 answer = request.form.get(f"questions[{i}][answer]")
                 points = request.form.get(f"questions[{i}][points]")
-                
-            # Ausgabe zur Überprüfung
-                # print(f"Frage {i + 1}:")
-                # print("  Frage:", question_text)
-                # print("  Kategorie:", category)
-                # print("  Beschreibung:", description)
-                # print("  Antwort:", answer)
-                # print("  Punkte:", points)
 
                 cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) VALUES (?,?,?,?,?,?,?)", (qid, new_quiz_id, question_text, category, description, answer, points))
                 con.commit()
@@ -100,24 +92,18 @@ def createquiz():
 def quiz(quiz_id):
 
     with sqlite3.connect('quizzy.db') as con:
-        con.row_factory = sqlite3.Row
         cur = con.cursor()
-        cur.execute("SELECT rowid, * FROM quizzes")
-        quizzes = cur.fetchall()
 
-    
+        # Quiz-Daten laden
+        cur.execute("SELECT * FROM quizzes WHERE rowid = (?)", (quiz_id,))
+        quiz = cur.fetchone()
 
-    next_quiz = next((q for q in quizzes if q["rowid"] == quiz_id), None)
-    if next_quiz != None:
+        # Fragen des Quizzes laden
+        cur.execute('SELECT * FROM questions WHERE quiz_id = (?)', (quiz_id,))
+        questions = cur.fetchall()
 
-        #Quizinhalt ausgeben
-        with sqlite3.connect('quizzy.db') as con:
-            con.row_factory = sqlite3.Row
-            cur = con.cursor()
-            cur.execute("SELECT * FROM questions WHERE quiz_id = (?)", (quiz_id,))
-            quiz = cur.fetchall()
-
-        return render_template("quiz.html", quiz=quiz, next_quiz=next_quiz)
+    if quiz != None:
+        return render_template("quiz.html", quiz=quiz, questions=questions)
     else:
         return "Quiz nicht gefunden.", 404
 

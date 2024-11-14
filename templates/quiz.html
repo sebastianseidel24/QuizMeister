@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>{{ next_quiz['title'] }}</h1>
-        {% for question in quiz %}
+    <h1>{{ quiz['title'] }}</h1>
+        {% for question in questions %}
             <h2>Frage {{ question[0] }}</h2>
             <p>Kategorie: {{ question[3] }}</p>
             <p>Frage: {{ question[2] }}</p>
@@ -21,17 +21,3 @@
 
 </body>
 </html>
-
-<!-- <body>
-    <h1>{{ next_quiz['title'] }}</h1>
-        {% for question in quiz['questions'] %}
-            <h2>Frage {{ question['qid'] }}</h2>
-            <p>Kategorie: {{ question['category'] }}</p>
-            <p>Frage: {{ question['question'] }}</p>
-            {% if question['description'] != "" %}
-                <p>Beschreibung: {{ question['description'] }}</p>
-            {% endif %}
-            <p>Antwort: {{ question['answer'] }}</p><br>
-        {% endfor %}
-
-</body> -->
