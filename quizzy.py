@@ -105,11 +105,19 @@ def quiz(quiz_id):
         cur.execute("SELECT rowid, * FROM quizzes")
         quizzes = cur.fetchall()
 
-    #Quizinhalt ausgeben
+    
 
-    quiz = next((q for q in quizzes if q["rowid"] == quiz_id), None)
-    if quiz != None:
-        return render_template("quiz.html", quiz=quiz)
+    next_quiz = next((q for q in quizzes if q["rowid"] == quiz_id), None)
+    if next_quiz != None:
+
+        #Quizinhalt ausgeben
+        with sqlite3.connect('quizzy.db') as con:
+            con.row_factory = sqlite3.Row
+            cur = con.cursor()
+            cur.execute("SELECT * FROM questions WHERE quiz_id = (?)", (quiz_id,))
+            quiz = cur.fetchall()
+
+        return render_template("quiz.html", quiz=quiz, next_quiz=next_quiz)
     else:
         return "Quiz nicht gefunden.", 404
 
