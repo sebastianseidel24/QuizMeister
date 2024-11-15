@@ -7,26 +7,26 @@ body {
 }
 
 h1 {
-    color: indigo;
+    color: rgb(52, 0, 130);
     padding-top: 25px;
     padding-bottom: 25px;
  }
 
 .navbar-expand-lg {
-    background-color: indigo !important;
+    background-color: rgb(52, 0, 130) !important;
 }
 
 .btn-primary:hover {
-    background-color: indigo;
-    border-color: indigo;
+    background-color: rgb(52, 0, 130);
+    border-color: rgb(52, 0, 130);
     font-weight: 500;
 }
 
 .btn-primary {
     background-color: #ccccfd;
-    border-color: indigo;
+    border-color: rgb(52, 0, 130);
     border-width: 2px;
-    color: indigo;
+    color: rgb(52, 0, 130);
     font-weight: 500;
 }
 
