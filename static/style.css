@@ -12,6 +12,10 @@ h1 {
     padding-bottom: 25px;
  }
 
+ ul {
+    list-style-type: none;
+ }
+
 .navbar-expand-lg {
     background-color: rgb(52, 0, 130) !important;
 }

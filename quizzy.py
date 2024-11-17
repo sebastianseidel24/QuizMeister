@@ -5,30 +5,11 @@ app = Flask(__name__)
 
 
 
-# Beispiel-Datenstruktur für Quizzes und Fragen
-# quizzes = [
-#     {
-#         "id": 1,
-#         "title": "Quiz 1",
-#         "questions": [
-#             {"qid": "1", "question": "Wie viele Kontinente gibt es?", "category": "Geografie", "description": "Europa, Afrika, Nordamerika, Südamerika, Australien, Asien, Arktis", "answer": "7"},
-#             {"qid": "2", "question": "Wer hat die Relativitätstheorie entwickelt?", "category": "Physik", "description": "", "answer": "Einstein"},
-#         ]
-#     },
-#     {
-#         "id": 2,
-#         "title": "Quiz 2",
-#         "questions": [
-#             {"qid": "1", "question": "Wer spielt Iron Man im Marvel-Universum?", "category": "Film & TV", "description": "", "answer": "Robert Downey Jr."},
-#             {"qid": "2", "question": "In welchem Jahr wurde der erste Star Wars-Film veröffentlicht?", "category": "Film & TV", "description": "", "answer": "1977"},
-#         ]
-#     },
-# ]
-
-#Seiten
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
 
 @app.route("/quizoverview")
 def quizoverview():
@@ -40,6 +21,8 @@ def quizoverview():
         quizzes = cur.fetchall()
     
     return render_template("quizoverview.html", quizzes=quizzes)
+
+
 
 @app.route("/createquiz", methods=["GET", "POST"])
 def createquiz():
@@ -88,6 +71,8 @@ def createquiz():
 
     return render_template("createquiz.html")
 
+
+
 @app.route("/quiz/<int:quiz_id>")
 def quiz(quiz_id):
 
@@ -107,6 +92,8 @@ def quiz(quiz_id):
     else:
         return "Quiz nicht gefunden.", 404
 
+
+
 @app.route("/results/<int:quiz_id>", methods=["POST"])
 def results(quiz_id):
     # Ergebnis-Berechnung hier einfügen
@@ -116,8 +103,3 @@ def results(quiz_id):
 # App starten
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
-

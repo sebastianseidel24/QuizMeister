@@ -42,13 +42,13 @@
                 </h2>
                 <div id="Q{{ question[0] }}" class="accordion-collapse collapse" data-bs-parent="#accordionQuiz">
                     <div class="accordion-body">
-                        <p>Kategorie: {{ question[3] }}</p>
-                        <p>Frage: {{ question[2] }}</p>
+                        <p><strong>Kategorie:</strong> {{ question[3] }}</p>
+                        <p><strong>Frage:</strong> {{ question[2] }}</p>
                         {% if question[4] != "" %}
-                            <p>Beschreibung: {{ question[4] }}</p>
+                            <p><strong>Beschreibung:</strong> {{ question[4] }}</p>
                         {% endif %}
-                        <p>Antwort: {{ question[5] }}</p>
-                        <p>Punkte: {{ question[6] }}</p>
+                        <p><strong>Antwort:</strong> {{ question[5] }}</p>
+                        <p><strong>Punkte:</strong> {{ question[6] }}</p>
                     </div>
                 </div>
             </div>
