@@ -80,6 +80,21 @@ ul {
     padding-bottom: 16px;
 }
 
+a.card {
+    text-decoration: none;
+    color: rgb(52, 0, 130);
+    background-color: aliceblue;
+}
+
+a.card:hover {
+    background-color: rgb(52, 0, 130);
+    color: aliceblue;
+}
+
+a.card:hover h6 {
+    color: rgba(240, 248, 255, 0.694) !important;
+}
+
 /* 
 a {
     display: inline-block;

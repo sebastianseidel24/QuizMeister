@@ -19,6 +19,9 @@ def quizoverview():
         cur = con.cursor()
         cur.execute("SELECT rowid, * FROM quizzes")
         quizzes = cur.fetchall()
+
+        #Anzahl Fragen in Quiz
+        #cur.execute("COUNT * WHERE ")
     
     return render_template("quizoverview.html", quizzes=quizzes)
 
