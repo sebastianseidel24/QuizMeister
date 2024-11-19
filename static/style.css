@@ -10,11 +10,11 @@ h1 {
     color: rgb(52, 0, 130);
     padding-top: 25px;
     padding-bottom: 25px;
- }
+}
 
- ul {
+ul {
     list-style-type: none;
- }
+}
 
 .navbar-expand-lg {
     background-color: rgb(52, 0, 130) !important;
@@ -36,7 +36,49 @@ h1 {
 
 .icon-bright {
     color: aliceblue;
-  }
+}
+
+.accordion-button {
+    color: rgb(52, 0, 130);
+    background-color: aliceblue;
+}
+
+.accordion-button:hover {
+    background-color: rgb(52, 0, 130);
+    color: aliceblue;
+}
+
+.accordion-button:focus {
+    background-color: rgba(128, 44, 255, 0.436);
+    color: aliceblue;
+    box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: rgba(128, 44, 255, 0.436);
+    color: aliceblue;
+    box-shadow: none;
+}
+
+.accordion-item {
+    color: aliceblue;
+    background-color: rgb(52, 0, 130);
+}
+
+.with-border {
+    border-style: solid; 
+    border-color: aliceblue; 
+    border-width: 1px;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.with-line {
+    border-bottom-style: solid; 
+    border-color: aliceblue; 
+    border-width: 1px;
+    padding-bottom: 16px;
+}
 
 /* 
 a {
