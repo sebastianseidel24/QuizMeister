@@ -55,11 +55,11 @@
             </div>
         </div>
         <!-- Hinzufügen der Fragen -->
-        <div class="row justify-content-center with-background" style="padding-top: 12px;">
-            <div class="col-2"></div>
-            <div class="col-8">
-                <div id="questions">
-                    <div class="question" id="question-0">
+        <div id="questions">
+            <div class="question" id="question-0">
+                <div class="row justify-content-center with-background" style="padding-top: 12px;">
+                    <div class="col-2"></div>
+                    <div class="col-8">
 
                         <div class="mb-3">
                             <label for="inputQuestion" class="form-label">Frage</label>
@@ -112,11 +112,11 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-2 text-end">
+                        <button class="btn btn-primary" type="button" onclick="deleteQuestion(0)"><i
+                                class="fa-solid fa-trash"></i></button>
+                    </div>
                 </div>
-            </div>
-            <div class="col-2 text-end">
-                <button class="btn btn-primary" type="button" onclick="deleteQuestion(0)"><i
-                        class="fa-solid fa-trash"></i></button>
             </div>
         </div>
 
@@ -148,14 +148,67 @@
             newQuestionDiv.setAttribute("id", `question-${questionIndex}`);
             newQuestionDiv.className = "question";
             newQuestionDiv.innerHTML = `
-                <label>Frage: <textarea type="text" name="questions[${questionIndex}][question]" required></textarea></label><br>
-                <label>Kategorie: <input type="text" name="questions[${questionIndex}][category]" required></label><br>
-                <label>Beschreibung: <textarea type="text" name="questions[${questionIndex}][description]"></textarea></label><br>
-                <label>Antwort: <textarea type="text" name="questions[${questionIndex}][answer]" required></textarea></label><br>
-                <label>Punkte: <input type="float" name="questions[${questionIndex}][points]" value="1"></label><br>
-                <br>
-                <button type="button" onclick="deleteQuestion(${questionIndex})">Diese Frage entfernen</button><br><br>
-            `;
+                <div class="row justify-content-center with-background" style="padding-top: 12px; margin-top: 12px">
+                    <div class="col-2"></div>
+                    <div class="col-8">
+
+                        <div class="mb-3">
+                            <label for="inputQuestion" class="form-label">Frage</label>
+                            <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][question]"
+                                required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputCategory" class="form-label">Kategorie</label>
+                            <select class="form-select" name="questions[${questionIndex}][category]" required>
+                                <option selected>Allgemeinwissen</option>
+                                <option>Geschichte</option>
+                                <option>Geografie</option>
+                                <option>Kunst</option>
+                                <option>Literatur</option>
+                                <option>Musik</option>
+                                <option>Naturwissenschaften</option>
+                                <option>Politik</option>
+                                <option>Sport</option>
+                                <option>Technik</option>
+                                <option>Tiere</option>
+                                <option>Unterhaltung</option>
+                                <option>Weltkulturen</option>
+                                <option>Wirtschaft</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputDescription" class="form-label">Beschreibung</label>
+                            <textarea class="form-control" type="text" rows="2"
+                                name="questions[${questionIndex}][description]"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputAnswer" class="form-label">Antwort</label>
+                            <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][answer]"
+                                required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputPoints" class="form-label">Punkte</label>
+                            <input class="form-control" type="number" name="questions[${questionIndex}][points]" value="1" min="0"
+                                max="5" step="0.5" required></input>
+                        </div>
+
+                        <!-- Button zum Hinzufügen weiterer Fragen -->
+                        <div class="d-flex col-12 justify-content-center">
+                            <div class="btn-add" type="button" onclick="addQuestion()">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2 text-end">
+                        <button class="btn btn-primary" type="button" onclick="deleteQuestion(${questionIndex})"><i
+                                class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+                `;
             questionsDiv.appendChild(newQuestionDiv);
             questionIndex++;
             updateQuestionCounter();
@@ -177,11 +230,11 @@
                 questionDiv.id = `question-${index}`;
 
                 // Aktualisiere die Nummerierung und Name-Attribute der Felder
-                questionDiv.querySelectorAll("input")[0].setAttribute("name", `questions[${index}][question]`);
-                questionDiv.querySelectorAll("input")[1].setAttribute("name", `questions[${index}][category]`);
-                questionDiv.querySelectorAll("input")[2].setAttribute("name", `questions[${index}][description]`);
-                questionDiv.querySelectorAll("input")[3].setAttribute("name", `questions[${index}][answer]`);
-                questionDiv.querySelectorAll("input")[4].setAttribute("name", `questions[${index}][points]`);
+                questionDiv.querySelectorAll(".form-control")[0].setAttribute("name", `questions[${index}][question]`);
+                questionDiv.querySelectorAll(".form-control")[1].setAttribute("name", `questions[${index}][description]`);
+                questionDiv.querySelectorAll(".form-control")[2].setAttribute("name", `questions[${index}][answer]`);
+                questionDiv.querySelectorAll(".form-control")[3].setAttribute("name", `questions[${index}][points]`);
+                questionDiv.querySelector(".form-select").setAttribute("name", `questions[${index}][category]`);
 
                 // Aktualisiere den "Diese Frage entfernen"-Button
                 questionDiv.querySelector("button").setAttribute("onclick", `deleteQuestion(${index})`);
