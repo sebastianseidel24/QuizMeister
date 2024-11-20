@@ -34,6 +34,24 @@ ul {
     font-weight: 500;
 }
 
+.btn-add {
+    width: 250px;
+    height: 50px;
+    border: 2px solid rgb(52, 0, 130);
+    border-bottom: 0px;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    color: rgb(52, 0, 130);
+    background-color: rgba(52, 0, 130, 0.402);
+    text-align: center;
+    padding: 10px;
+}
+
+.btn-add:hover {
+    background-color: rgb(52, 0, 130);
+    color: aliceblue;
+}
+
 .icon-bright {
     color: aliceblue;
 }
@@ -78,6 +96,18 @@ ul {
     border-color: aliceblue; 
     border-width: 1px;
     padding-bottom: 16px;
+}
+
+.with-background {
+    background-color: rgba(52, 0, 130, 0.244);
+    border-style: solid;
+    border-width: 0px;
+    border-radius: 8px;
+    /* padding-top: 8px; */
+}
+
+.card {
+    height: 100%;
 }
 
 a.card {

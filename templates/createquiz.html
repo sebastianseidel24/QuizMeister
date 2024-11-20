@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -12,18 +14,22 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand mb-0 h1" href="/" style="color: aliceblue;">Quizzy!</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-index" aria-controls="navbar-index" aria-expanded="false" aria-label="Toggle navigation" style="color: aliceblue;">
-                <span class="" role="button">   
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-index"
+                aria-controls="navbar-index" aria-expanded="false" aria-label="Toggle navigation"
+                style="color: aliceblue;">
+                <span class="" role="button">
                     <i class="fa-solid fa-bars" style="color: aliceblue; font-size:24px;"></i>
                 </span>
             </button>
             <div class="navbar-collapse collapse" id="navbar-index">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('quizoverview') }}" style="color: aliceblue;">Quiz spielen</a>
+                        <a class="nav-link" aria-current="page" href="{{ url_for('quizoverview') }}"
+                            style="color: aliceblue;">Quiz spielen</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('createquiz') }}" style="color: aliceblue;">Neues Quiz</a>
+                        <a class="nav-link" aria-current="page" href="{{ url_for('createquiz') }}"
+                            style="color: aliceblue;">Neues Quiz</a>
                     </li>
                 </ul>
             </div>
@@ -31,34 +37,99 @@
     </nav>
 
     <h1>Neues Quiz erstellen</h1>
-    <p>Erstelle hier ein neues Quiz.</p>
-    <form action="{{ url_for('createquiz') }}" method="POST">
-        <label>Quiz-Titel: <input type="text" name="title" required></label><br><br>
 
-        <!-- Counter-Anzeige für die Anzahl der Fragen -->
-        <div>
-            <strong>Fragenanzahl: <span id="question-counter">1</span></strong>
+    <div class="container text-start">
+        <div class="row justify-content-center">
+            <div class="col-8">
+                <form action="{{ url_for('createquiz') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="inputTitle" class="form-label">Quiz-Titel</label>
+                        <input class="form-control" type="text" name="title" required></input>
+                    </div>
+
+                    <!-- Counter-Anzeige für die Anzahl der Fragen -->
+                    <div class="text-center">
+                        <strong>Anzahl Fragen: <span id="question-counter">1</span></strong>
+                    </div>
+                    <br>
+            </div>
         </div>
-        <br>
-
         <!-- Hinzufügen der Fragen -->
-        <div id="questions">
-            <div class="question" id="question-0">
-                <label>Frage: <textarea type="text" name="questions[0][question]" required></textarea></label><br>
-                <label>Kategorie: <input type="text" name="questions[0][category]" required></label><br>
-                <label>Beschreibung: <textarea type="text" name="questions[0][description]"></textarea></label><br>
-                <label>Antwort: <textarea type="text" name="questions[0][answer]" required></textarea></label><br>
-                <label>Punkte: <input type="float" name="questions[0][points]" value="1"></label><br>
-                <br>
-                <button type="button" onclick="deleteQuestion(0)">Diese Frage entfernen</button><br><br>
+        <div class="row justify-content-center with-background" style="padding-top: 12px;">
+            <div class="col-2"></div>
+            <div class="col-8">
+                <div id="questions">
+                    <div class="question" id="question-0">
+
+                        <div class="mb-3">
+                            <label for="inputQuestion" class="form-label">Frage</label>
+                            <textarea class="form-control" type="text" rows="2" name="questions[0][question]"
+                                required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputCategory" class="form-label">Kategorie</label>
+                            <select class="form-select" name="questions[0][category]" required>
+                                <option selected>Allgemeinwissen</option>
+                                <option>Geschichte</option>
+                                <option>Geografie</option>
+                                <option>Kunst</option>
+                                <option>Literatur</option>
+                                <option>Musik</option>
+                                <option>Naturwissenschaften</option>
+                                <option>Politik</option>
+                                <option>Sport</option>
+                                <option>Technik</option>
+                                <option>Tiere</option>
+                                <option>Unterhaltung</option>
+                                <option>Weltkulturen</option>
+                                <option>Wirtschaft</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputDescription" class="form-label">Beschreibung</label>
+                            <textarea class="form-control" type="text" rows="2"
+                                name="questions[0][description]"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputAnswer" class="form-label">Antwort</label>
+                            <textarea class="form-control" type="text" rows="2" name="questions[0][answer]"
+                                required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputPoints" class="form-label">Punkte</label>
+                            <input class="form-control" type="number" name="questions[0][points]" value="1" min="0"
+                                max="5" step="0.5" required></input>
+                        </div>
+
+                        <!-- Button zum Hinzufügen weiterer Fragen -->
+                        <div class="d-flex col-12 justify-content-center">
+                            <div class="btn-add" type="button" onclick="addQuestion()">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 text-end">
+                <button class="btn btn-primary" type="button" onclick="deleteQuestion(0)"><i
+                        class="fa-solid fa-trash"></i></button>
             </div>
         </div>
 
-        <!-- Button zum Hinzufügen weiterer Fragen -->
-        <button type="button" onclick="addQuestion()">Weitere Frage hinzufügen</button><br><br>
+        <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
+            <button class="btn btn-success" type="submit">Quiz erstellen</button>
+        </div>
+        </form>
+    </div>
+    </div>
 
-        <button type="submit">Quiz erstellen</button>
-    </form>
+    <footer style="padding: 20px;">
+
+    </footer>
 
     <script>
         // JavaScript zum Hinzufügen und Entfernen von Fragenfeldern
@@ -122,6 +193,9 @@
         }
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>
