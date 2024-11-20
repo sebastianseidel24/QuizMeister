@@ -19,9 +19,6 @@ def quizoverview():
         cur = con.cursor()
         cur.execute("SELECT rowid, * FROM quizzes")
         quizzes = cur.fetchall()
-
-        #Anzahl Fragen in Quiz
-        #cur.execute("COUNT * WHERE ")
     
     return render_template("quizoverview.html", quizzes=quizzes)
 
@@ -38,6 +35,7 @@ def createquiz():
             with sqlite3.connect('quizzy.db') as con:
                 cur = con.cursor()
 
+                #Quiz zu Datenbank hinzfügen
                 cur.execute("INSERT INTO quizzes (title) VALUES (?)", (title,))
                 con.commit()
                 msg1 = "Quiz zu Datenbank hinzugefügt"
@@ -60,6 +58,11 @@ def createquiz():
                 msg2 = f"{i + 1} Fragen zur Datenbank hinzugefügt"
 
                 i += 1
+
+            #Anzahl Fragen zu Quiz-DB hinzufügen
+            cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (qid,title))
+            con.commit()
+
         except:
             con.rollback()
             msg1 = "Fehler beim Hinzufügen des Quizzes zur Datenbank"

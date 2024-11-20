@@ -36,17 +36,21 @@
         </div>
     </nav>
 
-    <h1>Übersicht über alle erstellten Quizzes</h1>
+    <h1>Quiz-Übersicht</h1>
 
     <div class="container">
-        {% for quiz in quizzes %}
-        <a class="card" style="width: 18rem;" href="{{ url_for('quiz', quiz_id=quiz['rowid']) }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ quiz['title'] }}</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">Fragen: ?</h6>
+        <div class="row justify-content-start">
+            {% for quiz in quizzes %}
+            <div class="col-4">
+                <a class="card"  href="{{ url_for('quiz', quiz_id=quiz['rowid']) }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ quiz['title'] }}</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">Fragen: {{ quiz['number_of_questions'] }}</h6>
+                    </div>
+                </a>
             </div>
-        </a>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 
 

@@ -19,23 +19,25 @@ print("Connected to database succesfully")
 # print("Daten von questions gelöscht")
 # con.commit()
 
-con.row_factory = sqlite3.Row
-cur = con.cursor()
-cur.execute("SELECT * FROM questions WHERE quiz_id = 2")
-#quiz = cur.fetchall()
-for row in cur.fetchall():
-    print(row[0])
-    print(row[1])
-    print(row[2])
-    print(row[3])
-    print(row[4])
-    print(row[5])
-    print(row[6])
+# con.row_factory = sqlite3.Row
+# cur = con.cursor()
+# cur.execute("SELECT * FROM questions WHERE quiz_id = 2")
+# #quiz = cur.fetchall()
+# for row in cur.fetchall():
+#     print(row[0])
+#     print(row[1])
+#     print(row[2])
+#     print(row[3])
+#     print(row[4])
+#     print(row[5])
+#     print(row[6])
 
 # try:
 #     con.execute('DELETE FROM quizzes WHERE quiz_id=3')
 #     print("Gelöscht")
 # except:
 #     print("Löschen nicht möglich")
+
+#con.execute("ALTER TABLE quizzes ADD number_of_questions INTEGER")
 
 con.close()
