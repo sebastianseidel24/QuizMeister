@@ -84,7 +84,6 @@ a.card {
     text-decoration: none;
     color: rgb(52, 0, 130);
     background-color: aliceblue;
-    margin: 12px;
 }
 
 a.card:hover {
