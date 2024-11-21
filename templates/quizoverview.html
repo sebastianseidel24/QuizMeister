@@ -4,30 +4,7 @@
 {% include 'head.html' %}
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand mb-0 h1" href="/" style="color: aliceblue;">Quizzy!</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-index"
-                aria-controls="navbar-index" aria-expanded="false" aria-label="Toggle navigation"
-                style="color: aliceblue;">
-                <span class="" role="button">
-                    <i class="fa-solid fa-bars" style="color: aliceblue; font-size:24px;"></i>
-                </span>
-            </button>
-            <div class="navbar-collapse collapse" id="navbar-index">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('quizoverview') }}"
-                            style="color: aliceblue;">Quiz spielen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('createquiz') }}"
-                            style="color: aliceblue;">Neues Quiz</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include 'navbar.html' %}
 
     <h1>Quiz-Übersicht</h1>
 
