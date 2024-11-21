@@ -90,7 +90,7 @@ def quiz(quiz_id):
         quiz = cur.fetchone()
 
         # Fragen des Quizzes laden
-        cur.execute('SELECT * FROM questions WHERE quiz_id = (?)', (quiz_id,))
+        cur.execute("SELECT * FROM questions WHERE quiz_id = (?)", (quiz_id,))
         questions = cur.fetchall()
 
     if quiz != None:
@@ -99,11 +99,76 @@ def quiz(quiz_id):
         return "Quiz nicht gefunden.", 404
 
 
+@app.route("/editquiz", methods=["GET", "POST"])
+def editquiz():
+    quiz_id = request.args.get('quiz_id')
 
-@app.route("/results/<int:quiz_id>", methods=["POST"])
-def results(quiz_id):
-    # Ergebnis-Berechnung hier einfügen
-    return render_template("results.html")
+    with sqlite3.connect('quizzy.db') as con:
+        cur = con.cursor()
+
+        # Quiz-Daten laden
+        cur.execute("SELECT * FROM quizzes WHERE rowid = (?)", (quiz_id,))
+        quiz = cur.fetchone()
+
+        # Fragen des Quizzes laden
+        cur.execute("SELECT * FROM questions WHERE quiz_id = (?)", (quiz_id,))
+        questions = cur.fetchall()
+
+    if quiz == None:
+        return "Quiz nicht gefunden.", 404
+    else:
+        if request.method == "POST":
+            try:  
+                # Titel abrufen
+                title = request.form.get("title")
+
+                with sqlite3.connect('quizzy.db') as con:
+                    cur = con.cursor()
+
+                    #Quiz zu Datenbank hinzfügen
+                    cur.execute("UPDATE quizzes SET title = (?) WHERE rowid = (?)", (title,quiz_id))
+                    con.commit()
+                    msg1 = f"Quiz-Titel '{title}' in Datenbank bearbeitet"
+
+                # Fragen und Antwortoptionen hinzufügen
+                i = 0
+                while f"questions[{i}][question]" in request.form:
+                    question_id = i + 1
+                    question_text = request.form.get(f"questions[{i}][question]")
+                    category = request.form.get(f"questions[{i}][category]")
+                    description = request.form.get(f"questions[{i}][description]")
+                    answer = request.form.get(f"questions[{i}][answer]")
+                    points = request.form.get(f"questions[{i}][points]")
+
+                    cur.execute("UPDATE questions SET question_id = (?), question = (?), category = (?), description = (?), answer = (?), points = (?) WHERE quiz_id = (?) AND question_id = (?)", (question_id, question_text, category, description, answer, points, quiz_id, question_id))
+                    con.commit()
+                    msg2 = f"Fragen von Quiz '{title}' in Datenbank bearbeitet"
+
+                    i += 1
+
+                #Anzahl Fragen zu Quiz-DB hinzufügen
+                cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (question_id, title))
+                con.commit()
+
+            except:
+                con.rollback()
+                msg1 = "Fehler beim Bearbeiten des Quizzes in der Datenbank"
+                msg2 = "Fehler beim Bearbeiten der Fragen in der Datenbank"
+
+            finally:
+                con.close()
+                print(msg1 + " | " + msg2)
+
+                # Umleitung zur Quiz-Übersicht
+                return redirect(url_for("quizoverview"))
+        
+        return render_template("editquiz.html", quiz=quiz, questions=questions)
+
+
+# @app.route("/results/<int:quiz_id>", methods=["POST"])
+# def results(quiz_id):
+#     # Ergebnis-Berechnung hier einfügen
+#     return render_template("results.html")
 
 
 # App starten
