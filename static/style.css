@@ -38,9 +38,9 @@ ul {
     width: 250px;
     height: 50px;
     border: 2px solid rgb(52, 0, 130);
-    border-bottom: 0px;
-    border-top-right-radius: 8px;
-    border-top-left-radius: 8px;
+    border-top: 0px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
     color: rgb(52, 0, 130);
     background-color: rgba(52, 0, 130, 0.402);
     text-align: center;

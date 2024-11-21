@@ -62,7 +62,7 @@
                     <div class="col-8">
 
                         <div class="mb-3">
-                            <label for="inputQuestion" class="form-label">Frage</label>
+                            <label for="inputQuestion" name="inputQuestion" class="form-label">Frage 1</label>
                             <textarea class="form-control" type="text" rows="2" name="questions[0][question]"
                                 required></textarea>
                         </div>
@@ -105,18 +105,20 @@
                                 max="5" step="0.5" required></input>
                         </div>
 
-                        <!-- Button zum Hinzufügen weiterer Fragen -->
-                        <div class="d-flex col-12 justify-content-center">
-                            <div class="btn-add" type="button" onclick="addQuestion()">
-                                <i class="fa-solid fa-plus"></i>
-                            </div>
-                        </div>
+
                     </div>
                     <div class="col-2 text-end">
                         <button class="btn btn-primary" type="button" onclick="deleteQuestion(0)"><i
                                 class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Button zum Hinzufügen weiterer Fragen -->
+        <div class="d-flex col-12 justify-content-center">
+            <div class="btn-add" type="button" onclick="addQuestion()">
+                <i class="fa-solid fa-plus"></i>
             </div>
         </div>
 
@@ -153,7 +155,7 @@
                     <div class="col-8">
 
                         <div class="mb-3">
-                            <label for="inputQuestion" class="form-label">Frage</label>
+                            <label for="inputQuestion" name="inputQuestion" class="form-label">Frage ${questionIndex+1}</label>
                             <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][question]"
                                 required></textarea>
                         </div>
@@ -196,12 +198,6 @@
                                 max="5" step="0.5" required></input>
                         </div>
 
-                        <!-- Button zum Hinzufügen weiterer Fragen -->
-                        <div class="d-flex col-12 justify-content-center">
-                            <div class="btn-add" type="button" onclick="addQuestion()">
-                                <i class="fa-solid fa-plus"></i>
-                            </div>
-                        </div>
                     </div>
                     <div class="col-2 text-end">
                         <button class="btn btn-primary" type="button" onclick="deleteQuestion(${questionIndex})"><i
@@ -228,6 +224,10 @@
             Array.from(questionDivs).forEach((questionDiv, index) => {
                 // Aktualisiere die ID des Frage-Divs
                 questionDiv.id = `question-${index}`;
+
+                //Aktualisiere die Nummerierung der Frage
+                const inputQuestion = questionDiv.querySelector('label[name="inputQuestion"]')
+                inputQuestion.innerText = `Frage ${index+1}`;
 
                 // Aktualisiere die Nummerierung und Name-Attribute der Felder
                 questionDiv.querySelectorAll(".form-control")[0].setAttribute("name", `questions[${index}][question]`);
