@@ -59,11 +59,11 @@
                                 <p class="with-border"><span class="fw-bold">Punkte</span><br> {{ question[6] }}</p>
                             </div>
                         </div>
-                            <p class="fs-5 with-line"><span class="fw-bold fs-5">Frage</span><br> {{ question[2] }}</p>
+                            <p class="fs-5 with-line"><span class="fw-bold fs-5">Frage</span><br> {{ question[2]|replace('\n', '<br>')|safe }}</p>
                             {% if question[4] != "" %}
-                            <p class="fs-5 with-line"><span class="fw-bold">Beschreibung</span><br> {{ question[4] }}</p>
+                            <p class="fs-5 with-line"><span class="fw-bold">Beschreibung</span><br> {{ question[4]|replace('\n', '<br>')|safe }}</p>
                             {% endif %}
-                            <p class="fs-5"><span class="fw-bold fs-5">Antwort</span><br> {{ question[5] }}</p>
+                            <p class="fs-5"><span class="fw-bold fs-5">Antwort</span><br> {{ question[5]|replace('\n', '<br>')|safe }}</p>
                     </div>
                 </div>
             </div>

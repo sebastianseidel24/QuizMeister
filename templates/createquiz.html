@@ -39,9 +39,9 @@
     <h1>Neues Quiz erstellen</h1>
 
     <div class="container text-start">
-        <div class="row justify-content-center">
-            <div class="col-8">
-                <form action="{{ url_for('createquiz') }}" method="POST">
+        <form action="{{ url_for('createquiz') }}" method="POST">
+            <div class="row justify-content-center">
+                <div class="col-8">
                     <div class="mb-3">
                         <label for="inputTitle" class="form-label">Quiz-Titel</label>
                         <input class="form-control" type="text" name="title" required></input>
@@ -52,79 +52,79 @@
                         <strong>Anzahl Fragen: <span id="question-counter">1</span></strong>
                     </div>
                     <br>
+                </div>
             </div>
-        </div>
-        <!-- Hinzufügen der Fragen -->
-        <div id="questions">
-            <div class="question" id="question-0">
-                <div class="row justify-content-center with-background" style="padding-top: 12px;">
-                    <div class="col-2"></div>
-                    <div class="col-8">
+            <!-- Hinzufügen der Fragen -->
+            <div id="questions">
+                <div class="question" id="question-0">
+                    <div class="row justify-content-center with-background" style="padding-top: 12px;">
+                        <div class="col-2"></div>
+                        <div class="col-8">
 
-                        <div class="mb-3">
-                            <label for="inputQuestion" name="inputQuestion" class="form-label">Frage 1</label>
-                            <textarea class="form-control" type="text" rows="2" name="questions[0][question]"
-                                required></textarea>
+                            <div class="mb-3">
+                                <label for="inputQuestion" name="inputQuestion" class="form-label">Frage 1</label>
+                                <textarea class="form-control" type="text" rows="2" name="questions[0][question]"
+                                    required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputCategory" class="form-label">Kategorie</label>
+                                <select class="form-select" name="questions[0][category]" required>
+                                    <option selected>Allgemeinwissen</option>
+                                    <option>Geschichte</option>
+                                    <option>Geografie</option>
+                                    <option>Kunst</option>
+                                    <option>Literatur</option>
+                                    <option>Musik</option>
+                                    <option>Naturwissenschaften</option>
+                                    <option>Politik</option>
+                                    <option>Sport</option>
+                                    <option>Technik</option>
+                                    <option>Tiere</option>
+                                    <option>Unterhaltung</option>
+                                    <option>Weltkulturen</option>
+                                    <option>Wirtschaft</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputDescription" class="form-label">Beschreibung</label>
+                                <textarea class="form-control" type="text" rows="2"
+                                    name="questions[0][description]"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputAnswer" class="form-label">Antwort</label>
+                                <textarea class="form-control" type="text" rows="2" name="questions[0][answer]"
+                                    required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputPoints" class="form-label">Punkte</label>
+                                <input class="form-control" type="number" name="questions[0][points]" value="1" min="0"
+                                    max="5" step="0.5" required></input>
+                            </div>
+
+
                         </div>
-
-                        <div class="mb-3">
-                            <label for="inputCategory" class="form-label">Kategorie</label>
-                            <select class="form-select" name="questions[0][category]" required>
-                                <option selected>Allgemeinwissen</option>
-                                <option>Geschichte</option>
-                                <option>Geografie</option>
-                                <option>Kunst</option>
-                                <option>Literatur</option>
-                                <option>Musik</option>
-                                <option>Naturwissenschaften</option>
-                                <option>Politik</option>
-                                <option>Sport</option>
-                                <option>Technik</option>
-                                <option>Tiere</option>
-                                <option>Unterhaltung</option>
-                                <option>Weltkulturen</option>
-                                <option>Wirtschaft</option>
-                            </select>
+                        <div class="col-2 text-end">
+                            <button class="btn btn-primary" type="button" onclick="deleteQuestion(0)"><i
+                                    class="fa-solid fa-trash"></i></button>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="inputDescription" class="form-label">Beschreibung</label>
-                            <textarea class="form-control" type="text" rows="2"
-                                name="questions[0][description]"></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="inputAnswer" class="form-label">Antwort</label>
-                            <textarea class="form-control" type="text" rows="2" name="questions[0][answer]"
-                                required></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="inputPoints" class="form-label">Punkte</label>
-                            <input class="form-control" type="number" name="questions[0][points]" value="1" min="0"
-                                max="5" step="0.5" required></input>
-                        </div>
-
-
-                    </div>
-                    <div class="col-2 text-end">
-                        <button class="btn btn-primary" type="button" onclick="deleteQuestion(0)"><i
-                                class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Button zum Hinzufügen weiterer Fragen -->
-        <div class="d-flex col-12 justify-content-center">
-            <div class="btn-add" type="button" onclick="addQuestion()">
-                <i class="fa-solid fa-plus"></i>
+            <!-- Button zum Hinzufügen weiterer Fragen -->
+            <div class="d-flex col-12 justify-content-center">
+                <div class="btn-add" type="button" onclick="addQuestion()">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
             </div>
-        </div>
 
-        <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
-            <button class="btn btn-success" type="submit">Quiz erstellen</button>
-        </div>
+            <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
+                <button class="btn btn-success" type="submit">Quiz erstellen</button>
+            </div>
         </form>
     </div>
     </div>
@@ -147,15 +147,15 @@
         function addQuestion() {
             const questionsDiv = document.getElementById("questions");
             const newQuestionDiv = document.createElement("div");
-            newQuestionDiv.setAttribute("id", `question-${questionIndex}`);
             newQuestionDiv.className = "question";
+            newQuestionDiv.setAttribute("id", `question-${questionIndex}`);
             newQuestionDiv.innerHTML = `
                 <div class="row justify-content-center with-background" style="padding-top: 12px; margin-top: 12px">
                     <div class="col-2"></div>
                     <div class="col-8">
 
                         <div class="mb-3">
-                            <label for="inputQuestion" name="inputQuestion" class="form-label">Frage ${questionIndex+1}</label>
+                            <label for="inputQuestion" name="inputQuestion" class="form-label">Frage ${questionIndex + 1}</label>
                             <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][question]"
                                 required></textarea>
                         </div>
@@ -227,7 +227,7 @@
 
                 //Aktualisiere die Nummerierung der Frage
                 const inputQuestion = questionDiv.querySelector('label[name="inputQuestion"]')
-                inputQuestion.innerText = `Frage ${index+1}`;
+                inputQuestion.innerText = `Frage ${index + 1}`;
 
                 // Aktualisiere die Nummerierung und Name-Attribute der Felder
                 questionDiv.querySelectorAll(".form-control")[0].setAttribute("name", `questions[${index}][question]`);
