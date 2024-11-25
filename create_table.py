@@ -6,7 +6,7 @@ print("Connected to database succesfully")
 # con.execute('CREATE TABLE quizzes (title TEXT NOT NULL)')
 # print("Tabelle quizzes erstellt")
 
-# con.execute('CREATE TABLE questions (question_id INTEGER, quiz_id INTEGER, question TEXT NOT NULL, category TEXT NOT NULL, description TEXT, answer TEXT NOT NULL, points FLOAT)')
+# con.execute('CREATE TABLE questions (quiz_id INTEGER NOT NULL, question_id INTEGER NOT NULL, question TEXT NOT NULL, category TEXT NOT NULL, description TEXT, image TEXT, answer TEXT NOT NULL, points NUMERIC NOT NULL, PRIMARY KEY (quiz_id, question_id))')
 # print("Tabelle questions erstellt")
 
 # con.execute('DROP TABLE questions')
@@ -38,6 +38,26 @@ print("Connected to database succesfully")
 # except:
 #     print("Löschen nicht möglich")
 
-#con.execute("ALTER TABLE quizzes ADD number_of_questions INTEGER")
+# con.execute("ALTER TABLE quizzes ADD number_of_questions INTEGER")
+
+cur = con.cursor()
+quiz_id = 1
+question_id = 1
+question_text = "Frage 1 (edited)"
+category = "Geschichte"
+description = "Beschreibung 1 (edited)"
+answer = "Antwort 1 (edited)"
+points = 2
+
+cur.execute('''INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) 
+            VALUES (?,?,?,?,?,?,?)
+            ON DUPLICATE KEY UPDATE questions 
+            SET question_id = (?), question = (?), category = (?), description = (?), answer = (?), points = (?) 
+            WHERE quiz_id = (?) AND question_id = (?)
+            ''',(question_id, quiz_id, question_text, category, description, answer, points, question_id, question_text, category, description, answer, points, quiz_id, question_id))
+            
+con.commit()
+print("Das hat geklappt")
+
 
 con.close()

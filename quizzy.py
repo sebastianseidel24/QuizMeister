@@ -32,6 +32,9 @@ def createquiz():
             # Titel abrufen
             title = request.form.get("title")
 
+            #Brauche ich hier "with", obwohl ich es am Ende eh schließe?????????????????
+            
+            
             with sqlite3.connect('quizzy.db') as con:
                 cur = con.cursor()
 
@@ -42,25 +45,25 @@ def createquiz():
 
                 #Neue Quiz ID erstellen
                 new_quiz_id = cur.lastrowid
-
+            
             # Fragen und Antwortoptionen hinzufügen
             i = 0
             while f"questions[{i}][question]" in request.form:
-                qid = i + 1
+                question_id = i + 1
                 question_text = request.form.get(f"questions[{i}][question]")
                 category = request.form.get(f"questions[{i}][category]")
                 description = request.form.get(f"questions[{i}][description]")
                 answer = request.form.get(f"questions[{i}][answer]")
                 points = request.form.get(f"questions[{i}][points]")
 
-                cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) VALUES (?,?,?,?,?,?,?)", (qid, new_quiz_id, question_text, category, description, answer, points))
+                cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) VALUES (?,?,?,?,?,?,?)", (question_id, new_quiz_id, question_text, category, description, answer, points))
                 con.commit()
                 msg2 = f"{i + 1} Fragen zur Datenbank hinzugefügt"
 
                 i += 1
 
             #Anzahl Fragen zu Quiz-DB hinzufügen
-            cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (qid,title))
+            cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (question_id, title))
             con.commit()
 
         except:
@@ -86,7 +89,7 @@ def quiz(quiz_id):
         cur = con.cursor()
 
         # Quiz-Daten laden
-        cur.execute("SELECT * FROM quizzes WHERE rowid = (?)", (quiz_id,))
+        cur.execute("SELECT rowid, * FROM quizzes WHERE rowid = (?)", (quiz_id,))
         quiz = cur.fetchone()
 
         # Fragen des Quizzes laden
@@ -99,15 +102,15 @@ def quiz(quiz_id):
         return "Quiz nicht gefunden.", 404
 
 
-@app.route("/editquiz", methods=["GET", "POST"])
-def editquiz():
-    quiz_id = request.args.get('quiz_id')
+@app.route("/editquiz/<int:quiz_id>", methods=["GET", "POST"])
+def editquiz(quiz_id):
+    #quiz_id = request.args.get('quiz_id')
 
     with sqlite3.connect('quizzy.db') as con:
         cur = con.cursor()
 
         # Quiz-Daten laden
-        cur.execute("SELECT * FROM quizzes WHERE rowid = (?)", (quiz_id,))
+        cur.execute("SELECT rowid, * FROM quizzes WHERE rowid = (?)", (quiz_id,))
         quiz = cur.fetchone()
 
         # Fragen des Quizzes laden
@@ -126,7 +129,7 @@ def editquiz():
                     cur = con.cursor()
 
                     #Quiz zu Datenbank hinzfügen
-                    cur.execute("UPDATE quizzes SET title = (?) WHERE rowid = (?)", (title,quiz_id))
+                    cur.execute("UPDATE quizzes SET title = (?) WHERE rowid = (?)", (title, quiz_id))
                     con.commit()
                     msg1 = f"Quiz-Titel '{title}' in Datenbank bearbeitet"
 
@@ -140,7 +143,13 @@ def editquiz():
                     answer = request.form.get(f"questions[{i}][answer]")
                     points = request.form.get(f"questions[{i}][points]")
 
-                    cur.execute("UPDATE questions SET question_id = (?), question = (?), category = (?), description = (?), answer = (?), points = (?) WHERE quiz_id = (?) AND question_id = (?)", (question_id, question_text, category, description, answer, points, quiz_id, question_id))
+                    cur.execute('''INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) 
+                                VALUES (?,?,?,?,?,?,?)
+                                ON DUPLICATE KEY UPDATE questions 
+                                SET question_id = (?), question = (?), category = (?), description = (?), answer = (?), points = (?) 
+                                WHERE quiz_id = (?) AND question_id = (?)
+                                ''',
+                                (question_id, quiz_id, question_text, category, description, answer, points, question_id, question_text, category, description, answer, points, quiz_id, question_id))
                     con.commit()
                     msg2 = f"Fragen von Quiz '{title}' in Datenbank bearbeitet"
 

@@ -7,26 +7,36 @@
     {% include 'navbar.html' %}
 
     <div class="container text-center">
-        <h1>{{ quiz[0] }}</h1>
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <h1>{{ quiz[1] }}</h1>
+            </div>
+            <div class="col-4 text-end">
+                <a class="btn btn-primary" type="button" href="{{ url_for('editquiz', quiz_id=quiz[0]) }}" style="margin: 25px; margin-right: 0px;"><i
+                        class="fa-regular fa-pen-to-square"></i></a>
+            </div>
+
+        </div>
 
         <div class="accordion accordion-flush" id="accordionQuiz">
             {% for question in questions %}
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed d-block text-center" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#Q{{ question[0] }}" aria-expanded="false"
-                        aria-controls="Q{{ question[0] }}">
-                        <strong>Frage {{ question[0] }}</strong>
+                        data-bs-toggle="collapse" data-bs-target="#Q{{ question[1] }}" aria-expanded="false"
+                        aria-controls="Q{{ question[1] }}">
+                        <strong>Frage {{ question[1] }}</strong>
                     </button>
                 </h2>
-                <div id="Q{{ question[0] }}" class="accordion-collapse collapse" data-bs-parent="#accordionQuiz">
+                <div id="Q{{ question[1] }}" class="accordion-collapse collapse" data-bs-parent="#accordionQuiz">
                     <div class="accordion-body">
                         <div class="row row-cols-md-4 justify-content-center">
                             <div class="col-md-3">
                                 <p class="with-border"><span class="fw-bold">Kategorie</span><br> {{ question[3] }}</p>
                             </div>
                             <div class="col-md-3">
-                                <p class="with-border"><span class="fw-bold">Punkte</span><br> {{ question[6] }}</p>
+                                <p class="with-border"><span class="fw-bold">Punkte</span><br> {{ question[7] }}</p>
                             </div>
                         </div>
                         <p class="fs-5 with-line"><span class="fw-bold fs-5">Frage</span><br> {{
@@ -35,7 +45,7 @@
                         <p class="fs-5 with-line"><span class="fw-bold">Beschreibung</span><br> {{
                             question[4]|replace('\n', '<br>')|safe }}</p>
                         {% endif %}
-                        <p class="fs-5"><span class="fw-bold fs-5">Antwort</span><br> {{ question[5]|replace('\n',
+                        <p class="fs-5"><span class="fw-bold fs-5">Antwort</span><br> {{ question[6]|replace('\n',
                             '<br>')|safe }}</p>
                     </div>
                 </div>
