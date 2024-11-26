@@ -42,19 +42,18 @@ print("Connected to database succesfully")
 
 cur = con.cursor()
 quiz_id = 1
-question_id = 1
-question_text = "Frage 1 (edited)"
+question_id = 4
+question_text = "Frage 4"
 category = "Geschichte"
-description = "Beschreibung 1 (edited)"
-answer = "Antwort 1 (edited)"
+description = "Beschreibung 4"
+answer = "Antwort 4"
 points = 2
 
-cur.execute('''INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) 
-            VALUES (?,?,?,?,?,?,?)
-            ON DUPLICATE KEY UPDATE questions 
-            SET question_id = (?), question = (?), category = (?), description = (?), answer = (?), points = (?) 
-            WHERE quiz_id = (?) AND question_id = (?)
-            ''',(question_id, quiz_id, question_text, category, description, answer, points, question_id, question_text, category, description, answer, points, quiz_id, question_id))
+cur.execute("""INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) 
+            VALUES (?,?,?,?,?,?,?) 
+            ON CONFLICT (quiz_id, question_id) 
+            DO UPDATE SET question = ?, category = ?, description = ?, answer = ?, points = ?;""", 
+            (question_id, quiz_id, question_text, category, description, answer, points, question_text, category, description, answer, points))
             
 con.commit()
 print("Das hat geklappt")

@@ -26,80 +26,80 @@
                 </div>
             </div>
 
+            <div id="questions">
             {% for question in questions %}
             <!-- Bearbeiten der Fragen -->
-            <div id="questions">
-                <div class="question" id="question-{{ question[1] }}">
-                    <div class="row justify-content-center with-background" style="padding-top: 12px;margin-top: 12px;">
-                        <div class="col-2"></div>
-                        <div class="col-8">
+            <div class="question" id="question-{{ question[1]-1 }}">
+                <div class="row justify-content-center with-background" style="padding-top: 12px;margin-top: 12px;">
+                    <div class="col-2"></div>
+                    <div class="col-8">
 
-                            <div class="mb-3">
-                                <label for="inputQuestion" name="inputQuestion" class="form-label">Frage {{ question[1]
-                                    }}</label>
-                                <textarea class="form-control" type="text" rows="2" name="questions[0][question]"
-                                    required>{{  question[2] }}</textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="inputCategory" class="form-label">Kategorie</label>
-                                <select class="form-select" name="questions[0][category]" required>
-                                    <option>Allgemeinwissen</option>
-                                    <option>Geschichte</option>
-                                    <option>Geografie</option>
-                                    <option>Kunst</option>
-                                    <option>Literatur</option>
-                                    <option>Musik</option>
-                                    <option>Naturwissenschaften</option>
-                                    <option>Politik</option>
-                                    <option>Sport</option>
-                                    <option>Technik</option>
-                                    <option>Tiere</option>
-                                    <option>Unterhaltung</option>
-                                    <option>Weltkulturen</option>
-                                    <option>Wirtschaft</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="inputDescription" class="form-label">Beschreibung</label>
-                                <textarea class="form-control" type="text" rows="2"
-                                    name="questions[0][description]">{{ question[4] }}</textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="inputAnswer" class="form-label">Antwort</label>
-                                <textarea class="form-control" type="text" rows="2" name="questions[0][answer]"
-                                    required>{{ question[6] }}</textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="inputPoints" class="form-label">Punkte</label>
-                                <input class="form-control" type="number" name="questions[0][points]"
-                                    value="{{ question[7] }}" min="0" max="5" step="0.5" required></input>
-                            </div>
-
-
+                        <div class="mb-3">
+                            <label for="inputQuestion" name="inputQuestion" class="form-label">Frage {{ question[1]
+                                }}</label>
+                            <textarea class="form-control" type="text" rows="2"
+                                name="questions[{{ question[1]-1 }}][question]" required>{{  question[2] }}</textarea>
                         </div>
-                        <div class="col-2 text-end">
-                            <button class="btn btn-primary" type="button" onclick="deleteQuestion({{ question[1] }})"><i
-                                    class="fa-solid fa-trash"></i></button>
+
+                        <div class="mb-3">
+                            <label for="inputCategory" class="form-label">Kategorie</label>
+                            <select class="form-select" name="questions[{{ question[1]-1 }}][category]" required>
+                                <option>Allgemeinwissen</option>
+                                <option>Geschichte</option>
+                                <option>Geografie</option>
+                                <option>Kunst</option>
+                                <option>Literatur</option>
+                                <option>Musik</option>
+                                <option>Naturwissenschaften</option>
+                                <option>Politik</option>
+                                <option>Sport</option>
+                                <option>Technik</option>
+                                <option>Tiere</option>
+                                <option>Unterhaltung</option>
+                                <option>Weltkulturen</option>
+                                <option>Wirtschaft</option>
+                            </select>
                         </div>
+
+                        <div class="mb-3">
+                            <label for="inputDescription" class="form-label">Beschreibung</label>
+                            <textarea class="form-control" type="text" rows="2"
+                                name="questions[{{ question[1]-1 }}][description]">{{ question[4] }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputAnswer" class="form-label">Antwort</label>
+                            <textarea class="form-control" type="text" rows="2"
+                                name="questions[{{ question[1]-1 }}][answer]" required>{{ question[6] }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputPoints" class="form-label">Punkte</label>
+                            <input class="form-control" type="number" name="questions[{{ question[1]-1 }}][points]"
+                                value="{{ question[7] }}" min="0" max="5" step="0.5" required></input>
+                        </div>
+
+
+                    </div>
+                    <div class="col-2 text-end">
+                        <button class="btn btn-primary" type="button" onclick="deleteQuestion({{ question[1]-1 }})"><i
+                                class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             </div>
             {% endfor %}
-            <!-- Button zum Hinzufügen weiterer Fragen -->
-            <div class="d-flex col-12 justify-content-center">
-                <div class="btn-add" type="button" onclick="addQuestion()">
-                    <i class="fa-solid fa-plus"></i>
-                </div>
-            </div>
+    </div>
+    <!-- Button zum Hinzufügen weiterer Fragen -->
+    <div class="d-flex col-12 justify-content-center">
+        <div class="btn-add" type="button" onclick="addQuestion()">
+            <i class="fa-solid fa-plus"></i>
+        </div>
+    </div>
 
-            <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
-                <button class="btn btn-success" type="submit">Quiz speichern</button>
-            </div>
-        </form>
+    <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
+        <button class="btn btn-success" type="submit">Quiz speichern</button>
+    </div>
+    </form>
     </div>
     </div>
 
@@ -183,6 +183,7 @@
         function deleteQuestion(question_id) {
             // Entferne die Frage
             const question_to_delete = document.getElementById(`question-${question_id}`);
+            console.log(question_to_delete);
             if (question_to_delete) {
                 question_to_delete.parentNode.removeChild(question_to_delete);
             }
@@ -191,7 +192,14 @@
             const questionsDiv = document.getElementById("questions");
             const questionDivs = questionsDiv.getElementsByClassName("question");
 
+            // Ausgabe zum Debuggen
+            console.log(questionsDiv);
+            console.log(questionDivs);
+
             Array.from(questionDivs).forEach((questionDiv, index) => {
+                console.log(questionDiv);
+                console.log(index);
+
                 // Aktualisiere die ID des Frage-Divs
                 questionDiv.id = `question-${index}`;
 

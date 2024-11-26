@@ -104,7 +104,6 @@ def quiz(quiz_id):
 
 @app.route("/editquiz/<int:quiz_id>", methods=["GET", "POST"])
 def editquiz(quiz_id):
-    #quiz_id = request.args.get('quiz_id')
 
     with sqlite3.connect('quizzy.db') as con:
         cur = con.cursor()
@@ -122,18 +121,18 @@ def editquiz(quiz_id):
     else:
         if request.method == "POST":
             try:  
-                # Titel abrufen
+                # (Neuen) Titel abrufen
                 title = request.form.get("title")
 
                 with sqlite3.connect('quizzy.db') as con:
                     cur = con.cursor()
 
-                    #Quiz zu Datenbank hinzfügen
+                    # Quiz-Titel in Datenbank updaten
                     cur.execute("UPDATE quizzes SET title = (?) WHERE rowid = (?)", (title, quiz_id))
                     con.commit()
                     msg1 = f"Quiz-Titel '{title}' in Datenbank bearbeitet"
 
-                # Fragen und Antwortoptionen hinzufügen
+                # Fragen und Antwortoptionen hinzufügen oder updaten
                 i = 0
                 while f"questions[{i}][question]" in request.form:
                     question_id = i + 1
@@ -143,19 +142,17 @@ def editquiz(quiz_id):
                     answer = request.form.get(f"questions[{i}][answer]")
                     points = request.form.get(f"questions[{i}][points]")
 
-                    cur.execute('''INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) 
-                                VALUES (?,?,?,?,?,?,?)
-                                ON DUPLICATE KEY UPDATE questions 
-                                SET question_id = (?), question = (?), category = (?), description = (?), answer = (?), points = (?) 
-                                WHERE quiz_id = (?) AND question_id = (?)
-                                ''',
-                                (question_id, quiz_id, question_text, category, description, answer, points, question_id, question_text, category, description, answer, points, quiz_id, question_id))
+                    cur.execute("""INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) 
+                                VALUES (?,?,?,?,?,?,?) 
+                                ON CONFLICT (quiz_id, question_id) 
+                                DO UPDATE SET question = ?, category = ?, description = ?, answer = ?, points = ?;""", 
+                                (question_id, quiz_id, question_text, category, description, answer, points, question_text, category, description, answer, points))
                     con.commit()
                     msg2 = f"Fragen von Quiz '{title}' in Datenbank bearbeitet"
 
                     i += 1
 
-                #Anzahl Fragen zu Quiz-DB hinzufügen
+                # Anzahl Fragen in Quiz-DB updaten
                 cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (question_id, title))
                 con.commit()
 
