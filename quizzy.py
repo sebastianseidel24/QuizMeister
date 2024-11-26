@@ -132,30 +132,31 @@ def editquiz(quiz_id):
                     con.commit()
                     msg1 = f"Quiz-Titel '{title}' in Datenbank bearbeitet"
 
-                # Fragen und Antwortoptionen hinzufügen oder updaten
-                i = 0
-                while f"questions[{i}][question]" in request.form:
-                    question_id = i + 1
-                    question_text = request.form.get(f"questions[{i}][question]")
-                    category = request.form.get(f"questions[{i}][category]")
-                    description = request.form.get(f"questions[{i}][description]")
-                    answer = request.form.get(f"questions[{i}][answer]")
-                    points = request.form.get(f"questions[{i}][points]")
+                # Alle Fragen löschen und wieder hinzufügen
+                cur.execute("DELETE FROM questions WHERE quiz_id = ?", (quiz_id,))
+                msg2 = "Alle Fragen gelöscht"
+                question_id = 0
+                
+                if "questions[0][question]" in request.form:
+                    i = 0
+                    while f"questions[{i}][question]" in request.form:
+                        question_id = i + 1
+                        question_text = request.form.get(f"questions[{i}][question]")
+                        category = request.form.get(f"questions[{i}][category]")
+                        description = request.form.get(f"questions[{i}][description]")
+                        answer = request.form.get(f"questions[{i}][answer]")
+                        points = request.form.get(f"questions[{i}][points]")
 
-                    cur.execute("""INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) 
-                                VALUES (?,?,?,?,?,?,?) 
-                                ON CONFLICT (quiz_id, question_id) 
-                                DO UPDATE SET question = ?, category = ?, description = ?, answer = ?, points = ?;""", 
-                                (question_id, quiz_id, question_text, category, description, answer, points, question_text, category, description, answer, points))
-                    con.commit()
-                    msg2 = f"Fragen von Quiz '{title}' in Datenbank bearbeitet"
+                        cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) VALUES (?,?,?,?,?,?,?)", (question_id, quiz_id, question_text, category, description, answer, points))
+                        con.commit()
+                        msg2 = f"Alle alten Fragen gelöscht und {i + 1} Fragen zur Datenbank hinzugefügt"
 
-                    i += 1
+                        i += 1
 
                 # Anzahl Fragen in Quiz-DB updaten
                 cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (question_id, title))
                 con.commit()
-
+                
             except:
                 con.rollback()
                 msg1 = "Fehler beim Bearbeiten des Quizzes in der Datenbank"
@@ -176,6 +177,9 @@ def editquiz(quiz_id):
 #     # Ergebnis-Berechnung hier einfügen
 #     return render_template("results.html")
 
+# NoQuestionsException
+# class NoQuestionsException(Exception):
+#     pass
 
 # App starten
 if __name__ == '__main__':

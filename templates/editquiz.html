@@ -82,7 +82,7 @@
 
                     </div>
                     <div class="col-2 text-end">
-                        <button class="btn btn-primary" type="button" onclick="deleteQuestion({{ question[1]-1 }})"><i
+                        <button class="btn btn-primary" type="button" onclick="deleteQuestion('{{ question[1]-1 }}')"><i
                                 class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
@@ -180,10 +180,11 @@
             updateQuestionCounter();
         }
 
-        function deleteQuestion(question_id) {
+        function deleteQuestion(qid) {
+            var question_id = Number(qid);
+
             // Entferne die Frage
             const question_to_delete = document.getElementById(`question-${question_id}`);
-            console.log(question_to_delete);
             if (question_to_delete) {
                 question_to_delete.parentNode.removeChild(question_to_delete);
             }
@@ -192,13 +193,7 @@
             const questionsDiv = document.getElementById("questions");
             const questionDivs = questionsDiv.getElementsByClassName("question");
 
-            // Ausgabe zum Debuggen
-            console.log(questionsDiv);
-            console.log(questionDivs);
-
             Array.from(questionDivs).forEach((questionDiv, index) => {
-                console.log(questionDiv);
-                console.log(index);
 
                 // Aktualisiere die ID des Frage-Divs
                 questionDiv.id = `question-${index}`;
