@@ -1,7 +1,18 @@
 import sqlite3
+import os
 from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'FileUploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 
@@ -48,15 +59,24 @@ def createquiz():
             
             # Fragen und Antwortoptionen hinzufügen
             i = 0
-            while f"questions[{i}][question]" in request.form:
+            while f"questions[{i}][question]" in request.form:                
                 question_id = i + 1
                 question_text = request.form.get(f"questions[{i}][question]")
                 category = request.form.get(f"questions[{i}][category]")
                 description = request.form.get(f"questions[{i}][description]")
                 answer = request.form.get(f"questions[{i}][answer]")
                 points = request.form.get(f"questions[{i}][points]")
+                
+                image = request.files[f"questions[{i}][image]"]
+                if image.filename != "" and allowed_file(image.filename):
+                    filename = secure_filename(image.filename)
+                    print(f"Filename: {filename}")
+                    print(f"Saving to: {os.path.join(app.config['UPLOAD_FOLDER'], filename)}")
+                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                else:
+                    filename = None
 
-                cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) VALUES (?,?,?,?,?,?,?)", (question_id, new_quiz_id, question_text, category, description, answer, points))
+                cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, image, answer, points) VALUES (?,?,?,?,?,?,?,?)", (question_id, new_quiz_id, question_text, category, description, filename, answer, points))
                 con.commit()
                 msg2 = f"{i + 1} Fragen zur Datenbank hinzugefügt"
 
