@@ -45,6 +45,10 @@
                         <p class="fs-5 with-line"><span class="fw-bold">Beschreibung</span><br> {{
                             question[4]|replace('\n', '<br>')|safe }}</p>
                         {% endif %}
+                        {% if question[5] != None %}
+                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Bild</span><br>
+                        <img class="img-fluid" style="max-width: 60%; margin-top: 12px;" src="../static/FileUploads/{{ question[5] }}"></img></p>
+                        {% endif %}
                         <p class="fs-5"><span class="fw-bold fs-5">Antwort</span><br> {{ question[6]|replace('\n',
                             '<br>')|safe }}</p>
                     </div>
