@@ -35,8 +35,7 @@
                     <div class="col-8">
 
                         <div class="mb-3">
-                            <label for="inputQuestion" name="inputQuestion" class="form-label">Frage {{ question[1]
-                                }}</label>
+                            <label for="inputQuestion" name="inputQuestion" class="form-label">Frage {{ question[1] }}</label>
                             <textarea class="form-control" type="text" rows="2"
                                 name="questions[{{ question[1]-1 }}][question]" required>{{  question[2] }}</textarea>
                         </div>
@@ -44,20 +43,20 @@
                         <div class="mb-3">
                             <label for="inputCategory" class="form-label">Kategorie</label>
                             <select class="form-select" name="questions[{{ question[1]-1 }}][category]" required>
-                                <option>Allgemeinwissen</option>
-                                <option>Geschichte</option>
-                                <option>Geografie</option>
-                                <option>Kunst</option>
-                                <option>Literatur</option>
-                                <option>Musik</option>
-                                <option>Naturwissenschaften</option>
-                                <option>Politik</option>
-                                <option>Sport</option>
-                                <option>Technik</option>
-                                <option>Tiere</option>
-                                <option>Unterhaltung</option>
-                                <option>Weltkulturen</option>
-                                <option>Wirtschaft</option>
+                                <option {{ "selected" if question[3]== "Allgemeinwissen" }}>Allgemeinwissen</option>
+                                <option {{ "selected" if question[3]== "Geschichte" }}>Geschichte</option>
+                                <option {{ "selected" if question[3]== "Geografie" }}>Geografie</option>
+                                <option {{ "selected" if question[3]== "Kunst" }}>Kunst</option>
+                                <option {{ "selected" if question[3]== "Literatur" }}>Literatur</option>
+                                <option {{ "selected" if question[3]== "Musik" }}>Musik</option>
+                                <option {{ "selected" if question[3]== "Naturwissenschaften" }}>Naturwissenschaften</option>
+                                <option {{ "selected" if question[3]== "Politik" }}>Politik</option>
+                                <option {{ "selected" if question[3]== "Sport" }}>Sport</option>
+                                <option {{ "selected" if question[3]== "Technik" }}>Technik</option>
+                                <option {{ "selected" if question[3]== "Tiere" }}>Tiere</option>
+                                <option {{ "selected" if question[3]== "Unterhaltung" }}>Unterhaltung</option>
+                                <option {{ "selected" if question[3]== "Weltkulturen" }}>Weltkulturen</option>
+                                <option {{ "selected" if question[3]== "Wirtschaft" }}>Wirtschaft</option>
                             </select>
                         </div>
 
