@@ -27,85 +27,99 @@
             </div>
 
             <div id="questions">
-            {% for question in questions %}
-            <!-- Bearbeiten der Fragen -->
-            <div class="question" id="question-{{ question[1]-1 }}">
-                <div class="row justify-content-center with-background" style="padding-top: 12px;margin-top: 12px;">
-                    <div class="col-2"></div>
-                    <div class="col-8">
+                {% for question in questions %}
+                <!-- Bearbeiten der Fragen -->
+                <div class="question" id="question-{{ question[1]-1 }}">
+                    <div class="row justify-content-center with-background" style="padding-top: 12px;margin-top: 12px;">
+                        <div class="col-2"></div>
+                        <div class="col-8">
 
-                        <div class="mb-3">
-                            <label for="inputQuestion" name="inputQuestion" class="form-label">Frage {{ question[1] }}</label>
-                            <textarea class="form-control" type="text" rows="2"
-                                name="questions[{{ question[1]-1 }}][question]" required>{{  question[2] }}</textarea>
+                            <div class="mb-3">
+                                <label for="inputQuestion" name="inputQuestion" class="form-label">Frage {{ question[1]
+                                    }}</label>
+                                <textarea class="form-control" type="text" rows="2"
+                                    name="questions[{{ question[1]-1 }}][question]"
+                                    required>{{  question[2] }}</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputCategory" class="form-label">Kategorie</label>
+                                <select class="form-select" name="questions[{{ question[1]-1 }}][category]" required>
+                                    <option {{ "selected" if question[3]=="Allgemeinwissen" }}>Allgemeinwissen</option>
+                                    <option {{ "selected" if question[3]=="Geschichte" }}>Geschichte</option>
+                                    <option {{ "selected" if question[3]=="Geografie" }}>Geografie</option>
+                                    <option {{ "selected" if question[3]=="Kunst" }}>Kunst</option>
+                                    <option {{ "selected" if question[3]=="Literatur" }}>Literatur</option>
+                                    <option {{ "selected" if question[3]=="Musik" }}>Musik</option>
+                                    <option {{ "selected" if question[3]=="Naturwissenschaften" }}>Naturwissenschaften
+                                    </option>
+                                    <option {{ "selected" if question[3]=="Politik" }}>Politik</option>
+                                    <option {{ "selected" if question[3]=="Sport" }}>Sport</option>
+                                    <option {{ "selected" if question[3]=="Technik" }}>Technik</option>
+                                    <option {{ "selected" if question[3]=="Tiere" }}>Tiere</option>
+                                    <option {{ "selected" if question[3]=="Unterhaltung" }}>Unterhaltung</option>
+                                    <option {{ "selected" if question[3]=="Weltkulturen" }}>Weltkulturen</option>
+                                    <option {{ "selected" if question[3]=="Wirtschaft" }}>Wirtschaft</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputDescription" class="form-label">Beschreibung</label>
+                                <textarea class="form-control" type="text" rows="2"
+                                    name="questions[{{ question[1]-1 }}][description]">{{ question[4] }}</textarea>
+                            </div>
+
+                            {% if question[5] != None %}
+                            <div class="mb-3" id="image-{{ question[1]-1 }}">
+                                <label class="form-label">Bild</label><br>
+                                <img class="img-fluid" style="max-width: 60%;"
+                                    src="../static/FileUploads/{{ question[5] }}"></img></p>
+                                <button class="btn btn-primary" type="button"
+                                    onclick="deleteImage('{{ question[1]-1 }}')"><i class="fa-solid fa-trash"></i> Bild
+                                    löschen oder ändern</button>
+                            </div>
+                            {% else %}
+                            <div class="mb-3">
+                                <label for="inputImage" class="form-label">Bild</label>
+                                <input class="form-control" type="file"
+                                    name="questions[{{ question[1]-1 }}][image]"></input>
+                            </div>
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label for="inputAnswer" class="form-label">Antwort</label>
+                                <textarea class="form-control" type="text" rows="2"
+                                    name="questions[{{ question[1]-1 }}][answer]" required>{{ question[6] }}</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputPoints" class="form-label">Punkte</label>
+                                <input class="form-control" type="number" name="questions[{{ question[1]-1 }}][points]"
+                                    value="{{ question[7] }}" min="0" max="5" step="0.5" required></input>
+                            </div>
+
+
                         </div>
-
-                        <div class="mb-3">
-                            <label for="inputCategory" class="form-label">Kategorie</label>
-                            <select class="form-select" name="questions[{{ question[1]-1 }}][category]" required>
-                                <option {{ "selected" if question[3]== "Allgemeinwissen" }}>Allgemeinwissen</option>
-                                <option {{ "selected" if question[3]== "Geschichte" }}>Geschichte</option>
-                                <option {{ "selected" if question[3]== "Geografie" }}>Geografie</option>
-                                <option {{ "selected" if question[3]== "Kunst" }}>Kunst</option>
-                                <option {{ "selected" if question[3]== "Literatur" }}>Literatur</option>
-                                <option {{ "selected" if question[3]== "Musik" }}>Musik</option>
-                                <option {{ "selected" if question[3]== "Naturwissenschaften" }}>Naturwissenschaften</option>
-                                <option {{ "selected" if question[3]== "Politik" }}>Politik</option>
-                                <option {{ "selected" if question[3]== "Sport" }}>Sport</option>
-                                <option {{ "selected" if question[3]== "Technik" }}>Technik</option>
-                                <option {{ "selected" if question[3]== "Tiere" }}>Tiere</option>
-                                <option {{ "selected" if question[3]== "Unterhaltung" }}>Unterhaltung</option>
-                                <option {{ "selected" if question[3]== "Weltkulturen" }}>Weltkulturen</option>
-                                <option {{ "selected" if question[3]== "Wirtschaft" }}>Wirtschaft</option>
-                            </select>
+                        <div class="col-2 text-end">
+                            <button class="btn btn-primary" type="button"
+                                onclick="deleteQuestion('{{ question[1]-1 }}')"><i
+                                    class="fa-solid fa-trash"></i></button>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="inputDescription" class="form-label">Beschreibung</label>
-                            <textarea class="form-control" type="text" rows="2"
-                                name="questions[{{ question[1]-1 }}][description]">{{ question[4] }}</textarea>
-                        </div>
-
-                        <!-- Hier fehlt noch das Bearbeiten des Files: Default Value scheint bei type:file nicht möglich -> Evtl. Bild anzeigen und weiteren Button hinzufügen um es zu ändern
-                        <div class="mb-3">
-                            <label for="inputImage" class="form-label">Bild</label>
-                            <input class="form-control" type="file"
-                                name="questions[{{ question[1]-1 }}][image]"></input>
-                        </div> -->
-
-                        <div class="mb-3">
-                            <label for="inputAnswer" class="form-label">Antwort</label>
-                            <textarea class="form-control" type="text" rows="2"
-                                name="questions[{{ question[1]-1 }}][answer]" required>{{ question[6] }}</textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="inputPoints" class="form-label">Punkte</label>
-                            <input class="form-control" type="number" name="questions[{{ question[1]-1 }}][points]"
-                                value="{{ question[7] }}" min="0" max="5" step="0.5" required></input>
-                        </div>
-
-
-                    </div>
-                    <div class="col-2 text-end">
-                        <button class="btn btn-primary" type="button" onclick="deleteQuestion('{{ question[1]-1 }}')"><i
-                                class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-    </div>
-    <!-- Button zum Hinzufügen weiterer Fragen -->
-    <div class="d-flex col-12 justify-content-center">
-        <div class="btn-add" type="button" onclick="addQuestion()">
-            <i class="fa-solid fa-plus"></i>
-        </div>
-    </div>
+            <!-- Button zum Hinzufügen weiterer Fragen -->
+            <div class="d-flex col-12 justify-content-center">
+                <div class="btn-add" type="button" onclick="addQuestion()">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </div>
 
-    <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
-        <button class="btn btn-success" type="submit">Quiz speichern</button>
-    </div>
-    </form>
+            <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
+                <button class="btn btn-success" type="submit">Quiz speichern</button>
+            </div>
+        </form>
     </div>
     </div>
 
@@ -160,6 +174,12 @@
                             <label for="inputDescription" class="form-label">Beschreibung</label>
                             <textarea class="form-control" type="text" rows="2"
                                 name="questions[${questionIndex}][description]"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputImage" class="form-label">Bild</label>
+                            <input class="form-control" type="file"
+                                name="questions[${questionIndex}][image]"></input>
                         </div>
 
                         <div class="mb-3">
@@ -222,6 +242,21 @@
             // Frageindex zurücksetzen, falls erforderlich
             questionIndex = questionDivs.length;
             updateQuestionCounter();
+        }
+
+        function deleteImage(qid) {
+            var question_id = Number(qid);
+
+            const image_to_delete = document.getElementById(`image-${question_id}`);
+            if (image_to_delete) {
+                image_to_delete.innerHTML = `
+                <div class="mb-3">
+                    <label for="inputImage" class="form-label">Bild</label>
+                    <input class="form-control" type="file"
+                        name="questions[${question_id}][image]"></input>
+                </div>
+                `
+            }
         }
     </script>
 
