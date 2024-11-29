@@ -9,7 +9,7 @@
     <h1>Quiz bearbeiten</h1>
 
     <div class="container text-start">
-        <form action="{{ url_for('editquiz', quiz_id=quiz[0]) }}" method="POST">
+        <form action="{{ url_for('editquiz', quiz_id=quiz[0]) }}" method="POST" enctype="multipart/form-data">
 
             <div class="row justify-content-center">
                 <div class="col-8">
@@ -71,6 +71,9 @@
 
                             {% if question[5] != None %}
                             <div class="mb-3" id="image-{{ question[1]-1 }}">
+                                <input class="form-control" type="text"
+                                    name="questions[{{ question[1]-1 }}][image-filename]" value="{{ question[5] }}"
+                                    hidden></input>
                                 <label class="form-label">Bild</label><br>
                                 <img class="img-fluid" style="max-width: 60%;"
                                     src="../static/FileUploads/{{ question[5] }}"></img></p>
@@ -80,6 +83,8 @@
                             </div>
                             {% else %}
                             <div class="mb-3">
+                                <input class="form-control" type="text"
+                                    name="questions[{{ question[1]-1 }}][image-filename]" value="None" hidden></input>
                                 <label for="inputImage" class="form-label">Bild</label>
                                 <input class="form-control" type="file"
                                     name="questions[{{ question[1]-1 }}][image]"></input>

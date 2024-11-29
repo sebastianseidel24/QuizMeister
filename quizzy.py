@@ -1,9 +1,10 @@
 import sqlite3
 import os
+from os.path import join, dirname, realpath
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = '/static/FileUploads'
+UPLOAD_FOLDER = 'static\\FileUploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
@@ -70,8 +71,6 @@ def createquiz():
                 image = request.files[f"questions[{i}][image]"]
                 if image.filename != "" and allowed_file(image.filename):
                     filename = secure_filename(image.filename)
-                    print(f"Filename: {filename}")
-                    print(f"Saving to: {os.path.join(app.config['UPLOAD_FOLDER'], filename)}")
                     image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 else:
                     filename = None
@@ -86,8 +85,9 @@ def createquiz():
             cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (question_id, title))
             con.commit()
 
-        except:
+        except Exception as e:
             con.rollback()
+            print(type(e).__name__, e)
             msg1 = "Fehler beim Hinzufügen des Quizzes zur Datenbank"
             msg2 = "Fehler beim Hinufügen der Fragen zur Datenbank"
 
@@ -167,7 +167,19 @@ def editquiz(quiz_id):
                         answer = request.form.get(f"questions[{i}][answer]")
                         points = request.form.get(f"questions[{i}][points]")
 
-                        cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) VALUES (?,?,?,?,?,?,?)", (question_id, quiz_id, question_text, category, description, answer, points))
+                        filename = request.form.get(f"questions[{i}][image-filename]")
+                        if filename == "None":
+                            filename = None
+                        
+                        if f"questions[{i}][image]" in request.files:
+                            image = request.files[f"questions[{i}][image]"]
+                            if image.filename != "" and allowed_file(image.filename):
+                                filename = secure_filename(image.filename)
+                                image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                            else:
+                                filename = None
+
+                        cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, image, answer, points) VALUES (?,?,?,?,?,?,?,?)", (question_id, quiz_id, question_text, category, description, filename, answer, points))
                         con.commit()
                         msg2 = f"Alle alten Fragen gelöscht und {i + 1} Fragen zur Datenbank hinzugefügt"
 
@@ -177,8 +189,9 @@ def editquiz(quiz_id):
                 cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (question_id, title))
                 con.commit()
                 
-            except:
+            except Exception as e:
                 con.rollback()
+                print("An exception occurred:", type(e).__name__, e)
                 msg1 = "Fehler beim Bearbeiten des Quizzes in der Datenbank"
                 msg2 = "Fehler beim Bearbeiten der Fragen in der Datenbank"
 
