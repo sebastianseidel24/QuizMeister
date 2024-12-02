@@ -37,14 +37,14 @@
                             <div class="mb-3">
                                 <label for="inputQuestion" name="inputQuestion" class="form-label">Frage {{ question[1]
                                     }}</label>
-                                <textarea class="form-control" type="text" rows="2"
+                                <textarea class="form-control" type="text" id="question" rows="2"
                                     name="questions[{{ question[1]-1 }}][question]"
                                     required>{{  question[2] }}</textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label for="inputCategory" class="form-label">Kategorie</label>
-                                <select class="form-select" name="questions[{{ question[1]-1 }}][category]" required>
+                                <select class="form-select" id="category" name="questions[{{ question[1]-1 }}][category]" required>
                                     <option {{ "selected" if question[3]=="Allgemeinwissen" }}>Allgemeinwissen</option>
                                     <option {{ "selected" if question[3]=="Geschichte" }}>Geschichte</option>
                                     <option {{ "selected" if question[3]=="Geografie" }}>Geografie</option>
@@ -65,13 +65,13 @@
 
                             <div class="mb-3">
                                 <label for="inputDescription" class="form-label">Beschreibung</label>
-                                <textarea class="form-control" type="text" rows="2"
+                                <textarea class="form-control" type="text" id="description" rows="2"
                                     name="questions[{{ question[1]-1 }}][description]">{{ question[4] }}</textarea>
                             </div>
 
                             {% if question[5] != None %}
                             <div class="mb-3" id="image-{{ question[1]-1 }}">
-                                <input class="form-control" type="text"
+                                <input class="form-control" type="text" id="image-filename"
                                     name="questions[{{ question[1]-1 }}][image-filename]" value="{{ question[5] }}"
                                     hidden></input>
                                 <label class="form-label">Bild</label><br>
@@ -83,30 +83,30 @@
                             </div>
                             {% else %}
                             <div class="mb-3">
-                                <input class="form-control" type="text"
+                                <input class="form-control" type="text" id="image-filename"
                                     name="questions[{{ question[1]-1 }}][image-filename]" value="None" hidden></input>
                                 <label for="inputImage" class="form-label">Bild</label>
-                                <input class="form-control" type="file"
+                                <input class="form-control" type="file" id="image"
                                     name="questions[{{ question[1]-1 }}][image]"></input>
                             </div>
                             {% endif %}
 
                             <div class="mb-3">
                                 <label for="inputAnswer" class="form-label">Antwort</label>
-                                <textarea class="form-control" type="text" rows="2"
+                                <textarea class="form-control" type="text" id="answer" rows="2"
                                     name="questions[{{ question[1]-1 }}][answer]" required>{{ question[6] }}</textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label for="inputPoints" class="form-label">Punkte</label>
-                                <input class="form-control" type="number" name="questions[{{ question[1]-1 }}][points]"
+                                <input class="form-control" type="number" id="points" name="questions[{{ question[1]-1 }}][points]"
                                     value="{{ question[7] }}" min="0" max="5" step="0.5" required></input>
                             </div>
 
 
                         </div>
                         <div class="col-2 text-end">
-                            <button class="btn btn-primary" type="button"
+                            <button class="btn btn-primary" type="button" id="deleteQuestionButton"
                                 onclick="deleteQuestion('{{ question[1]-1 }}')"><i
                                     class="fa-solid fa-trash"></i></button>
                         </div>
@@ -130,7 +130,10 @@
 
     <script>
         // JavaScript zum Hinzufügen und Entfernen von Fragenfeldern
-        let questionIndex = 1;
+        const questionsDiv = document.getElementById("questions");
+        const questionDivs = questionsDiv.getElementsByClassName("question");
+        let questionIndex = questionDivs.length;
+        console.log(questionIndex);
 
         function updateQuestionCounter() {
             const questionCounter = document.getElementById("question-counter");
@@ -151,13 +154,13 @@
 
                         <div class="mb-3">
                             <label for="inputQuestion" name="inputQuestion" class="form-label">Frage ${questionIndex + 1}</label>
-                            <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][question]"
+                            <textarea class="form-control" type="text" id="question" rows="2" name="questions[${questionIndex}][question]"
                                 required></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label for="inputCategory" class="form-label">Kategorie</label>
-                            <select class="form-select" name="questions[${questionIndex}][category]" required>
+                            <select class="form-select" id="category" name="questions[${questionIndex}][category]" required>
                                 <option selected>Allgemeinwissen</option>
                                 <option>Geschichte</option>
                                 <option>Geografie</option>
@@ -177,37 +180,38 @@
 
                         <div class="mb-3">
                             <label for="inputDescription" class="form-label">Beschreibung</label>
-                            <textarea class="form-control" type="text" rows="2"
+                            <textarea class="form-control" type="text" id="description" rows="2"
                                 name="questions[${questionIndex}][description]"></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label for="inputImage" class="form-label">Bild</label>
-                            <input class="form-control" type="file"
+                            <input class="form-control" type="file" id="image"
                                 name="questions[${questionIndex}][image]"></input>
                         </div>
 
                         <div class="mb-3">
                             <label for="inputAnswer" class="form-label">Antwort</label>
-                            <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][answer]"
+                            <textarea class="form-control" type="text" id="answer" rows="2" name="questions[${questionIndex}][answer]"
                                 required></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label for="inputPoints" class="form-label">Punkte</label>
-                            <input class="form-control" type="number" name="questions[${questionIndex}][points]" value="1" min="0"
+                            <input class="form-control" type="number" id="points" name="questions[${questionIndex}][points]" value="1" min="0"
                                 max="5" step="0.5" required></input>
                         </div>
 
                     </div>
                     <div class="col-2 text-end">
-                        <button class="btn btn-primary" type="button" onclick="deleteQuestion(${questionIndex})"><i
+                        <button class="btn btn-primary" type="button" id="deleteQuestionButton" onclick="deleteQuestion(${questionIndex})"><i
                                 class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
                 `;
             questionsDiv.appendChild(newQuestionDiv);
             questionIndex++;
+            console.log(questionIndex);
             updateQuestionCounter();
         }
 
@@ -234,18 +238,25 @@
                 inputQuestion.innerText = `Frage ${index + 1}`;
 
                 // Aktualisiere die Nummerierung und Name-Attribute der Felder
-                questionDiv.querySelectorAll(".form-control")[0].setAttribute("name", `questions[${index}][question]`);
-                questionDiv.querySelectorAll(".form-control")[1].setAttribute("name", `questions[${index}][description]`);
-                questionDiv.querySelectorAll(".form-control")[2].setAttribute("name", `questions[${index}][answer]`);
-                questionDiv.querySelectorAll(".form-control")[3].setAttribute("name", `questions[${index}][points]`);
-                questionDiv.querySelector(".form-select").setAttribute("name", `questions[${index}][category]`);
+                questionDiv.querySelector("#question").setAttribute("name", `questions[${index}][question]`);
+                questionDiv.querySelector("#category").setAttribute("name", `questions[${index}][category]`);
+                questionDiv.querySelector("#description").setAttribute("name", `questions[${index}][description]`);
+                if (questionDiv.querySelector("#image-filename")) {
+                    questionDiv.querySelector("#image-filename").setAttribute("name", `questions[${index}][image-filename]`);
+                }
+                if (questionDiv.querySelector("#image")) {
+                    questionDiv.querySelector("#image").setAttribute("name", `questions[${index}][image]`);
+                }
+                questionDiv.querySelector("#answer").setAttribute("name", `questions[${index}][answer]`);
+                questionDiv.querySelector("#points").setAttribute("name", `questions[${index}][points]`);
 
                 // Aktualisiere den "Diese Frage entfernen"-Button
-                questionDiv.querySelector("button").setAttribute("onclick", `deleteQuestion(${index})`);
+                questionDiv.querySelector("#deleteQuestionButton").setAttribute("onclick", `deleteQuestion(${index})`);
             });
 
             // Frageindex zurücksetzen, falls erforderlich
             questionIndex = questionDivs.length;
+            console.log(questionIndex);
             updateQuestionCounter();
         }
 

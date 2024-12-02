@@ -210,8 +210,9 @@
                 // Aktualisiere die Nummerierung und Name-Attribute der Felder
                 questionDiv.querySelectorAll(".form-control")[0].setAttribute("name", `questions[${index}][question]`);
                 questionDiv.querySelectorAll(".form-control")[1].setAttribute("name", `questions[${index}][description]`);
-                questionDiv.querySelectorAll(".form-control")[2].setAttribute("name", `questions[${index}][answer]`);
-                questionDiv.querySelectorAll(".form-control")[3].setAttribute("name", `questions[${index}][points]`);
+                questionDiv.querySelectorAll(".form-control")[2].setAttribute("name", `questions[${index}][image]`);
+                questionDiv.querySelectorAll(".form-control")[3].setAttribute("name", `questions[${index}][answer]`);
+                questionDiv.querySelectorAll(".form-control")[4].setAttribute("name", `questions[${index}][points]`);
                 questionDiv.querySelector(".form-select").setAttribute("name", `questions[${index}][category]`);
 
                 // Aktualisiere den "Diese Frage entfernen"-Button
