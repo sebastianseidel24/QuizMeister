@@ -1,6 +1,7 @@
 import sqlite3
 import os
 from flask import Flask, render_template, request, redirect, url_for
+from flask_socketio import SocketIO, join_room, leave_room, emit
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'static\\FileUploads'
@@ -8,6 +9,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SECRET_KEY'] = 'thekey'
+socketio = SocketIO(app)
 
 
 
@@ -215,4 +218,4 @@ def editquiz(quiz_id):
 
 # App starten
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app)
