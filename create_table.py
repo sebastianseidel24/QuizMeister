@@ -40,20 +40,20 @@ print("Connected to database succesfully")
 
 # con.execute("ALTER TABLE quizzes ADD number_of_questions INTEGER")
 
-cur = con.cursor()
-quiz_id = 1
-question_id = 4
-question_text = "Frage 4"
-category = "Geschichte"
-description = "Beschreibung 4"
-answer = "Antwort 4"
-points = 2
+# cur = con.cursor()
+# quiz_id = 1
+# question_id = 4
+# question_text = "Frage 4"
+# category = "Geschichte"
+# description = "Beschreibung 4"
+# answer = "Antwort 4"
+# points = 2
 
-cur.execute("""INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) 
-            VALUES (?,?,?,?,?,?,?) 
-            ON CONFLICT (quiz_id, question_id) 
-            DO UPDATE SET question = ?, category = ?, description = ?, answer = ?, points = ?;""", 
-            (question_id, quiz_id, question_text, category, description, answer, points, question_text, category, description, answer, points))
+# cur.execute("""INSERT INTO questions (question_id, quiz_id, question, category, description, answer, points) 
+#             VALUES (?,?,?,?,?,?,?) 
+#             ON CONFLICT (quiz_id, question_id) 
+#             DO UPDATE SET question = ?, category = ?, description = ?, answer = ?, points = ?;""", 
+#             (question_id, quiz_id, question_text, category, description, answer, points, question_text, category, description, answer, points))
             
 con.commit()
 print("Das hat geklappt")
