@@ -206,16 +206,29 @@ def editquiz(quiz_id):
         
         return render_template("editquiz.html", quiz=quiz, questions=questions)
 
+#Sessions-Logik
+sessions = {}
+
+@app.route('/quizsession')
+def quizsession():
+    return render_template("quizsession.html")
+    # session['session_id'] = session_id
+    # return render_template('quiz_session.html', quiz=quizzes.get(session_id, {}))
+
+
+@socketio.on("connect")
+def handle_connect():
+    print("Spieler verbunden.")
+
+@socketio.on("player_join")
+def handle_player_join(playername):
+    print(f"Spieler {playername} ist beigetreten!")
 
 # @app.route("/results/<int:quiz_id>", methods=["POST"])
 # def results(quiz_id):
 #     # Ergebnis-Berechnung hier einfügen
 #     return render_template("results.html")
 
-# NoQuestionsException
-# class NoQuestionsException(Exception):
-#     pass
-
 # App starten
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, debug=True)
