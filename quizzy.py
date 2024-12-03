@@ -207,22 +207,76 @@ def editquiz(quiz_id):
         return render_template("editquiz.html", quiz=quiz, questions=questions)
 
 #Sessions-Logik
-sessions = {}
+sessions = [{"session_id": "1234", "players": []}]
 
-@app.route('/quizsession')
-def quizsession():
-    return render_template("quizsession.html")
-    # session['session_id'] = session_id
-    # return render_template('quiz_session.html', quiz=quizzes.get(session_id, {}))
+
+# @app.route('/joinquiz', methods=["GET", "POST"])
+# def joinquiz():
+#     if request.method == "POST":
+#         session_id = request.form.get("session_id")
+#         playername = request.form.get("playername")
+#         for session in sessions:
+#             if session_id == session["session_id"]:
+#                 session["players"].append(playername)
+#                 print(f"{playername} ist Session {session_id} beigetreten.")
+#                 print(sessions)
+#                 return redirect(url_for("playquiz", session_id=session_id, playername=playername))
+#             else:
+#                 print("Beitritt zur Session fehlgeschlagen.")
+#     return render_template("joinquiz.html")
+
+
+@app.route('/hostquiz')
+def hostquiz():
+    return render_template("hostquiz.html")
+
+
+
+@app.route('/playquiz')
+def playquiz():
+    return render_template("playquiz.html")
+
 
 
 @socketio.on("connect")
 def handle_connect():
-    print("Spieler verbunden.")
+    print("Teilnehmer verbunden: " + request.sid)
+    
+    
+    
+@socketio.on("host_session")
+def handle_host_session(session_id):
+    session_unavailable = False
+    for session in sessions:
+        if session_id == session["session_id"]:
+            print(f"Session {session_id} existiert bereits.")
+            session_unavailable = True
+    if(session_unavailable == False):
+        sessions.append({"session_id": session_id, "players": []})
+        print(f"Host hat Session {session_id} erstellt.")
+        print(sessions)
+
+
 
 @socketio.on("player_join")
-def handle_player_join(playername):
-    print(f"Spieler {playername} ist beigetreten!")
+def handle_player_join(session_id, playername):
+    session_unavailable = True
+    for session in sessions:
+        if session_id == session["session_id"]:
+            session["players"].append(playername)
+            session_unavailable = False
+            print(f"{playername} ist Session {session_id} beigetreten.")
+            print(sessions)
+            emit("new_player", (session_id, playername), broadcast=True)
+    if(session_unavailable):   
+        emit("session_unavailable", session_id, broadcast=False)
+        print(f"Beitritt von {playername} zu Session {session_id} fehlgeschlagen.")
+
+
+    
+# @socketio.on("submit_answer")
+# def handle_answer(playername, answer):
+#     print(f"Spieler: {playername} | Antwort: {answer}")
 
 # @app.route("/results/<int:quiz_id>", methods=["POST"])
 # def results(quiz_id):

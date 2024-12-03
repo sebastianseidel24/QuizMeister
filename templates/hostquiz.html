@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% include 'head.html' %}
+
+<body>
+    {% include 'navbar.html' %}
+
+    <h1>Ein Quiz hosten</h1>
+
+    <div class="container text-center" id="new_session">
+        <h2>Eine neue Session erstellen</h2>
+        <label for="session_id">Session-ID:</label>
+        <input type="number" id="session_id" name="session_id" placeholder="Eine Session-ID vergeben" required>
+        <button id="host_session_btn">Session erstellen</button>
+
+    </div>
+
+    <div class="container text-center" id="active_session" style="display: none;">
+        <h2>Eine aktive Session</h2>
+        <!--Hier das ausgewählte Quiz einfügen (über quiz-Seite)-->
+        <p>Aktive Spieler:</p>
+        <ul id="active_players"></ul>
+
+        <p>Antworten:</p>
+        <ul id="answers"></ul>
+        
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <script>
+        const socket = io({ autoConnect: false });
+
+        document.getElementById("host_session_btn").addEventListener("click", function () {
+            socket.connect();
+            let session_id = document.getElementById("session_id").value;
+            socket.emit("host_session", session_id)
+            //Hier Hosting Formular ausblenden und Fragen einblenden
+            document.getElementById("active_session").style.display = "block";
+            document.getElementById("new_session").style.display = "none";
+        })
+
+        socket.on("new_player", function (session_id, playername) {
+            let ul = document.getElementById("active_players");
+            let li = document.createElement("li");
+            li.appendChild(document.createTextNode(playername));
+            ul.appendChild(li);
+        })
+
+        socket.on("submit_answer", function (playername, answer) {
+            let ul = document.getElementById("active_players");
+            let li = document.createElement("li");
+            li.appendChild(document.createTextNode(playername + ": " + answer));
+            ul.appendChild(li);
+
+        })
+
+
+    </script>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>

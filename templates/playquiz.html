@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% include 'head.html' %}
+
+<body>
+    {% include 'navbar.html' %}
+
+    <h1>Quiz-Session</h1>
+
+    <div class="container text-center" id="new_session">
+        <h2>Einer Session beitreten</h2>
+
+        <div id="alert_placeholder"></div>
+
+        <label for="session_id">Session-ID:</label>
+        <input type="text" id="session_id" name="session_id" placeholder="Gib die Session-ID ein" required>
+
+        <label for="playername">Dein Name:</label>
+        <input type="text" id="playername" name="playername" placeholder="Spielername" required>
+
+        <button id="join_session_btn">Session beitreten</button>
+
+    </div>
+
+
+    <div class="container text-center" id="active_session" style="display: none;">
+        <h2>Hier wird das laufende Quiz angezeigt</h2>
+        <p>Session-ID: <span id="active_session_id"></span></p>
+        <p>Spielername: <span id="active_playername"></span></p>
+        <input type="text" id="answer" placeholder="Deine Antwort" required>
+        <button id="answer_submit_btn">Absenden</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <script>
+        const socket = io({ autoConnect: false });
+
+        document.getElementById("join_session_btn").addEventListener("click", function () {
+            socket.connect();
+            let session_id = document.getElementById("session_id").value;
+            let playername = document.getElementById("playername").value;
+            socket.emit("player_join", session_id, playername)
+        })
+
+        socket.on("new_player", function (session_id, playername) {
+            document.getElementById("active_session").style.display = "block";
+            document.getElementById("new_session").style.display = "none";
+            document.getElementById("active_session_id").innerText = session_id;
+            document.getElementById("active_playername").innerText = playername;
+        })
+
+        socket.on("session_unavailable", function (session_id) {
+            document.getElementById("active_session").style.display = "none";
+            document.getElementById("new_session").style.display = "block";
+            document.getElementById("alert_placeholder").innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                Session-ID ${session_id} ist nicht vergeben!
+            </div>
+            `
+        })
+
+        document.getElementById("answer_submit_btn").addEventListener("click", function () {
+            let playername = document.getElementById("playername").value;
+            let answer = document.getElementById("answer").value;
+            socket.emit("submit_answer", playername, answer);
+            document.getElementById("answer").value = "";
+        })
+    </script>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>
