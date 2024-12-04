@@ -45,14 +45,14 @@
             socket.connect();
             let session_id = document.getElementById("session_id").value;
             let playername = document.getElementById("playername").value;
-            socket.emit("player_join", session_id, playername)
+            document.getElementById("active_session_id").innerText = session_id;
+            document.getElementById("active_playername").innerText = playername;
+            socket.emit("player_join", session_id, playername);
         })
 
         socket.on("new_player", function (session_id, playername) {
             document.getElementById("active_session").style.display = "block";
             document.getElementById("new_session").style.display = "none";
-            document.getElementById("active_session_id").innerText = session_id;
-            document.getElementById("active_playername").innerText = playername;
         })
 
         socket.on("session_unavailable", function (session_id) {

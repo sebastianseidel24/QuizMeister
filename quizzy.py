@@ -207,7 +207,7 @@ def editquiz(quiz_id):
         return render_template("editquiz.html", quiz=quiz, questions=questions)
 
 #Sessions-Logik
-sessions = [{"session_id": "1234", "players": []}]
+sessions = [{"session_id": "1234", "players": {}}]
 
 
 # @app.route('/joinquiz', methods=["GET", "POST"])
@@ -252,7 +252,7 @@ def handle_host_session(session_id):
             print(f"Session {session_id} existiert bereits.")
             session_unavailable = True
     if(session_unavailable == False):
-        sessions.append({"session_id": session_id, "players": []})
+        sessions.append({"session_id": session_id, "players": {}})
         print(f"Host hat Session {session_id} erstellt.")
         print(sessions)
 
@@ -261,11 +261,12 @@ def handle_host_session(session_id):
 @socketio.on("player_join")
 def handle_player_join(session_id, playername):
     session_unavailable = True
+    player_id = request.sid
     for session in sessions:
         if session_id == session["session_id"]:
-            session["players"].append(playername)
+            session["players"][player_id] = playername
             session_unavailable = False
-            print(f"{playername} ist Session {session_id} beigetreten.")
+            print(f"{playername} mit ID: {player_id} ist Session {session_id} beigetreten.")
             print(sessions)
             emit("new_player", (session_id, playername), broadcast=True)
     if(session_unavailable):   
@@ -274,9 +275,10 @@ def handle_player_join(session_id, playername):
 
 
     
-# @socketio.on("submit_answer")
-# def handle_answer(playername, answer):
-#     print(f"Spieler: {playername} | Antwort: {answer}")
+@socketio.on("submit_answer")
+def handle_answer(playername, answer):
+    
+    emit("send_answer", (playername, answer), broadcast=True)
 
 # @app.route("/results/<int:quiz_id>", methods=["POST"])
 # def results(quiz_id):
