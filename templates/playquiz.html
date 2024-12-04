@@ -6,26 +6,30 @@
 <body>
     {% include 'navbar.html' %}
 
-    <h1>Quiz-Session</h1>
+
 
     <div class="container text-center" id="new_session">
-        <h2>Einer Session beitreten</h2>
+        <h1>Einer Quiz-Runde beitreten</h1>
 
         <div id="alert_placeholder"></div>
 
-        <label for="session_id">Session-ID:</label>
-        <input type="text" id="session_id" name="session_id" placeholder="Gib die Session-ID ein" required>
-
-        <label for="playername">Dein Name:</label>
-        <input type="text" id="playername" name="playername" placeholder="Spielername" required>
-
-        <button id="join_session_btn">Session beitreten</button>
+        <div class="mb-3 text-start">
+            <label class="form-label" for="session_id">Session-ID</label>
+            <input class="form-control" type="text" id="session_id" name="session_id"
+                placeholder="Gib die Session-ID ein" required>
+        </div>
+        <div class="mb-3 text-start">
+            <label class="form-label" for="playername">Dein Name</label>
+            <input class="form-control" type="text" id="playername" name="playername" placeholder="Spielername"
+                required>
+        </div>
+        <button class="btn btn-session" id="join_session_btn">Session beitreten</button>
 
     </div>
 
 
     <div class="container text-center" id="active_session" style="display: none;">
-        <h2>Hier wird das laufende Quiz angezeigt</h2>
+        <h1 id="quiz_name"></h1>
         <p>Session-ID: <span id="active_session_id"></span></p>
         <p>Spielername: <span id="active_playername"></span></p>
         <input type="text" id="answer" placeholder="Deine Antwort" required>
@@ -50,9 +54,10 @@
             socket.emit("player_join", session_id, playername);
         })
 
-        socket.on("new_player", function (session_id, playername) {
+        socket.on("new_player", function (quiz_name, session_id, playername) {
             document.getElementById("active_session").style.display = "block";
             document.getElementById("new_session").style.display = "none";
+            document.getElementById("quiz_name").innerText = "- " + quiz_name + " -";
         })
 
         socket.on("session_unavailable", function (session_id) {
@@ -63,6 +68,11 @@
                 Session-ID ${session_id} ist nicht vergeben!
             </div>
             `
+        })
+
+        socket.on("send_question", function (question_id, question_text, category, points, image) {
+            //Logik, wenn Frage ankommt
+
         })
 
         document.getElementById("answer_submit_btn").addEventListener("click", function () {

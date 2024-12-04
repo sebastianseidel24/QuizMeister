@@ -27,7 +27,7 @@ ul {
 
 .btn-primary:hover {
     background-color: rgb(52, 0, 130);
-    border-color: rgb(52, 0, 130);
+    border-color: #ccccfd;
     font-weight: 500;
 }
 
@@ -51,6 +51,22 @@ ul {
     border-color: rgb(111, 51, 201);
     font-weight: 500;
     border-width: 2px;
+}
+
+.btn-session {
+    background-color: rgb(52, 0, 130);
+    border-color: rgb(52, 0, 130);
+    font-weight: 500;
+    color: aliceblue;
+    border-width: 2px;
+}
+
+.btn-session:hover {
+    background-color: #ccccfd;
+    border-color: rgb(52, 0, 130);
+    border-width: 2px;
+    color: rgb(52, 0, 130);
+    font-weight: 500;
 }
 
 .btn-add {
@@ -144,20 +160,6 @@ a.card:hover h6 {
     color: rgba(240, 248, 255, 0.694) !important;
 }
 
-/* 
-a {
-    display: inline-block;
-    padding: 10px 20px;
-    color: white;
-    background-color: #007bff;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-top: 20px; 
+.list-group-item {
+    background-color: aliceblue;
 }
-*/
-
-/*
-a:hover {
-    background-color: #0056b3;
-}
-*/

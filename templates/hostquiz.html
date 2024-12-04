@@ -6,24 +6,66 @@
 <body>
     {% include 'navbar.html' %}
 
-    <h1>Ein Quiz hosten</h1>
+
 
     <div class="container text-center" id="new_session">
+        <h1>- {{ quiz[1] }} - hosten</h1>
+        
         <div class="mb-3">
-            <input class="form-control" type="number" id="session_id" name="session_id" placeholder="Eine Session-ID vergeben" required>
+            <input class="form-control" type="number" id="session_id" name="session_id"
+                placeholder="Eine Session-ID vergeben" required>
         </div>
-        <button class="btn btn-primary" id="host_session_btn">Session erstellen</button>
+        <button class="btn btn-primary" id="host_session_btn" onclick="hostSession('{{ quiz[1] }}')">Session erstellen</button>
 
     </div>
 
     <div class="container text-center" id="active_session" style="display: none;">
-        <h2>Eine aktive Session</h2>
-        <!--Hier das ausgewählte Quiz einfügen (über quiz-Seite)-->
+        <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
+        <h3>[Host]</h3>
         <p>Aktive Spieler:</p>
-        <ul id="active_players"></ul>
+        <ul class="list-group" id="active_players"></ul>
 
         <p>Antworten:</p>
         <ul id="answers"></ul>
+
+        <div class="accordion accordion-flush" id="accordionQuiz">
+            {% for question in questions %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed d-block text-center" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#Q{{ question[1] }}" aria-expanded="false"
+                        aria-controls="Q{{ question[1] }}">
+                        <strong>Frage {{ question[1] }}</strong>
+                    </button>
+                </h2>
+                <div id="Q{{ question[1] }}" class="accordion-collapse collapse" data-bs-parent="#accordionQuiz">
+                    <div class="accordion-body">
+                        <div class="row row-cols-md-4 justify-content-center">
+                            <div class="col-md-3">
+                                <p class="with-border"><span class="fw-bold">Kategorie</span><br> {{ question[3] }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="with-border"><span class="fw-bold">Punkte</span><br> {{ question[7] }}</p>
+                            </div>
+                        </div>
+                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Frage</span><br> {{
+                            question[2]|replace('\n', '<br>')|safe }}</p>
+                        {% if question[4] != "" %}
+                        <p class="fs-5 with-line"><span class="fw-bold">Beschreibung</span><br> {{
+                            question[4]|replace('\n', '<br>')|safe }}</p>
+                        {% endif %}
+                        {% if question[5] != None %}
+                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Bild</span><br>
+                        <img class="img-fluid" style="max-width: 60%; margin-top: 12px;" src="../static/FileUploads/{{ question[5] }}"></img></p>
+                        {% endif %}
+                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Antwort</span><br> {{ question[6]|replace('\n',
+                            '<br>')|safe }}</p>
+                        <button class="btn btn-primary" onclick="askQuestion('{{ question[0] }}', '{{ question[1] }}')">Diese Frage stellen</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
     </div>
 
@@ -37,21 +79,32 @@
     <script>
         const socket = io({ autoConnect: false });
 
-        document.getElementById("host_session_btn").addEventListener("click", function () {
+        function hostSession(quiz_name) {
             socket.connect();
             let session_id = document.getElementById("session_id").value;
-            socket.emit("host_session", session_id)
+            socket.emit("host_session", quiz_name, session_id)
             //Hier Hosting Formular ausblenden und Fragen einblenden
             document.getElementById("active_session").style.display = "block";
             document.getElementById("new_session").style.display = "none";
-        })
+        }
 
-        socket.on("new_player", function (session_id, playername) {
+        // document.getElementById("host_session_btn").addEventListener("click", function () {
+            
+        // })
+
+        socket.on("new_player", function (quiz_name, session_id, playername) {
             let ul = document.getElementById("active_players");
             let li = document.createElement("li");
+            li.className = "list-group-item";
             li.appendChild(document.createTextNode(playername));
             ul.appendChild(li);
         })
+
+        function askQuestion(qui_id, que_id) {
+            var quiz_id = Number(qui_id);
+            var question_id = Number(que_id);
+            socket.emit("ask_question", quiz_id, question_id);
+        }
 
         socket.on("send_answer", function (playername, answer) {
             let ul = document.getElementById("answers");

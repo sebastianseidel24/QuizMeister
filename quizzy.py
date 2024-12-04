@@ -207,23 +207,7 @@ def editquiz(quiz_id):
         return render_template("editquiz.html", quiz=quiz, questions=questions)
 
 #Sessions-Logik
-sessions = [{"session_id": "1234", "players": {}}]
-
-
-# @app.route('/joinquiz', methods=["GET", "POST"])
-# def joinquiz():
-#     if request.method == "POST":
-#         session_id = request.form.get("session_id")
-#         playername = request.form.get("playername")
-#         for session in sessions:
-#             if session_id == session["session_id"]:
-#                 session["players"].append(playername)
-#                 print(f"{playername} ist Session {session_id} beigetreten.")
-#                 print(sessions)
-#                 return redirect(url_for("playquiz", session_id=session_id, playername=playername))
-#             else:
-#                 print("Beitritt zur Session fehlgeschlagen.")
-#     return render_template("joinquiz.html")
+sessions = [{"session_id": None, "quiz_id": None, "players": {}}]
 
 
 @app.route('/hostquiz/<int:quiz_id>')
@@ -259,34 +243,54 @@ def handle_connect():
     
     
 @socketio.on("host_session")
-def handle_host_session(session_id):
+def handle_host_session(quiz_name, session_id):
     session_unavailable = False
     for session in sessions:
         if session_id == session["session_id"]:
             print(f"Session {session_id} existiert bereits.")
             session_unavailable = True
     if(session_unavailable == False):
-        sessions.append({"session_id": session_id, "players": {}})
-        print(f"Host hat Session {session_id} erstellt.")
+        sessions.append({"session_id": session_id, "quiz_name": quiz_name, "players": {}})
+        print(f"Host hat Session {session_id} für Quiz mit ID {quiz_name} erstellt.")
         print(sessions)
 
 
 
 @socketio.on("player_join")
 def handle_player_join(session_id, playername):
+    
+    # Hier noch prüfen, ob playername bereits existiert
+    
     session_unavailable = True
     player_id = request.sid
     for session in sessions:
         if session_id == session["session_id"]:
             session["players"][player_id] = playername
             session_unavailable = False
+            quiz_name = session["quiz_name"]
             print(f"{playername} mit ID: {player_id} ist Session {session_id} beigetreten.")
             print(sessions)
-            emit("new_player", (session_id, playername), broadcast=True)
+            emit("new_player", (quiz_name, session_id, playername), broadcast=True)
     if(session_unavailable):   
         emit("session_unavailable", session_id, broadcast=False)
         print(f"Beitritt von {playername} zu Session {session_id} fehlgeschlagen.")
 
+
+@socketio.on("ask_question")
+def handle_question(quiz_id, question_id):
+    with sqlite3.connect('quizzy.db') as con:
+        cur = con.cursor()
+
+        # Frage-Daten laden
+        cur.execute("SELECT * FROM questions WHERE quiz_id = (?) AND question_id = (?)", (quiz_id, question_id))
+        question = cur.fetchone()
+
+        question_text = question[2]
+        category = question[3]
+        points = question[7]
+        image = question[5]
+        
+    emit("send_question", (question_id, question_text, category, points, image), broadcast=True)
 
     
 @socketio.on("submit_answer")
