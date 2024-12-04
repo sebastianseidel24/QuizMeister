@@ -9,9 +9,9 @@
     <h1>Ein Quiz hosten</h1>
 
     <div class="container text-center" id="new_session">
-        <h2>Eine neue Session erstellen</h2>
-        <label for="session_id">Session-ID:</label>
-        <input type="number" id="session_id" name="session_id" placeholder="Eine Session-ID vergeben" required>
+        <div class="mb-3">
+            <input class="form-control" type="number" id="session_id" name="session_id" placeholder="Eine Session-ID vergeben" required>
+        </div>
         <button class="btn btn-primary" id="host_session_btn">Session erstellen</button>
 
     </div>
@@ -24,7 +24,7 @@
 
         <p>Antworten:</p>
         <ul id="answers"></ul>
-        
+
     </div>
 
 

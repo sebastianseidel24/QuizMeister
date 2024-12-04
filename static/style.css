@@ -12,6 +12,11 @@ h1 {
     padding-bottom: 25px;
 }
 
+h3 {
+    color: rgb(52, 0, 130);
+    padding-bottom: 15px;
+}
+
 ul {
     list-style-type: none;
 }
@@ -32,6 +37,20 @@ ul {
     border-width: 2px;
     color: rgb(52, 0, 130);
     font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background-color: #ccccfd;
+    border-color: rgb(111, 51, 201);
+    color: rgb(111, 51, 201);
+    font-weight: 500;
+}
+
+.btn-secondary {
+    background-color: rgb(111, 51, 201);
+    border-color: rgb(111, 51, 201);
+    font-weight: 500;
+    border-width: 2px;
 }
 
 .btn-add {
