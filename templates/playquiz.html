@@ -28,12 +28,63 @@
     </div>
 
 
+
     <div class="container text-center" id="active_session" style="display: none;">
-        <h1 id="quiz_name"></h1>
-        <p>Session-ID: <span id="active_session_id"></span></p>
-        <p>Spielername: <span id="active_playername"></span></p>
-        <input type="text" id="answer" placeholder="Deine Antwort" required>
-        <button id="answer_submit_btn">Absenden</button>
+        <h1 id="quiz_name" style="padding-bottom: 10px;"></h1>
+        <div class="row">
+            <h4 id="active_playername" style="font-variant: small-caps;"></h4>
+            <!-- <h4 id="active_session_id"></h4>
+            <p>Session-ID</p> -->
+        </div>
+
+        <div id="no_current_question" class="with-border" style="border-width: 4px; padding-top: 30px; padding-bottom: 30px;">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Bitte warten...</span>
+
+            </div>
+            <h5>Bitte warte bis der Host eine Frage freigibt.</h5>
+        </div>
+
+        <div class="accordion accordion-flush" id="current_question" style="display: none;">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <div class="accordion-button collapsed d-block text-center question-number">
+                        <strong id="question_number"></strong>
+                    </div>
+                </h2>
+
+                <div class="accordion-collapse collapse show" data-bs-parent="#current_question">
+                    <div class="accordion-body">
+                        <div class="row row-cols-2 row-cols-md-4 justify-content-center">
+                            <div class="col col-md-3">
+                                <p class="with-border"><span class="fw-bold">Kategorie</span><br><span
+                                        id="category"></span></p>
+                            </div>
+                            <div class="col col-md-3">
+                                <p class="with-border"><span class="fw-bold">Punkte</span><br><span id="points"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Frage</span><br><span
+                                id="question_text"></span></p>
+
+                        <div id="image"></div>
+                        <div>
+                            <label class="form-label fw-bold fs-5">Deine Antwort</label>
+                            <input class="form-control" type="text" id="answer" placeholder="Eine Antwort eingeben..."
+                                style="margin-bottom: 12px;" required>
+                            <button class="btn btn-primary" id="answer_submit_btn"><i
+                                    class="fa-solid fa-check-to-slot"></i> Antwort einloggen</button>
+                            </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
@@ -49,15 +100,15 @@
             socket.connect();
             let session_id = document.getElementById("session_id").value;
             let playername = document.getElementById("playername").value;
-            document.getElementById("active_session_id").innerText = session_id;
-            document.getElementById("active_playername").innerText = playername;
+            // document.getElementById("active_session_id").innerText = session_id;
+            document.getElementById("active_playername").innerText = "- " + playername + " -";
             socket.emit("player_join", session_id, playername);
         })
 
         socket.on("new_player", function (quiz_name, session_id, playername) {
             document.getElementById("active_session").style.display = "block";
             document.getElementById("new_session").style.display = "none";
-            document.getElementById("quiz_name").innerText = "- " + quiz_name + " -";
+            document.getElementById("quiz_name").innerText = quiz_name;
         })
 
         socket.on("session_unavailable", function (session_id) {
@@ -72,13 +123,30 @@
 
         socket.on("send_question", function (question_id, question_text, category, points, image) {
             //Logik, wenn Frage ankommt
+            document.getElementById("no_current_question").style.display = "none";
+            document.getElementById("current_question").style.display = "block";
+            document.getElementById("question_number").innerText = "Frage " + question_id;
+            document.getElementById("category").innerText = category;
+            document.getElementById("points").innerText = points;
+            document.getElementById("question_text").innerText = question_text;
 
+            if (image != null) {
+                document.getElementById("image").style.display = "block";
+                document.getElementById("image").innerHTML = `
+                <p class="fs-5 with-line"><span class="fw-bold fs-5">Bild</span><br>
+                    <img class="img-fluid" style="max-width: 60%; margin-top: 12px;" src="../static/FileUploads/${image}"></img>
+                `
+            } else {
+                document.getElementById("image").style.display = "none";
+            }
         })
 
         document.getElementById("answer_submit_btn").addEventListener("click", function () {
             let playername = document.getElementById("playername").value;
             let answer = document.getElementById("answer").value;
             socket.emit("submit_answer", playername, answer);
+            document.getElementById("no_current_question").style.display = "block";
+            document.getElementById("current_question").style.display = "none";
             document.getElementById("answer").value = "";
         })
     </script>
