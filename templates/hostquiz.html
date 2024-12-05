@@ -10,23 +10,22 @@
 
     <div class="container text-center" id="new_session">
         <h1>- {{ quiz[1] }} - hosten</h1>
-        
+
         <div class="mb-3">
             <input class="form-control" type="number" id="session_id" name="session_id"
                 placeholder="Eine Session-ID vergeben" required>
         </div>
-        <button class="btn btn-primary" id="host_session_btn" onclick="hostSession('{{ quiz[1] }}')">Session erstellen</button>
+        <button class="btn btn-primary" id="host_session_btn" onclick="hostSession('{{ quiz[1] }}')">Session
+            erstellen</button>
 
     </div>
 
     <div class="container text-center" id="active_session" style="display: none;">
         <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
         <h3>[Host]</h3>
+        <p>Aktive Session: <span id="current_session"></span></p>
         <p>Aktive Spieler:</p>
-        <ul class="list-group" id="active_players"></ul>
-
-        <p>Antworten:</p>
-        <ul id="answers"></ul>
+        <ul class="list-group" id="active_players"></ul><br>
 
         <div class="accordion accordion-flush" id="accordionQuiz">
             {% for question in questions %}
@@ -56,11 +55,20 @@
                         {% endif %}
                         {% if question[5] != None %}
                         <p class="fs-5 with-line"><span class="fw-bold fs-5">Bild</span><br>
-                        <img class="img-fluid" style="max-width: 60%; margin-top: 12px;" src="../static/FileUploads/{{ question[5] }}"></img></p>
+                            <img class="img-fluid" style="max-width: 60%; margin-top: 12px;"
+                                src="../static/FileUploads/{{ question[5] }}"></img>
+                        </p>
                         {% endif %}
-                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Antwort</span><br> {{ question[6]|replace('\n',
+                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Richtige Antwort</span><br> {{
+                            question[6]|replace('\n',
                             '<br>')|safe }}</p>
-                        <button class="btn btn-primary" onclick="askQuestion('{{ question[0] }}', '{{ question[1] }}')">Diese Frage stellen</button>
+                        <div class="fs-5 with-line"><span class="fw-bold fs-5">Antworten der Spieler</span><br>
+                            <p id="no_answers_Q{{ question[1] }}">Bisher wurden keine Antworten abgegeben.</p>
+                        <ul class="list-group" id="answers_Q{{ question[1] }}"></ul></div><br>
+                        <button class="btn btn-primary"
+                            onclick="askQuestion('{{ question[0] }}', '{{ question[1] }}')">Diese Frage stellen</button>
+
+                        </p>
                     </div>
                 </div>
             </div>
@@ -86,10 +94,11 @@
             //Hier Hosting Formular ausblenden und Fragen einblenden
             document.getElementById("active_session").style.display = "block";
             document.getElementById("new_session").style.display = "none";
+            document.getElementById("current_session").innerText = session_id;
         }
 
         // document.getElementById("host_session_btn").addEventListener("click", function () {
-            
+
         // })
 
         socket.on("new_player", function (quiz_name, session_id, playername) {
@@ -106,8 +115,9 @@
             socket.emit("ask_question", quiz_id, question_id);
         }
 
-        socket.on("send_answer", function (playername, answer) {
-            let ul = document.getElementById("answers");
+        socket.on("send_answer", function (question_id, playername, answer) {
+            document.getElementById(`no_answers_Q${question_id}`).style.display = "none";
+            let ul = document.getElementById(`answers_Q${question_id}`);
             let li = document.createElement("li");
             li.appendChild(document.createTextNode(playername + ": " + answer));
             ul.appendChild(li);

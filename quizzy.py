@@ -294,9 +294,8 @@ def handle_question(quiz_id, question_id):
 
     
 @socketio.on("submit_answer")
-def handle_answer(playername, answer):
-    
-    emit("send_answer", (playername, answer), broadcast=True)
+def handle_answer(question_id, playername, answer):
+    emit("send_answer", (question_id, playername, answer), broadcast=True)
 
 # @app.route("/results/<int:quiz_id>", methods=["POST"])
 # def results(quiz_id):

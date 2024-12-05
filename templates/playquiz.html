@@ -16,12 +16,12 @@
         <div class="mb-3 text-start">
             <label class="form-label" for="session_id">Session-ID</label>
             <input class="form-control" type="text" id="session_id" name="session_id"
-                placeholder="Gib die Session-ID ein" required>
+                placeholder="Gib die Session-ID ein" required></input>
         </div>
         <div class="mb-3 text-start">
             <label class="form-label" for="playername">Dein Name</label>
             <input class="form-control" type="text" id="playername" name="playername" placeholder="Spielername"
-                required>
+                required></input>
         </div>
         <button class="btn btn-session" id="join_session_btn">Session beitreten</button>
 
@@ -37,7 +37,8 @@
             <p>Session-ID</p> -->
         </div>
 
-        <div id="no_current_question" class="with-border" style="border-width: 4px; padding-top: 30px; padding-bottom: 30px;">
+        <div id="no_current_question" class="with-border"
+            style="border-width: 4px; padding-top: 30px; padding-bottom: 30px;">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden">Bitte warten...</span>
 
@@ -71,11 +72,11 @@
                         <div id="image"></div>
                         <div>
                             <label class="form-label fw-bold fs-5">Deine Antwort</label>
-                            <input class="form-control" type="text" id="answer" placeholder="Eine Antwort eingeben..."
-                                style="margin-bottom: 12px;" required>
+                            <textarea class="form-control" type="text" id="answer"
+                                placeholder="Eine Antwort eingeben..." style="margin-bottom: 12px;" required></textarea>
                             <button class="btn btn-primary" id="answer_submit_btn"><i
-                                    class="fa-solid fa-check-to-slot"></i> Antwort einloggen</button>
-                            </div>
+                                    class="fa-solid fa-check-to-slot"></i>  Antwort abgeben</button>
+                        </div>
                     </div>
                 </div>
 
@@ -121,6 +122,8 @@
             `
         })
 
+        let qid = null;
+
         socket.on("send_question", function (question_id, question_text, category, points, image) {
             //Logik, wenn Frage ankommt
             document.getElementById("no_current_question").style.display = "none";
@@ -139,12 +142,15 @@
             } else {
                 document.getElementById("image").style.display = "none";
             }
+
+            qid = question_id;
         })
 
         document.getElementById("answer_submit_btn").addEventListener("click", function () {
+            let question_id = qid;
             let playername = document.getElementById("playername").value;
             let answer = document.getElementById("answer").value;
-            socket.emit("submit_answer", playername, answer);
+            socket.emit("submit_answer", question_id, playername, answer);
             document.getElementById("no_current_question").style.display = "block";
             document.getElementById("current_question").style.display = "none";
             document.getElementById("answer").value = "";
