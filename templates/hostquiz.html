@@ -39,18 +39,24 @@
                 </h2>
                 <div id="Q{{ question[1] }}" class="accordion-collapse collapse" data-bs-parent="#accordionQuiz">
                     <div class="accordion-body">
+                        <p class="fs-5 with-line">
+                            <button class="btn btn-primary"
+                                onclick="askQuestion('{{ question[0] }}', '{{ question[1] }}')"><i
+                                    class="fa-solid fa-clipboard-question"></i> Diese Frage stellen</button>
+                        </p>
                         <div class="row row-cols-md-4 justify-content-center">
                             <div class="col-md-3">
-                                <p class="with-border"><span class="fw-bold">Kategorie</span><br> {{ question[3] }}</p>
+                                <p class="with-border"><span class="fw-bold">Kategorie</span><br>{{ question[3] }}</p>
                             </div>
                             <div class="col-md-3">
-                                <p class="with-border"><span class="fw-bold">Punkte</span><br> {{ question[7] }}</p>
+                                <p class="with-border"><span class="fw-bold">Punkte</span><span
+                                        id="points_Q{{ question[1] }}"><br>{{ question[7] }}</span></p>
                             </div>
                         </div>
-                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Frage</span><br> {{
+                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Frage</span><br>{{
                             question[2]|replace('\n', '<br>')|safe }}</p>
                         {% if question[4] != "" %}
-                        <p class="fs-5 with-line"><span class="fw-bold">Beschreibung</span><br> {{
+                        <p class="fs-5 with-line"><span class="fw-bold">Beschreibung</span><br>{{
                             question[4]|replace('\n', '<br>')|safe }}</p>
                         {% endif %}
                         {% if question[5] != None %}
@@ -59,21 +65,29 @@
                                 src="../static/FileUploads/{{ question[5] }}"></img>
                         </p>
                         {% endif %}
-                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Richtige Antwort</span><br> {{
+                        <p class="fs-5 with-line"><span class="fw-bold fs-5">Richtige Antwort</span><br>{{
                             question[6]|replace('\n',
                             '<br>')|safe }}</p>
-                        <div class="fs-5 with-line"><span class="fw-bold fs-5">Antworten der Spieler</span><br>
-                            <p id="no_answers_Q{{ question[1] }}">Bisher wurden keine Antworten abgegeben.</p>
-                        <ul class="list-group" id="answers_Q{{ question[1] }}"></ul></div><br>
-                        <button class="btn btn-primary"
-                            onclick="askQuestion('{{ question[0] }}', '{{ question[1] }}')">Diese Frage stellen</button>
+                        <div class="fs-5" id="no_answers_Q{{ question[1] }}"><span class="fw-bold fs-5">Antworten der
+                                Spieler</span><br>
+                            <span>Bisher wurden keine Antworten abgegeben.</span>
+                        </div>
+                        
+                        <div class="fs-5" id="answers_Q{{ question[1] }}" style="display: none;">
+                            <div class="row row-cols-3" style="margin-bottom: 12px;">
+                                <div class="col-2 fw-bold">Spielername</div>
+                                <div class="col-8 fw-bold">Antworten der Spieler</div>
+                                <div class="col-2 fw-bold">Punkte</div>
+                            </div>
+                        </div>
 
-                        </p>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
+
+        <!-- Punktestand -->
 
     </div>
 
@@ -97,10 +111,6 @@
             document.getElementById("current_session").innerText = session_id;
         }
 
-        // document.getElementById("host_session_btn").addEventListener("click", function () {
-
-        // })
-
         socket.on("new_player", function (quiz_name, session_id, playername) {
             let ul = document.getElementById("active_players");
             let li = document.createElement("li");
@@ -117,11 +127,25 @@
 
         socket.on("send_answer", function (question_id, playername, answer) {
             document.getElementById(`no_answers_Q${question_id}`).style.display = "none";
-            let ul = document.getElementById(`answers_Q${question_id}`);
-            let li = document.createElement("li");
-            li.appendChild(document.createTextNode(playername + ": " + answer));
-            ul.appendChild(li);
+            document.getElementById(`answers_Q${question_id}`).style.display = "block";
+            
+            let points = document.getElementById(`points_Q${question_id}`).innerText;
+            points = Number(points);
 
+            document.getElementById(`answers_Q${question_id}`).innerHTML = document.getElementById(`answers_Q${question_id}`).innerHTML + `
+            <div class="row row-cols-3 with-border" style="margin-bottom: 8px; padding-left: 0px; padding-right: 0px;">
+                <div class="col-2">${playername}</div>
+                <div class="col-8">${answer}</div>
+                <div class="col-2">
+                    <div class="input-group">
+                        <input class="form-control" id="points_${question_id}_${playername}" type="number" value="${points}" min="0"
+                        max="5" step="0.5" required>
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for points">
+                        </div>
+                    </div>   
+                </div>
+            </div>`;
         })
 
 
