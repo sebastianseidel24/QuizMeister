@@ -24,10 +24,17 @@
         <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
         <h3>[Host]</h3>
         <p>Aktive Session: <span id="current_session"></span></p>
-        <p>Aktive Spieler:</p>
-        <ul class="list-group" id="active_players"></ul><br>
 
-        <div class="accordion accordion-flush" id="accordionQuiz">
+        <button class="btn btn-primary mb-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_players"
+            aria-expanded="false" aria-controls="collapse_players"><i class="fa-solid fa-person"></i>
+            Aktive Spieler
+        </button>
+
+        <div class="collapse" id="collapse_players">
+            <ul class="list-group" id="active_players"></ul><br>
+        </div>
+
+        <div class="accordion accordion-flush mb-4" id="accordionQuiz">
             {% for question in questions %}
             <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -72,12 +79,12 @@
                                 Spieler</span><br>
                             <span>Bisher wurden keine Antworten abgegeben.</span>
                         </div>
-                        
+
                         <div class="fs-5" id="answers_Q{{ question[1] }}" style="display: none;">
                             <div class="row row-cols-3" style="margin-bottom: 12px;">
                                 <div class="col-2 fw-bold">Spielername</div>
                                 <div class="col-8 fw-bold">Antworten der Spieler</div>
-                                <div class="col-2 fw-bold">Punkte</div>
+                                <div class="col-2 fw-bold">Auswertung</div>
                             </div>
                         </div>
 
@@ -88,6 +95,15 @@
         </div>
 
         <!-- Punktestand -->
+        <button class="btn btn-primary mb-4" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse_leaderboard" aria-expanded="false" aria-controls="collapse_leaderboard"><i
+                class="fa-solid fa-trophy"></i>
+            Aktueller Punktestand
+        </button>
+
+        <div class="collapse" id="collapse_leaderboard">
+            <canvas id="leaderboard" style="width:100%;max-width:700px;margin: auto;"></canvas>
+        </div>
 
     </div>
 
@@ -97,6 +113,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    </script>
 
     <script>
         const socket = io({ autoConnect: false });
@@ -128,7 +147,7 @@
         socket.on("send_answer", function (question_id, playername, answer) {
             document.getElementById(`no_answers_Q${question_id}`).style.display = "none";
             document.getElementById(`answers_Q${question_id}`).style.display = "block";
-            
+
             let points = document.getElementById(`points_Q${question_id}`).innerText;
             points = Number(points);
 
@@ -136,20 +155,60 @@
             <div class="row row-cols-3 with-border" style="margin-bottom: 8px; padding-left: 0px; padding-right: 0px;">
                 <div class="col-2">${playername}</div>
                 <div class="col-8">${answer}</div>
-                <div class="col-2">
+                <div class="col-2" style="padding-left: 8px; padding-right: 8px;">
                     <div class="input-group">
-                        <input class="form-control" id="points_${question_id}_${playername}" type="number" value="${points}" min="0"
-                        max="5" step="0.5" required>
-                        <div class="input-group-text">
-                            <input class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for points">
-                        </div>
-                    </div>   
+                        <input type="radio" class="btn-check" name="options_${question_id}_${playername}" id="correct_${question_id}_${playername}" autocomplete="off">
+                        <label class="btn btn-outline-success rounded-start" for="correct_${question_id}_${playername}" style="border-width: 2px; margin-left: 0px;" onclick="setPoints(true, ${question_id}, '${playername}', ${points})"><i class="fa-solid fa-check"></i></label>
+                        <input type="radio" class="btn-check" name="options_${question_id}_${playername}" id="wrong_${question_id}_${playername}" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="wrong_${question_id}_${playername}" style="border-width: 2px; margin-left: 0px;" onclick="setPoints(false, ${question_id}, '${playername}', ${points})"><i class="fa-solid fa-xmark"></i></label>
+                        <input class="form-control" id="points_${question_id}_${playername}" type="number" value="" min="0"
+                        max="5" step="0.5" disabled>
+                    </div>
                 </div>
             </div>`;
         })
 
+        function setPoints(correct, question_id, playername, points) {
+            if (correct == true) {
+                document.getElementById(`points_${question_id}_${playername}`).disabled = false;
+                document.getElementById(`points_${question_id}_${playername}`).value = points;
+            } else if (correct == false) {
+                document.getElementById(`points_${question_id}_${playername}`).value = 0;
+                document.getElementById(`points_${question_id}_${playername}`).disabled = true;
+            }
+        }
+
+        // const leaderboard = document.getElementById('leaderborad')
+        // leaderboard.addEventListener('hidden.bs.collapse', event => {
+        //     leaderboard.scrollIntoView();
+        // })
+
+
+        var playernames = ["Maria", "Sebi", "Luisa"];
+        var current_points = [12, 8, 4];
+
+        new Chart("leaderboard", {
+            type: "bar",
+            data: {
+                labels: playernames,
+                datasets: [{
+                    backgroundColor: "rgb(52, 0, 130)",
+                    data: current_points
+                }]
+            },
+            options: {
+                legend: { display: false },
+                title: {
+                    display: false,
+                    text: "Leaderboard"
+                }
+            }
+        });
+
 
     </script>
+
+
 
     {% include 'footer.html' %}
 </body>
