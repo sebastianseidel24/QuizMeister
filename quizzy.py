@@ -207,7 +207,7 @@ def editquiz(quiz_id):
         return render_template("editquiz.html", quiz=quiz, questions=questions)
 
 #Sessions-Logik
-sessions = [{"session_id": None, "quiz_id": None, "players": {}}]
+session = {"quiz_id": None, "quiz_name": None, "players": []} #Session mit QuizID, Quiz-Name und Teilnehmern; jeder Teilnehmer wird durch ein Dictionary mit SessionID, Spielername und Punkten repräsentiert
 
 
 @app.route('/hostquiz/<int:quiz_id>')
@@ -243,37 +243,34 @@ def handle_connect():
     
     
 @socketio.on("host_session")
-def handle_host_session(quiz_name, session_id):
-    session_unavailable = False
-    for session in sessions:
-        if session_id == session["session_id"]:
-            print(f"Session {session_id} existiert bereits.")
-            session_unavailable = True
-    if(session_unavailable == False):
-        sessions.append({"session_id": session_id, "quiz_name": quiz_name, "players": {}})
-        print(f"Host hat Session {session_id} für Quiz mit ID {quiz_name} erstellt.")
-        print(sessions)
+def handle_host_session(quiz_id, quiz_name):
+    session["quiz_id"] = quiz_id
+    session["quiz_name"] = quiz_name
+    print(f"Host hat Session für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
+    print(session)
+    emit("session_open", (quiz_id, quiz_name), broadcast=True)
 
 
 
 @socketio.on("player_join")
-def handle_player_join(session_id, playername):
-    
-    # Hier noch prüfen, ob playername bereits existiert
-    
-    session_unavailable = True
-    player_id = request.sid
-    for session in sessions:
-        if session_id == session["session_id"]:
-            session["players"][player_id] = playername
-            session_unavailable = False
-            quiz_name = session["quiz_name"]
-            print(f"{playername} mit ID: {player_id} ist Session {session_id} beigetreten.")
-            print(sessions)
-            emit("new_player", (quiz_name, session_id, playername), broadcast=True)
-    if(session_unavailable):   
-        emit("session_unavailable", session_id, broadcast=False)
-        print(f"Beitritt von {playername} zu Session {session_id} fehlgeschlagen.")
+def handle_player_join(active_quiz_id, active_quiz_name, playername):
+    try:
+        if active_quiz_id == session["quiz_id"] and active_quiz_name == session["quiz_name"]:
+            for player in session["players"]:
+                if session["players"][player]["playername"] == playername:
+                    print("Spieler existiert bereits.")
+                    emit("player_already_exists", playername, broadcast=False)
+                    raise Exception
+            points = 0
+            place = len(session["players"])
+            session["players"].append({["session_id"]: request.sid, ["playername"]: playername, ["points"]: points, ["place"]: place})
+            print(f"'{playername}' mit Session-ID '{request.sid}' ist Quiz '{active_quiz_name}' beigetreten.")
+            print(session)
+            emit("new_player", (active_quiz_name, playername, points, place), broadcast=True)
+        else:
+            print("Spieler konnte nicht hinzugefügt werden, da dieses Quiz nicht aktiv ist.")
+    except Exception as e:
+        print("An exception occurred:", type(e).__name__, e)
 
 
 @socketio.on("ask_question")
@@ -297,10 +294,6 @@ def handle_question(quiz_id, question_id):
 def handle_answer(question_id, playername, answer):
     emit("send_answer", (question_id, playername, answer), broadcast=True)
 
-# @app.route("/results/<int:quiz_id>", methods=["POST"])
-# def results(quiz_id):
-#     # Ergebnis-Berechnung hier einfügen
-#     return render_template("results.html")
 
 # App starten
 if __name__ == '__main__':

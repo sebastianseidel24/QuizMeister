@@ -6,24 +6,17 @@
 <body>
     {% include 'navbar.html' %}
 
+    <div class="container text-center" id="start_session" style="display: block;">
+        <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
 
-
-    <div class="container text-center" id="new_session">
-        <h1>- {{ quiz[1] }} - hosten</h1>
-
-        <div class="mb-3">
-            <input class="form-control" type="number" id="session_id" name="session_id"
-                placeholder="Eine Session-ID vergeben" required>
-        </div>
-        <button class="btn btn-primary" id="host_session_btn" onclick="hostSession('{{ quiz[1] }}')">Session
-            erstellen</button>
-
+        <button class="btn btn-primary btn-lg" type="button" onclick="hostSession('{{ quiz[0] }}', '{{ quiz[1] }}')">
+            Dieses Quiz starten
+        </button>
     </div>
 
     <div class="container text-center" id="active_session" style="display: none;">
         <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
         <h3>[Host]</h3>
-        <p>Aktive Session: <span id="current_session"></span></p>
 
         <button class="btn btn-primary mb-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_players"
             aria-expanded="false" aria-controls="collapse_players"><i class="fa-solid fa-person"></i>
@@ -183,22 +176,37 @@
     <script>
         const socket = io({ autoConnect: false });
 
-        function hostSession(quiz_name) {
+        function hostSession(quiz_id, quiz_name) {
             socket.connect();
-            let session_id = document.getElementById("session_id").value;
-            socket.emit("host_session", quiz_name, session_id)
-            //Hier Hosting Formular ausblenden und Fragen einblenden
-            document.getElementById("active_session").style.display = "block";
-            document.getElementById("new_session").style.display = "none";
-            document.getElementById("current_session").innerText = session_id;
+            var quiz_id = Number(quiz_id)
+            document.getElementById(`start_session`).style.display = "none";
+            document.getElementById(`active_session`).style.display = "block";
+            socket.emit("host_session", quiz_id, quiz_name)
         }
 
-        socket.on("new_player", function (quiz_name, session_id, playername) {
+        socket.on("new_player", function (active_quiz_name, playername, points, place) {
             let ul = document.getElementById("active_players");
             let li = document.createElement("li");
             li.className = "list-group-item";
             li.appendChild(document.createTextNode(playername));
             ul.appendChild(li);
+
+            // In Leaderboard aufnehmen
+            document.getElementById(`leaderboard`).innerHTML = document.getElementById(`leaderboard`).innerHTML +
+            `
+            <div class="row justify-content-center fs-5">
+                    <div class="col-4 col-md-2 fw-bold">
+                        <span>${place}.</span>
+                    </div>
+                    <div class="col-4 col-md-3">
+                        <span>${playername}</span>
+                    </div>
+                    <div class="col-4 col-md-2">
+                        <span>${points}</span>
+                    </div>
+                </div>
+            `
+
         })
 
         function askQuestion(qui_id, que_id) {

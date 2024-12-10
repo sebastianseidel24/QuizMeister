@@ -13,7 +13,28 @@
 
         <div id="alert_placeholder"></div>
 
-        <div class="mb-3 text-start">
+        <div id="no_current_quiz" class="with-border"
+            style="border-width: 4px; padding-top: 30px; padding-bottom: 30px;">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Bitte warten...</span>
+
+            </div>
+            <h5>Bitte warte bis der Host ein Quiz gestartet hat.</h5>
+        </div>
+
+        <div class="with-background" id="join_quiz_form" style="display: none;">
+            <div class="mb-3 fs-5">
+                Quiz: <span id="active_quiz_name"></span>
+            </div>
+            <div class="mb-3 text-start">
+                <label class="form-label" for="playername">Dein Name</label>
+                <input class="form-control" type="text" id="playername" name="playername" placeholder="Spielername"
+                    required></input>
+            </div>
+            <button class="btn btn-session" id="join_session_btn">Quiz beitreten</button>
+        </div>
+
+        <!-- <div class="mb-3 text-start">
             <label class="form-label" for="session_id">Session-ID</label>
             <input class="form-control" type="text" id="session_id" name="session_id"
                 placeholder="Gib die Session-ID ein" required></input>
@@ -23,7 +44,7 @@
             <input class="form-control" type="text" id="playername" name="playername" placeholder="Spielername"
                 required></input>
         </div>
-        <button class="btn btn-session" id="join_session_btn">Session beitreten</button>
+        <button class="btn btn-session" id="join_session_btn">Session beitreten</button> -->
 
     </div>
 
@@ -33,8 +54,6 @@
         <h1 id="quiz_name" style="padding-bottom: 10px;"></h1>
         <div class="row">
             <h4 id="active_playername" style="font-variant: small-caps;"></h4>
-            <!-- <h4 id="active_session_id"></h4>
-            <p>Session-ID</p> -->
         </div>
 
         <div id="no_current_question" class="with-border"
@@ -95,34 +114,42 @@
         crossorigin="anonymous"></script>
 
     <script>
-        const socket = io({ autoConnect: false });
+        const socket = io();
+        const active_quiz_id = null;
+        const active_quiz_name = null;
+
+        // Session verfügbar
+        socket.on("session_open", function (quiz_id, quiz_name) {
+            document.getElementById("no_current_quiz").style.display = "none";
+            document.getElementById("join_quiz_form").style.display = "block";
+            document.getElementById("active_quiz_name").innerText = quiz_name;
+            active_quiz_id = quiz_id;
+            active_quiz_name = quiz_name;
+        })
 
         document.getElementById("join_session_btn").addEventListener("click", function () {
-            socket.connect();
-            let session_id = document.getElementById("session_id").value;
             let playername = document.getElementById("playername").value;
-            // document.getElementById("active_session_id").innerText = session_id;
             document.getElementById("active_playername").innerText = "- " + playername + " -";
-            socket.emit("player_join", session_id, playername);
+            socket.emit("player_join", active_quiz_id, active_quiz_name, playername);
         })
 
-        socket.on("new_player", function (quiz_name, session_id, playername) {
+        socket.on("new_player", function (active_quiz_name, playername, points, place) {
             document.getElementById("active_session").style.display = "block";
             document.getElementById("new_session").style.display = "none";
-            document.getElementById("quiz_name").innerText = quiz_name;
+            document.getElementById("quiz_name").innerText = active_quiz_name;
         })
 
-        socket.on("session_unavailable", function (session_id) {
+        socket.on("player_already_exists", function (playername) {
             document.getElementById("active_session").style.display = "none";
             document.getElementById("new_session").style.display = "block";
             document.getElementById("alert_placeholder").innerHTML = `
             <div class="alert alert-danger" role="alert">
-                Session-ID ${session_id} ist nicht vergeben!
+                Spielername '${playername}' existiert bereits!
             </div>
             `
         })
 
-        let qid = null;
+        const active_question_id = null;
 
         socket.on("send_question", function (question_id, question_text, category, points, image) {
             //Logik, wenn Frage ankommt
@@ -143,11 +170,11 @@
                 document.getElementById("image").style.display = "none";
             }
 
-            qid = question_id;
+            active_question_id = question_id;
         })
 
         document.getElementById("answer_submit_btn").addEventListener("click", function () {
-            let question_id = qid;
+            let question_id = active_question_id;
             let playername = document.getElementById("playername").value;
             let answer = document.getElementById("answer").value;
             socket.emit("submit_answer", question_id, playername, answer);
