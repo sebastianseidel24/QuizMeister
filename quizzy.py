@@ -262,8 +262,8 @@ def handle_player_join(active_quiz_id, active_quiz_name, playername):
                     emit("player_already_exists", playername, broadcast=False)
                     raise Exception
             points = 0
-            place = len(session["players"])
-            session["players"].append({["session_id"]: request.sid, ["playername"]: playername, ["points"]: points, ["place"]: place})
+            place = len(session["players"]) + 1
+            session["players"].append({"session_id": request.sid, "playername": playername, "points": points, "place": place})
             print(f"'{playername}' mit Session-ID '{request.sid}' ist Quiz '{active_quiz_name}' beigetreten.")
             print(session)
             emit("new_player", (active_quiz_name, playername, points, place), broadcast=True)

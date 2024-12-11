@@ -115,10 +115,9 @@
 
     <script>
         const socket = io();
-        const active_quiz_id = null;
-        const active_quiz_name = null;
+        let active_quiz_id = null;
+        let active_quiz_name = null;
 
-        // Session verfügbar
         socket.on("session_open", function (quiz_id, quiz_name) {
             document.getElementById("no_current_quiz").style.display = "none";
             document.getElementById("join_quiz_form").style.display = "block";
@@ -149,7 +148,7 @@
             `
         })
 
-        const active_question_id = null;
+        let active_question_id = null;
 
         socket.on("send_question", function (question_id, question_text, category, points, image) {
             //Logik, wenn Frage ankommt
