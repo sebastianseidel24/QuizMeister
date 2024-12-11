@@ -248,27 +248,29 @@ def handle_host_session(quiz_id, quiz_name):
     session["quiz_name"] = quiz_name
     print(f"Host hat Session für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
     print(session)
-    emit("session_open", (quiz_id, quiz_name), broadcast=True)
+    # emit("session_open", (quiz_id, quiz_name), broadcast=True)
 
 
 
 @socketio.on("player_join")
-def handle_player_join(active_quiz_id, active_quiz_name, playername):
+def handle_player_join(playername):
     try:
-        if active_quiz_id == session["quiz_id"] and active_quiz_name == session["quiz_name"]:
+        if session["quiz_id"] == None:
+            emit("session_unavailable", broadcast=False)
+        else:
             for player in session["players"]:
-                if session["players"][player]["playername"] == playername:
+                if player["playername"] == playername:
                     print("Spieler existiert bereits.")
                     emit("player_already_exists", playername, broadcast=False)
                     raise Exception
+            quiz_id = session["quiz_id"]
+            quiz_name = session["quiz_name"]
             points = 0
             place = len(session["players"]) + 1
             session["players"].append({"session_id": request.sid, "playername": playername, "points": points, "place": place})
-            print(f"'{playername}' mit Session-ID '{request.sid}' ist Quiz '{active_quiz_name}' beigetreten.")
+            print(f"'{playername}' mit Session-ID '{request.sid}' ist Quiz '{quiz_name}' beigetreten.")
             print(session)
-            emit("new_player", (active_quiz_name, playername, points, place), broadcast=True)
-        else:
-            print("Spieler konnte nicht hinzugefügt werden, da dieses Quiz nicht aktiv ist.")
+            emit("new_player", (quiz_id, quiz_name, playername, points, place), broadcast=True)
     except Exception as e:
         print("An exception occurred:", type(e).__name__, e)
 

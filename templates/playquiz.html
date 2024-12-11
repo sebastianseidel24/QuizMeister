@@ -13,39 +13,21 @@
 
         <div id="alert_placeholder"></div>
 
-        <div id="no_current_quiz" class="with-border"
-            style="border-width: 4px; padding-top: 30px; padding-bottom: 30px;">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Bitte warten...</span>
-
-            </div>
-            <h5>Bitte warte bis der Host ein Quiz gestartet hat.</h5>
-        </div>
-
-        <div class="with-background" id="join_quiz_form" style="display: none;">
-            <div class="mb-3 fs-5">
-                Quiz: <span id="active_quiz_name"></span>
-            </div>
-            <div class="mb-3 text-start">
-                <label class="form-label" for="playername">Dein Name</label>
-                <input class="form-control" type="text" id="playername" name="playername" placeholder="Spielername"
-                    required></input>
+        <div class="with-background pb-3 pt-1" id="join_quiz_form">
+            <div class="row justify-content-center mb-3 fs-5">
+                Bitte gib deinen Spielernamen ein
+                <div class="col-2"></div>
+                <div class="col-8">
+                    <div class="mb-3 fs-6 text-start">
+                        <label class="form-label" for="playername">Dein Name</label>
+                        <input class="form-control" type="text" id="playername" name="playername"
+                            placeholder="Spielername" required></input>
+                    </div>
+                </div>
+                <div class="col-2"></div>
             </div>
             <button class="btn btn-session" id="join_session_btn">Quiz beitreten</button>
         </div>
-
-        <!-- <div class="mb-3 text-start">
-            <label class="form-label" for="session_id">Session-ID</label>
-            <input class="form-control" type="text" id="session_id" name="session_id"
-                placeholder="Gib die Session-ID ein" required></input>
-        </div>
-        <div class="mb-3 text-start">
-            <label class="form-label" for="playername">Dein Name</label>
-            <input class="form-control" type="text" id="playername" name="playername" placeholder="Spielername"
-                required></input>
-        </div>
-        <button class="btn btn-session" id="join_session_btn">Session beitreten</button> -->
-
     </div>
 
 
@@ -55,6 +37,8 @@
         <div class="row">
             <h4 id="active_playername" style="font-variant: small-caps;"></h4>
         </div>
+
+        <div id="alert_placeholder"></div>
 
         <div id="no_current_question" class="with-border"
             style="border-width: 4px; padding-top: 30px; padding-bottom: 30px;">
@@ -93,8 +77,37 @@
                             <label class="form-label fw-bold fs-5">Deine Antwort</label>
                             <textarea class="form-control" type="text" id="answer"
                                 placeholder="Eine Antwort eingeben..." style="margin-bottom: 12px;" required></textarea>
-                            <button class="btn btn-primary" id="answer_submit_btn"><i
-                                    class="fa-solid fa-check-to-slot"></i> Antwort abgeben</button>
+
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#submit_answer_modal"><i class="fa-solid fa-check-to-slot"></i>Antwort
+                                abgeben
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="submit_answer_modal" tabindex="-1"
+                                aria-labelledby="submit_answer_modalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="submit_answer_modalLabel">Bist du dir da
+                                                sicher?</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <!-- <div class="modal-body">
+                                            ...
+                                        </div> -->
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary"
+                                                data-bs-dismiss="modal">Zurück</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                                id="answer_submit_btn">Antwort einloggen</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -114,41 +127,45 @@
         crossorigin="anonymous"></script>
 
     <script>
-        const socket = io();
+        const socket = io({ autoConnect: false });
         let active_quiz_id = null;
         let active_quiz_name = null;
-
-        socket.on("session_open", function (quiz_id, quiz_name) {
-            document.getElementById("no_current_quiz").style.display = "none";
-            document.getElementById("join_quiz_form").style.display = "block";
-            document.getElementById("active_quiz_name").innerText = quiz_name;
-            active_quiz_id = quiz_id;
-            active_quiz_name = quiz_name;
-        })
+        let active_question_id = null;
 
         document.getElementById("join_session_btn").addEventListener("click", function () {
+            socket.connect();
             let playername = document.getElementById("playername").value;
             document.getElementById("active_playername").innerText = "- " + playername + " -";
-            socket.emit("player_join", active_quiz_id, active_quiz_name, playername);
+            socket.emit("player_join", playername);
         })
 
-        socket.on("new_player", function (active_quiz_name, playername, points, place) {
-            document.getElementById("active_session").style.display = "block";
-            document.getElementById("new_session").style.display = "none";
-            document.getElementById("quiz_name").innerText = active_quiz_name;
+        socket.on("session_unavailable", function () {
+            document.getElementById("alert_placeholder").innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Ups!</strong> Es gibt aktuell kein aktives Quiz. Bitte warte bis der Host das Quiz gestartet hat.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            `
         })
 
         socket.on("player_already_exists", function (playername) {
             document.getElementById("active_session").style.display = "none";
             document.getElementById("new_session").style.display = "block";
             document.getElementById("alert_placeholder").innerHTML = `
-            <div class="alert alert-danger" role="alert">
-                Spielername '${playername}' existiert bereits!
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Ups!</strong> Spielername <i>${playername}</i> existiert bereits! Bitte wähle einen anderen Namen.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             `
         })
 
-        let active_question_id = null;
+        socket.on("new_player", function (quiz_id, quiz_name, playername, points, place) {
+            document.getElementById("active_session").style.display = "block";
+            document.getElementById("new_session").style.display = "none";
+            document.getElementById("quiz_name").innerText = quiz_name;
+            active_quiz_id = quiz_id;
+            active_quiz_name = quiz_name;
+        })
 
         socket.on("send_question", function (question_id, question_text, category, points, image) {
             //Logik, wenn Frage ankommt
@@ -173,13 +190,20 @@
         })
 
         document.getElementById("answer_submit_btn").addEventListener("click", function () {
-            let question_id = active_question_id;
+            var question_id = active_question_id;
             let playername = document.getElementById("playername").value;
             let answer = document.getElementById("answer").value;
             socket.emit("submit_answer", question_id, playername, answer);
             document.getElementById("no_current_question").style.display = "block";
             document.getElementById("current_question").style.display = "none";
             document.getElementById("answer").value = "";
+            document.getElementById("alert_placeholder").innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Yeah!</strong> Du hast folgende Antwort abgegeben:<br>
+                §{answer}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            `
         })
     </script>
 

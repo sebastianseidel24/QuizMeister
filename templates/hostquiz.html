@@ -95,7 +95,8 @@
         </button>
 
         <!-- Punktestand -->
-        <div class="collapse with-background" id="collapse_leaderboard" style="background-color: rgb(149 129 219); color: rgb(37 1 91)">
+        <div class="collapse with-background" id="collapse_leaderboard"
+            style="background-color: rgb(149 129 219); color: rgb(37 1 91)">
             <div class="mb-4" id="leaderboard">
                 <!-- Je Teilnehmer eine Row -->
 
@@ -160,7 +161,8 @@
                 </div>
 
             </div>
-            <button class="btn btn-primary mb-3" type="button" id="share_leaderboard_btn"><i class="fa-solid fa-trophy"></i>
+            <button class="btn btn-primary mb-3" type="button" id="share_leaderboard_btn"><i
+                    class="fa-solid fa-trophy"></i>
                 Punktestand teilen
             </button>
         </div>
@@ -184,7 +186,7 @@
             socket.emit("host_session", quiz_id, quiz_name)
         }
 
-        socket.on("new_player", function (active_quiz_name, playername, points, place) {
+        socket.on("new_player", function (quiz_id, quiz_name, playername, points, place) {
             let ul = document.getElementById("active_players");
             let li = document.createElement("li");
             li.className = "list-group-item";
@@ -193,7 +195,7 @@
 
             // In Leaderboard aufnehmen
             document.getElementById(`leaderboard`).innerHTML = document.getElementById(`leaderboard`).innerHTML +
-            `
+                `
             <div class="row justify-content-center fs-5">
                     <div class="col-4 col-md-2 fw-bold">
                         <span>${place}.</span>
@@ -213,6 +215,15 @@
             var quiz_id = Number(qui_id);
             var question_id = Number(que_id);
             socket.emit("ask_question", quiz_id, question_id);
+            document.getElementById(`answers_Q${question_id}`).innerHTML = `
+            <div class="row row-cols-3" style="margin-bottom: 12px;">
+                <div class="col-2 fw-bold">Spielername</div>
+                <div class="col-8 fw-bold">Antworten der Spieler</div>
+                <div class="col-2 fw-bold">Auswertung</div>
+            </div>
+            `;
+            document.getElementById(`no_answers_Q${question_id}`).style.display = "block";
+            document.getElementById(`answers_Q${question_id}`).style.display = "none";
         }
 
         socket.on("send_answer", function (question_id, playername, answer) {
