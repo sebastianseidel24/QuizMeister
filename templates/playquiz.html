@@ -6,12 +6,10 @@
 <body>
     {% include 'navbar.html' %}
 
-
+    <div id="alert_placeholder"></div>
 
     <div class="container text-center" id="new_session">
         <h1 style="margin-bottom: 0px;">Einer Quiz-Runde beitreten</h1>
-
-        <div id="alert_placeholder"></div>
 
         <div class="with-background pb-3 pt-1" id="join_quiz_form">
             <div class="row justify-content-center mb-3 fs-5">
@@ -34,8 +32,6 @@
         <div class="row">
             <h4 id="active_playername" style="font-variant: small-caps;"></h4>
         </div>
-
-        <div id="alert_placeholder"></div>
 
         <div id="no_current_question" class="with-border"
             style="border-width: 4px; padding-top: 30px; padding-bottom: 30px;">
@@ -137,6 +133,7 @@
         })
 
         socket.on("session_unavailable", function () {
+            socket.disconnect();
             document.getElementById("alert_placeholder").innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <strong>Ups!</strong> Es gibt aktuell kein aktives Quiz. Bitte warte bis der Host das Quiz gestartet hat.
@@ -146,11 +143,24 @@
         })
 
         socket.on("player_already_exists", function (playername) {
+            socket.disconnect();
             document.getElementById("active_session").style.display = "none";
             document.getElementById("new_session").style.display = "block";
             document.getElementById("alert_placeholder").innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <strong>Ups!</strong> Spielername <i>${playername}</i> existiert bereits! Bitte wähle einen anderen Namen.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            `
+        })
+
+        socket.on("new_session", function (quiz_id, quiz_name) {
+            socket.disconnect();
+            document.getElementById("active_session").style.display = "none";
+            document.getElementById("new_session").style.display = "block";
+            document.getElementById("alert_placeholder").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Ups!</strong> Diese Session wurde vom Host beendet. Du kannst aber hier erneut beitreten.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             `
@@ -166,6 +176,7 @@
 
         socket.on("send_question", function (question_id, question_text, category, points, image) {
             //Logik, wenn Frage ankommt
+            document.getElementById("alert_placeholder").innerHTML = null
             document.getElementById("no_current_question").style.display = "none";
             document.getElementById("current_question").style.display = "block";
             document.getElementById("question_number").innerText = "Frage " + question_id;
@@ -177,7 +188,7 @@
                 document.getElementById("image").style.display = "block";
                 document.getElementById("image").innerHTML = `
                 <p class="fs-5 with-line"><span class="fw-bold fs-5">Bild</span><br>
-                    <img class="img-fluid" style="max-width: 60%; margin-top: 12px;" src="../static/FileUploads/${image}"></img>
+                    <img class="img-fluid" style="max-width: 100%; margin-top: 12px;" src="../static/FileUploads/${image}"></img>
                 `
             } else {
                 document.getElementById("image").style.display = "none";
@@ -195,9 +206,9 @@
             document.getElementById("current_question").style.display = "none";
             document.getElementById("answer").value = "";
             document.getElementById("alert_placeholder").innerHTML = `
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Yeah!</strong> Du hast folgende Antwort abgegeben:<br>
-                §{answer}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <strong>Ob das richtig ist?</strong> Du hast folgende Antwort abgegeben:<br><br>
+                ${answer}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             `

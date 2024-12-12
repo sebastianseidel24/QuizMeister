@@ -240,15 +240,20 @@ def playquiz():
 def handle_connect():
     print("Teilnehmer verbunden: " + request.sid)
     
+@socketio.on("disconnect")
+def handle_disconnect():
+    print("Teilnehmer getrennt")
+    
     
     
 @socketio.on("host_session")
 def handle_host_session(quiz_id, quiz_name):
     session["quiz_id"] = quiz_id
     session["quiz_name"] = quiz_name
+    session["players"] = []
     print(f"Host hat Session für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
     print(session)
-    # emit("session_open", (quiz_id, quiz_name), broadcast=True)
+    emit("new_session", (quiz_id, quiz_name), broadcast=True)
 
 
 

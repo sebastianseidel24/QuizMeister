@@ -54,6 +54,7 @@ ul {
     border-color: rgb(52, 0, 130);
     font-weight: 500;
     box-shadow: 0 0 0 3px aliceblue;
+    color: aliceblue;
 }
 
 .btn-primary:active {
