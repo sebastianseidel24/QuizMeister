@@ -302,6 +302,38 @@ def handle_answer(question_id, playername, answer):
     emit("send_answer", (question_id, playername, answer), broadcast=True)
 
 
+@socketio.on("calculate_points")
+def handle_calculate_points(playername, points):
+    for player in session["players"]:
+        if player["playername"] == playername:
+            player["points"] = points
+
+
+@socketio.on("calculate_leaderboard")
+def handle_calc_leaderboard():
+    calculateLeaderboard()
+    print(session)
+
+
+def calculateLeaderboard():
+    # Sortiere Spieler nach Punkten absteigend
+    session['players'].sort(key=lambda player: player['points'], reverse=True)
+
+    # Aktualisiere die Plätze basierend auf der Sortierung
+    current_place = 1
+    for i, player in enumerate(session['players']):
+        if i > 0 and player['points'] == session['players'][i-1]['points']:
+            # Spieler mit gleichen Punkten haben denselben Platz
+            player['place'] = session['players'][i-1]['place']
+        else:
+            # Ansonsten: Platz entsprechend der Position setzen
+            player['place'] = current_place
+        current_place += 1
+
+
+
+
+
 # App starten
 if __name__ == '__main__':
     socketio.run(app, debug=True)
