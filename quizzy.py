@@ -313,25 +313,40 @@ def handle_calculate_points(playername, points):
 def handle_calc_leaderboard():
     calculateLeaderboard()
     print(session)
+    # Sende das Leaderboard-Update für jeden Spieler einzeln
+    for player in session["players"]:
+        place = player["place"]
+        playername = player["playername"]
+        points = player["points"]
+        emit("update_leaderboard", (place, playername, points), broadcast=True)
+    
 
 
 def calculateLeaderboard():
     # Sortiere Spieler nach Punkten absteigend
-    session['players'].sort(key=lambda player: player['points'], reverse=True)
+    session["players"].sort(key=lambda player: player["points"], reverse=True)
 
     # Aktualisiere die Plätze basierend auf der Sortierung
     current_place = 1
-    for i, player in enumerate(session['players']):
-        if i > 0 and player['points'] == session['players'][i-1]['points']:
+    for i, player in enumerate(session["players"]):
+        if i > 0 and player["points"] == session["players"][i-1]["points"]:
             # Spieler mit gleichen Punkten haben denselben Platz
-            player['place'] = session['players'][i-1]['place']
+            player["place"] = session["players"][i-1]["place"]
         else:
             # Ansonsten: Platz entsprechend der Position setzen
-            player['place'] = current_place
+            player["place"] = current_place
         current_place += 1
 
 
-
+@socketio.on("share_leaderboard")
+def handle_share_leaderboard():
+    emit("clear_leaderboard", broadcast=True)
+    calculateLeaderboard()
+    for player in session["players"]:
+        place = player["place"]
+        playername = player["playername"]
+        points = player["points"]
+        emit("send_leaderboard", (place, playername, points), broadcast=True)
 
 
 # App starten
