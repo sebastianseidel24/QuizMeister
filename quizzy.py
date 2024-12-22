@@ -29,7 +29,8 @@ def require_login():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    username = session["username"]
+    return render_template("index.html", username=username)
 
 
 
@@ -88,11 +89,12 @@ def logout():
 
 @app.route("/quizoverview")
 def quizoverview():
+    user_id = session["user_id"]
 
     with sqlite3.connect("quizzy.db") as con:
         con.row_factory = sqlite3.Row
         cur = con.cursor()
-        cur.execute("SELECT rowid, * FROM quizzes")
+        cur.execute("SELECT * FROM quizzes WHERE user_id = (?)", (user_id,))
         quizzes = cur.fetchall()
     
     return render_template("quizoverview.html", quizzes=quizzes)
@@ -105,21 +107,22 @@ def createquiz():
     if request.method == "POST":
         try:  
             # Titel abrufen
-            title = request.form.get("title")
-
-            #Brauche ich hier "with", obwohl ich es am Ende eh schließe?????????????????
-            
+            title = request.form.get("title")        
+            user_id = session["user_id"]
             
             with sqlite3.connect("quizzy.db") as con:
                 cur = con.cursor()
 
                 #Quiz zu Datenbank hinzfügen
-                cur.execute("INSERT INTO quizzes (title) VALUES (?)", (title,))
+                cur.execute("INSERT INTO quizzes (title, user_id) VALUES (?,?)", (title, user_id))
                 con.commit()
                 msg1 = "Quiz zu Datenbank hinzugefügt"
 
-                #Neue Quiz ID erstellen
-                new_quiz_id = cur.lastrowid
+                #Quiz ID abrufen
+                current_row = cur.lastrowid
+                cur.execute("SELECT quiz_id FROM quizzes WHERE rowid = (?)", (current_row,))
+                quiz = cur.fetchone()
+                quiz_id = quiz[0]
             
             # Fragen und Antwortoptionen hinzufügen
             i = 0
@@ -138,14 +141,14 @@ def createquiz():
                 else:
                     filename = None
 
-                cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, image, answer, points) VALUES (?,?,?,?,?,?,?,?)", (question_id, new_quiz_id, question_text, category, description, filename, answer, points))
+                cur.execute("INSERT INTO questions (question_id, quiz_id, question, category, description, image, answer, points) VALUES (?,?,?,?,?,?,?,?)", (question_id, quiz_id, question_text, category, description, filename, answer, points))
                 con.commit()
                 msg2 = f"{i + 1} Fragen zur Datenbank hinzugefügt"
 
                 i += 1
 
             #Anzahl Fragen zu Quiz-DB hinzufügen
-            cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (question_id, title))
+            cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE quiz_id = (?)", (question_id, quiz_id))
             con.commit()
 
         except Exception as e:
@@ -172,17 +175,17 @@ def quiz(quiz_id):
         cur = con.cursor()
 
         # Quiz-Daten laden
-        cur.execute("SELECT rowid, * FROM quizzes WHERE rowid = (?)", (quiz_id,))
+        cur.execute("SELECT * FROM quizzes WHERE quiz_id = (?)", (quiz_id,))
         quiz = cur.fetchone()
 
         # Fragen des Quizzes laden
         cur.execute("SELECT * FROM questions WHERE quiz_id = (?)", (quiz_id,))
         questions = cur.fetchall()
 
-    if quiz != None:
+    if quiz != None and quiz[3] == session["user_id"]:
         return render_template("quiz.html", quiz=quiz, questions=questions)
     else:
-        return "Quiz nicht gefunden.", 404
+        return "Quiz nicht gefunden oder keine Zugriffsberechtigung.", 404
 
 
 @app.route("/editquiz/<int:quiz_id>", methods=["GET", "POST"])
@@ -192,7 +195,7 @@ def editquiz(quiz_id):
         cur = con.cursor()
 
         # Quiz-Daten laden
-        cur.execute("SELECT rowid, * FROM quizzes WHERE rowid = (?)", (quiz_id,))
+        cur.execute("SELECT * FROM quizzes WHERE quiz_id = (?)", (quiz_id,))
         quiz = cur.fetchone()
 
         # Fragen des Quizzes laden
@@ -211,7 +214,7 @@ def editquiz(quiz_id):
                     cur = con.cursor()
 
                     # Quiz-Titel in Datenbank updaten
-                    cur.execute("UPDATE quizzes SET title = (?) WHERE rowid = (?)", (title, quiz_id))
+                    cur.execute("UPDATE quizzes SET title = (?) WHERE quiz_id = (?)", (title, quiz_id))
                     con.commit()
                     msg1 = f"Quiz-Titel '{title}' in Datenbank bearbeitet"
 
@@ -249,7 +252,7 @@ def editquiz(quiz_id):
                         i += 1
 
                 # Anzahl Fragen in Quiz-DB updaten
-                cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE title = (?)", (question_id, title))
+                cur.execute("UPDATE quizzes SET number_of_questions = (?) WHERE quiz_id = (?)", (question_id, quiz_id))
                 con.commit()
                 
             except Exception as e:

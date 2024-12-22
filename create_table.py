@@ -13,10 +13,10 @@ print("Connected to database succesfully")
 # con.execute('DROP TABLE quizzes')
 
 #Tabelleninhalte löschen
-# con.execute('DELETE FROM quizzes')
-# print("Daten von quizzes gelöscht")
-# con.execute('DELETE FROM questions')
-# print("Daten von questions gelöscht")
+con.execute('DELETE FROM quizzes')
+print("Daten von quizzes gelöscht")
+con.execute('DELETE FROM questions')
+print("Daten von questions gelöscht")
 # con.commit()
 
 # con.row_factory = sqlite3.Row
@@ -55,11 +55,23 @@ print("Connected to database succesfully")
 #             DO UPDATE SET question = ?, category = ?, description = ?, answer = ?, points = ?;""", 
 #             (question_id, quiz_id, question_text, category, description, answer, points, question_text, category, description, answer, points))
             
-con.execute("""CREATE TABLE users (
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL)
-            """)
+# con.execute("""CREATE TABLE users (
+#             username TEXT UNIQUE NOT NULL,
+#             password TEXT NOT NULL)
+#             """)
 
+
+# con.execute('DELETE FROM quizzes WHERE rowid=1')
+# print("Gelöscht")
+
+# con.execute('DROP TABLE questions')
+# con.execute('DROP TABLE quizzes')
+
+# con.execute('CREATE TABLE quizzes (quiz_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, number_of_questions INTEGER, user_id INTEGER NOT NULL)')
+# print("Tabelle quizzes erstellt")
+
+# con.execute('CREATE TABLE questions (quiz_id INTEGER NOT NULL, question_id INTEGER NOT NULL, question TEXT NOT NULL, category TEXT NOT NULL, description TEXT, image TEXT, answer TEXT NOT NULL, points NUMERIC NOT NULL, PRIMARY KEY (quiz_id, question_id))')
+# print("Tabelle questions erstellt")
             
 con.commit()
 print("Das hat geklappt")

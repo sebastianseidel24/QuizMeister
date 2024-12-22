@@ -12,7 +12,7 @@
         <div class="row g-4 justify-content-start">
             {% for quiz in quizzes %}
             <div class="col-12 col-sm-6 col-lg-4">
-                <a class="card" href="{{ url_for('quiz', quiz_id=quiz['rowid']) }}">
+                <a class="card" href="{{ url_for('quiz', quiz_id=quiz['quiz_id']) }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ quiz['title'] }}</h5>
                         <h6 class="card-subtitle mb-2 text-body-secondary">Fragen: {{ quiz['number_of_questions'] }}
