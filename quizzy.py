@@ -1,6 +1,7 @@
 import sqlite3
 import os
-from flask import Flask, render_template, request, redirect, url_for
+import bcrypt
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from werkzeug.utils import secure_filename
 
@@ -18,6 +19,13 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+@app.before_request
+def require_login():
+    # Routen ohne Login
+    allowed_routes = ["register", "login", "static"]
+    if "username" not in session and request.endpoint not in allowed_routes:
+        return redirect(url_for("login"))
+
 
 @app.route("/")
 def index():
@@ -25,10 +33,63 @@ def index():
 
 
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        
+        # Passwort hashen
+        hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+
+        # Benutzer in die Datenbank einfügen
+        try:
+            with sqlite3.connect("quizzy.db") as con:
+                cur = con.cursor()
+                cur.execute("INSERT INTO users (username, password) VALUES (?, ?)",
+                            (username, hashed_password))
+                con.commit()
+            return redirect(url_for("login"))
+        except sqlite3.IntegrityError:
+            return "Benutzername bereits vergeben.", 400
+
+    return render_template("register.html")
+
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        with sqlite3.connect("quizzy.db") as con:
+            cur = con.cursor()
+            cur.execute("SELECT rowid, password FROM users WHERE username = ?", (username,))
+            user = cur.fetchone()
+
+            if user and bcrypt.checkpw(password.encode("utf-8"), user[1]):
+                session["user_id"] = user[0]
+                session["username"] = username
+                return redirect(url_for("index"))
+            else:
+                return "Falscher Benutzername oder Passwort.", 401
+
+    return render_template("login.html")
+
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
+
 @app.route("/quizoverview")
 def quizoverview():
 
-    with sqlite3.connect('quizzy.db') as con:
+    with sqlite3.connect("quizzy.db") as con:
         con.row_factory = sqlite3.Row
         cur = con.cursor()
         cur.execute("SELECT rowid, * FROM quizzes")
@@ -49,7 +110,7 @@ def createquiz():
             #Brauche ich hier "with", obwohl ich es am Ende eh schließe?????????????????
             
             
-            with sqlite3.connect('quizzy.db') as con:
+            with sqlite3.connect("quizzy.db") as con:
                 cur = con.cursor()
 
                 #Quiz zu Datenbank hinzfügen
@@ -73,7 +134,7 @@ def createquiz():
                 image = request.files[f"questions[{i}][image]"]
                 if image.filename != "" and allowed_file(image.filename):
                     filename = secure_filename(image.filename)
-                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    image.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
                 else:
                     filename = None
 
@@ -107,7 +168,7 @@ def createquiz():
 @app.route("/quiz/<int:quiz_id>")
 def quiz(quiz_id):
 
-    with sqlite3.connect('quizzy.db') as con:
+    with sqlite3.connect("quizzy.db") as con:
         cur = con.cursor()
 
         # Quiz-Daten laden
@@ -127,7 +188,7 @@ def quiz(quiz_id):
 @app.route("/editquiz/<int:quiz_id>", methods=["GET", "POST"])
 def editquiz(quiz_id):
 
-    with sqlite3.connect('quizzy.db') as con:
+    with sqlite3.connect("quizzy.db") as con:
         cur = con.cursor()
 
         # Quiz-Daten laden
@@ -146,7 +207,7 @@ def editquiz(quiz_id):
                 # (Neuen) Titel abrufen
                 title = request.form.get("title")
 
-                with sqlite3.connect('quizzy.db') as con:
+                with sqlite3.connect("quizzy.db") as con:
                     cur = con.cursor()
 
                     # Quiz-Titel in Datenbank updaten
@@ -210,9 +271,9 @@ def editquiz(quiz_id):
 session = {"quiz_id": None, "quiz_name": None, "players": []} #Session mit QuizID, Quiz-Name und Teilnehmern; jeder Teilnehmer wird durch ein Dictionary mit SessionID, Spielername und Punkten repräsentiert
 
 
-@app.route('/hostquiz/<int:quiz_id>')
+@app.route("/hostquiz/<int:quiz_id>")
 def hostquiz(quiz_id):
-    with sqlite3.connect('quizzy.db') as con:
+    with sqlite3.connect("quizzy.db") as con:
         cur = con.cursor()
 
         # Quiz-Daten laden
@@ -230,7 +291,7 @@ def hostquiz(quiz_id):
 
 
 
-@app.route('/playquiz')
+@app.route("/playquiz")
 def playquiz():
     return render_template("playquiz.html")
 

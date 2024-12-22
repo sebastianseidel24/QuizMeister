@@ -55,6 +55,12 @@ print("Connected to database succesfully")
 #             DO UPDATE SET question = ?, category = ?, description = ?, answer = ?, points = ?;""", 
 #             (question_id, quiz_id, question_text, category, description, answer, points, question_text, category, description, answer, points))
             
+con.execute("""CREATE TABLE users (
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL)
+            """)
+
+            
 con.commit()
 print("Das hat geklappt")
 
