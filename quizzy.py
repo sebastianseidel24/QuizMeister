@@ -271,7 +271,7 @@ def editquiz(quiz_id):
         return render_template("editquiz.html", quiz=quiz, questions=questions)
 
 #Sessions-Logik
-session = {"quiz_id": None, "quiz_name": None, "players": []} #Session mit QuizID, Quiz-Name und Teilnehmern; jeder Teilnehmer wird durch ein Dictionary mit SessionID, Spielername und Punkten repräsentiert
+quiz_session = {"quiz_id": None, "quiz_name": None, "players": []} #Quiz-Session mit QuizID, Quiz-Name und Teilnehmern; jeder Teilnehmer wird durch ein Dictionary mit SessionID, Spielername und Punkten repräsentiert
 
 
 @app.route("/hostquiz/<int:quiz_id>")
@@ -280,7 +280,7 @@ def hostquiz(quiz_id):
         cur = con.cursor()
 
         # Quiz-Daten laden
-        cur.execute("SELECT rowid, * FROM quizzes WHERE rowid = (?)", (quiz_id,))
+        cur.execute("SELECT * FROM quizzes WHERE quiz_id = (?)", (quiz_id,))
         quiz = cur.fetchone()
 
         # Fragen des Quizzes laden
@@ -312,11 +312,11 @@ def handle_disconnect():
     
 @socketio.on("host_session")
 def handle_host_session(quiz_id, quiz_name):
-    session["quiz_id"] = quiz_id
-    session["quiz_name"] = quiz_name
-    session["players"] = []
+    quiz_session["quiz_id"] = quiz_id
+    quiz_session["quiz_name"] = quiz_name
+    quiz_session["players"] = []
     print(f"Host hat Session für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
-    print(session)
+    print(quiz_session)
     emit("new_session", (quiz_id, quiz_name), broadcast=True)
 
 
@@ -324,21 +324,21 @@ def handle_host_session(quiz_id, quiz_name):
 @socketio.on("player_join")
 def handle_player_join(playername):
     try:
-        if session["quiz_id"] == None:
+        if quiz_session["quiz_id"] == None:
             emit("session_unavailable", broadcast=False)
         else:
-            for player in session["players"]:
+            for player in quiz_session["players"]:
                 if player["playername"] == playername:
                     print("Spieler existiert bereits.")
                     emit("player_already_exists", playername, broadcast=False)
                     raise Exception
-            quiz_id = session["quiz_id"]
-            quiz_name = session["quiz_name"]
+            quiz_id = quiz_session["quiz_id"]
+            quiz_name = quiz_session["quiz_name"]
             points = 0
-            place = len(session["players"]) + 1
-            session["players"].append({"session_id": request.sid, "playername": playername, "points": points, "place": place})
+            place = len(quiz_session["players"]) + 1
+            quiz_session["players"].append({"session_id": request.sid, "playername": playername, "points": points, "place": place})
             print(f"'{playername}' mit Session-ID '{request.sid}' ist Quiz '{quiz_name}' beigetreten.")
-            print(session)
+            print(quiz_session)
             emit("new_player", (quiz_id, quiz_name, playername, points, place), broadcast=True)
     except Exception as e:
         print("An exception occurred:", type(e).__name__, e)
@@ -368,7 +368,7 @@ def handle_answer(question_id, playername, answer):
 
 @socketio.on("calculate_points")
 def handle_calculate_points(playername, points):
-    for player in session["players"]:
+    for player in quiz_session["players"]:
         if player["playername"] == playername:
             player["points"] = points
 
@@ -376,9 +376,9 @@ def handle_calculate_points(playername, points):
 @socketio.on("calculate_leaderboard")
 def handle_calc_leaderboard():
     calculateLeaderboard()
-    print(session)
+    print(quiz_session)
     # Sende das Leaderboard-Update für jeden Spieler einzeln
-    for player in session["players"]:
+    for player in quiz_session["players"]:
         place = player["place"]
         playername = player["playername"]
         points = player["points"]
@@ -388,14 +388,14 @@ def handle_calc_leaderboard():
 
 def calculateLeaderboard():
     # Sortiere Spieler nach Punkten absteigend
-    session["players"].sort(key=lambda player: player["points"], reverse=True)
+    quiz_session["players"].sort(key=lambda player: player["points"], reverse=True)
 
     # Aktualisiere die Plätze basierend auf der Sortierung
     current_place = 1
-    for i, player in enumerate(session["players"]):
-        if i > 0 and player["points"] == session["players"][i-1]["points"]:
+    for i, player in enumerate(quiz_session["players"]):
+        if i > 0 and player["points"] == quiz_session["players"][i-1]["points"]:
             # Spieler mit gleichen Punkten haben denselben Platz
-            player["place"] = session["players"][i-1]["place"]
+            player["place"] = quiz_session["players"][i-1]["place"]
         else:
             # Ansonsten: Platz entsprechend der Position setzen
             player["place"] = current_place
@@ -406,7 +406,7 @@ def calculateLeaderboard():
 def handle_share_leaderboard():
     emit("clear_leaderboard", broadcast=True)
     calculateLeaderboard()
-    for player in session["players"]:
+    for player in quiz_session["players"]:
         place = player["place"]
         playername = player["playername"]
         points = player["points"]

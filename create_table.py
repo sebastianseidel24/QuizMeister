@@ -12,11 +12,11 @@ print("Connected to database succesfully")
 # con.execute('DROP TABLE questions')
 # con.execute('DROP TABLE quizzes')
 
-#Tabelleninhalte löschen
-con.execute('DELETE FROM quizzes')
-print("Daten von quizzes gelöscht")
-con.execute('DELETE FROM questions')
-print("Daten von questions gelöscht")
+# #Tabelleninhalte löschen
+# con.execute('DELETE FROM quizzes')
+# print("Daten von quizzes gelöscht")
+# con.execute('DELETE FROM questions')
+# print("Daten von questions gelöscht")
 # con.commit()
 
 # con.row_factory = sqlite3.Row
