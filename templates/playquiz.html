@@ -15,9 +15,9 @@
             <div class="row justify-content-center mb-3 fs-5">
                 <div class="col-10">
                     <div class="fs-6">
-                        <label class="form-label mb-3 mt-2" for="playername">Bitte gib deinen Spielernamen ein:</label>
-                        <input class="form-control" type="text" id="playername" name="playername"
-                            placeholder="Spielername" required></input>
+                        <label class="form-label mb-3 mt-2" for="session_code">Bitte gib den Session-Code ein:</label>
+                        <input class="form-control" type="text" id="session_code" name="session_code" minlength="4"
+                            maxlength="4" size="4" required></input>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
             style="background-color: rgb(149 129 219); color: rgb(37 1 91); display: none;">
             <h3 style="padding-bottom: 4px; padding-top: 8px; color: rgb(37 1 91);">Leaderboard</h3>
             <!-- Je Teilnehmer eine Row -->
-            
+
             <div class="row justify-content-center fs-5 fw-bold pb-2">
                 <div class="col-4 col-md-2">
                     Platzierung
@@ -139,57 +139,60 @@
 
     <script>
         const socket = io({ autoConnect: false });
+        const playername = "{{ session['username'] }}";
+        let session_id = null;
         let active_quiz_id = null;
         let active_quiz_name = null;
         let active_question_id = null;
 
         document.getElementById("join_session_btn").addEventListener("click", function () {
             socket.connect();
-            let playername = document.getElementById("playername").value;
+            let session_code = document.getElementById("session_code").value;
             document.getElementById("active_playername").innerText = "- " + playername + " -";
-            socket.emit("player_join", playername);
+            socket.emit("player_join", session_code, playername);
         })
 
         socket.on("session_unavailable", function () {
             socket.disconnect();
             document.getElementById("alert_placeholder").innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Ups!</strong> Es gibt aktuell kein aktives Quiz. Bitte warte bis der Host das Quiz gestartet hat.
+                <strong>Ups!</strong> Es gibt derzeit kein aktives Quiz mit diesem Session-Code.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             `
         })
 
-        socket.on("player_already_exists", function (playername) {
-            socket.disconnect();
-            document.getElementById("active_session").style.display = "none";
-            document.getElementById("new_session").style.display = "block";
-            document.getElementById("alert_placeholder").innerHTML = `
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Ups!</strong> Spielername <i>${playername}</i> existiert bereits! Bitte wähle einen anderen Namen.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            `
-        })
+        // socket.on("player_already_exists", function (playername) {
+        //     socket.disconnect();
+        //     document.getElementById("active_session").style.display = "none";
+        //     document.getElementById("new_session").style.display = "block";
+        //     document.getElementById("alert_placeholder").innerHTML = `
+        //     <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        //         <strong>Ups!</strong> Spielername <i>${playername}</i> existiert bereits! Bitte wähle einen anderen Namen.
+        //         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        //     </div>
+        //     `
+        // })
 
-        socket.on("new_session", function (quiz_id, quiz_name) {
-            socket.disconnect();
-            document.getElementById("active_session").style.display = "none";
-            document.getElementById("new_session").style.display = "block";
-            document.getElementById("alert_placeholder").innerHTML = `
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Ups!</strong> Diese Session wurde vom Host beendet. Du kannst aber hier erneut beitreten.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            `
-        })
+        // socket.on("new_session", function (quiz_id, quiz_name) {
+        //     socket.disconnect();
+        //     document.getElementById("active_session").style.display = "none";
+        //     document.getElementById("new_session").style.display = "block";
+        //     document.getElementById("alert_placeholder").innerHTML = `
+        //     <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        //         <strong>Ups!</strong> Diese Session wurde vom Host beendet. Du kannst aber hier erneut beitreten.
+        //         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        //     </div>
+        //     `
+        // })
 
-        socket.on("new_player", function (quiz_id, quiz_name, playername, points, place) {
+        socket.on("joined_session", function (session_code, quiz_id, quiz_name) {
             document.getElementById("active_session").style.display = "block";
             document.getElementById("new_session").style.display = "none";
             document.getElementById("quiz_name").innerText = quiz_name;
             active_quiz_id = quiz_id;
             active_quiz_name = quiz_name;
+            session_id = session_code;
         })
 
         socket.on("send_question", function (question_id, question_text, category, points, image) {
@@ -218,9 +221,8 @@
 
         document.getElementById("answer_submit_btn").addEventListener("click", function () {
             var question_id = active_question_id;
-            let playername = document.getElementById("playername").value;
             let answer = document.getElementById("answer").value;
-            socket.emit("submit_answer", question_id, playername, answer);
+            socket.emit("submit_answer", session_id, question_id, playername, answer);
             document.getElementById("no_current_question").style.display = "block";
             document.getElementById("current_question").style.display = "none";
             document.getElementById("answer").value = "";

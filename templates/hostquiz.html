@@ -9,7 +9,7 @@
     <div class="container text-center" id="start_session" style="display: block;">
         <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
 
-        <button class="btn btn-primary btn-lg" type="button" onclick="hostSession('{{ quiz[0] }}', '{{ quiz[1] }}')">
+        <button class="btn btn-primary btn-lg" type="button" onclick="hostSession('{{ quiz[0] }}')">
             Dieses Quiz starten
         </button>
     </div>
@@ -17,15 +17,7 @@
     <div class="container text-center" id="active_session" style="display: none;">
         <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
         <h3>[Host]</h3>
-
-        <button class="btn btn-primary mb-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_players"
-            aria-expanded="false" aria-controls="collapse_players"><i class="fa-solid fa-person"></i>
-            Aktive Spieler
-        </button>
-
-        <div class="collapse" id="collapse_players">
-            <ul class="list-group" id="active_players"></ul><br>
-        </div>
+        <h4 id="session_code"></h4>
 
         <div class="accordion accordion-flush mb-4" id="accordionQuiz">
             {% for question in questions %}
@@ -124,22 +116,22 @@
 
     <script>
         const socket = io({ autoConnect: false });
+        let session_id = null;
 
-        function hostSession(quiz_id, quiz_name) {
+        function hostSession(qui_id) {
             socket.connect();
-            var quiz_id = Number(quiz_id)
+            let quiz_id = Number(qui_id)
             document.getElementById(`start_session`).style.display = "none";
             document.getElementById(`active_session`).style.display = "block";
-            socket.emit("host_session", quiz_id, quiz_name)
+            socket.emit("host_session", quiz_id)
         }
 
-        socket.on("new_player", function (quiz_id, quiz_name, playername, points, place) {
-            let ul = document.getElementById("active_players");
-            let li = document.createElement("li");
-            li.className = "list-group-item";
-            li.appendChild(document.createTextNode(playername));
-            ul.appendChild(li);
+        socket.on("session_created", function (session_code) {
+            document.getElementById("session_code").innerText = "Aktive Session: " + session_code;
+            session_id = session_code;
+        });
 
+        socket.on("new_player", function (session_code, quiz_id, quiz_name, playername, points, place) {
             // In Leaderboard aufnehmen
             document.getElementById(`leaderboard`).innerHTML = document.getElementById(`leaderboard`).innerHTML +
                 `
@@ -148,7 +140,7 @@
                         <i class="fa-solid fa-medal"></i>
                     </div>
                     <div class="col-4 col-md-3">
-                        <span>${playername}</span>
+                        <span name="players">${playername}</span>
                     </div>
                     <div class="col-4 col-md-2">
                         <span>${points}</span>
@@ -159,9 +151,9 @@
         });
 
         function askQuestion(qui_id, que_id) {
-            var quiz_id = Number(qui_id);
-            var question_id = Number(que_id);
-            socket.emit("ask_question", quiz_id, question_id);
+            let quiz_id = Number(qui_id);
+            let question_id = Number(que_id);
+            socket.emit("ask_question", session_id, quiz_id, question_id);
             document.getElementById(`answers_Q${question_id}`).innerHTML = `
             <div class="row row-cols-3" style="margin-bottom: 12px;">
                 <div class="col-2 fw-bold">Spielername</div>
@@ -210,8 +202,7 @@
 
         document.getElementById("update_leaderboard").addEventListener("click", function () {
             const questionDivs = document.getElementsByClassName("accordion-item");
-            const activePlayers = document.getElementById("active_players")
-            const players = activePlayers.getElementsByClassName("list-group-item")
+            const players = document.getElementsByName("players");
             let points = 0;
 
             Array.from(players).forEach((player, index) => {
@@ -223,11 +214,11 @@
                         points = points + points_to_add;
                     }
                 });
-                socket.emit("calculate_points", playername, points);
+                socket.emit("calculate_points", session_id, playername, points);
                 points = 0;
             });
 
-            socket.emit("calculate_leaderboard");
+            socket.emit("calculate_leaderboard", session_id);
             // Leaderboard zurücksetzen
             document.getElementById("leaderboard").innerHTML = `
                 <h3 style="padding-bottom: 4px; padding-top: 8px; color: rgb(37 1 91);">Leaderboard</h3>
@@ -253,7 +244,7 @@
                         <i class="fa-solid fa-medal"></i>
                     </div>
                     <div class="col-4 col-md-3">
-                        <span>${playername}</span>
+                        <span name="players">${playername}</span>
                     </div>
                     <div class="col-4 col-md-2">
                         <span>${points}</span>
@@ -266,7 +257,7 @@
                         <i class="fa-solid fa-medal"></i>
                     </div>
                     <div class="col-4 col-md-3">
-                        <span>${playername}</span>
+                        <span name="players">${playername}</span>
                     </div>
                     <div class="col-4 col-md-2">
                         <span>${points}</span>
@@ -279,7 +270,7 @@
                         <i class="fa-solid fa-medal"></i>
                     </div>
                     <div class="col-4 col-md-3">
-                        <span>${playername}</span>
+                        <span name="players">${playername}</span>
                     </div>
                     <div class="col-4 col-md-2">
                         <span>${points}</span>
@@ -292,7 +283,7 @@
                         <span>${place}.</span>
                     </div>
                     <div class="col-4 col-md-3">
-                        <span>${playername}</span>
+                        <span name="players">${playername}</span>
                     </div>
                     <div class="col-4 col-md-2">
                         <span>${points}</span>
@@ -303,7 +294,7 @@
         });
 
         document.getElementById("share_leaderboard_btn").addEventListener("click", function () {
-            socket.emit("share_leaderboard");
+            socket.emit("share_leaderboard", session_id);
         });
 
     </script>

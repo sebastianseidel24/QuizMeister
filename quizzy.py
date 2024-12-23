@@ -1,6 +1,8 @@
 import sqlite3
 import os
 import bcrypt
+import random
+import string
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from werkzeug.utils import secure_filename
@@ -270,8 +272,20 @@ def editquiz(quiz_id):
         
         return render_template("editquiz.html", quiz=quiz, questions=questions)
 
-#Sessions-Logik
-quiz_session = {"quiz_id": None, "quiz_name": None, "players": []} #Quiz-Session mit QuizID, Quiz-Name und Teilnehmern; jeder Teilnehmer wird durch ein Dictionary mit SessionID, Spielername und Punkten repräsentiert
+# Sessions-Logik
+
+quiz_sessions = {}
+
+# quiz_sessions = {<Quiz-Session-ID>: {                 # Dictionary für jede Quiz-Session mit Quiz-Session-ID als Key
+#     "quiz_id": <Quiz-ID>,                             # ID des Quizzes
+#     "quiz_name": <Quiz-Name>,                         # Name des Quizzes
+#     "host": <Host-Name>,                              # Host der Session (repräsentiert durch Benutzername)
+#     "players": {<Spielername>: {                      # Liste der teilnehmenden Spieler mit Benutzername als Key
+#             "points": <Punkte>,                       # Aktuelle Punktzahl
+#             "place": <Platzierung>,                   # Aktuelle Platzierung
+#             "answers": {<Question-ID>: <Antwort>}     # Antworten zu den Fragen
+#         }},
+# }}
 
 
 @app.route("/hostquiz/<int:quiz_id>")
@@ -298,8 +312,6 @@ def hostquiz(quiz_id):
 def playquiz():
     return render_template("playquiz.html")
 
-
-
 @socketio.on("connect")
 def handle_connect():
     print("Teilnehmer verbunden: " + request.sid)
@@ -308,44 +320,75 @@ def handle_connect():
 def handle_disconnect():
     print("Teilnehmer getrennt")
     
-    
-    
+
+# Funktion zum Generieren eines zufälligen Session-Codes
+def generate_session_code():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+
+
 @socketio.on("host_session")
-def handle_host_session(quiz_id, quiz_name):
+def handle_host_session(quiz_id):
+    # Session-Code generieren
+    session_code = generate_session_code()
+    
+    # Neue Quiz-Session erstellen
+    quiz_sessions[session_code] = {}
+    quiz_session = quiz_sessions[session_code]
+    
     quiz_session["quiz_id"] = quiz_id
+    
+    with sqlite3.connect('quizzy.db') as con:
+        cur = con.cursor()
+        cur.execute("SELECT title FROM quizzes WHERE quiz_id = (?)", (quiz_id,))
+        quiz = cur.fetchone()
+        quiz_name = quiz[0]
+    
     quiz_session["quiz_name"] = quiz_name
-    quiz_session["players"] = []
-    print(f"Host hat Session für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
+    
+    quiz_session["host"] = session["username"]
+    
+    quiz_session["players"] = {}
+    
+    # Host tritt dem Room bei
+    join_room(session_code)
+    print(f"Host hat Room '{session_code}' für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
     print(quiz_session)
-    emit("new_session", (quiz_id, quiz_name), broadcast=True)
+    emit("session_created", session_code, broadcast=False)
 
 
 
 @socketio.on("player_join")
-def handle_player_join(playername):
+def handle_player_join(session_code, playername):    
     try:
-        if quiz_session["quiz_id"] == None:
+        # Testen ob Session existiert
+        if session_code not in quiz_sessions:
             emit("session_unavailable", broadcast=False)
         else:
-            for player in quiz_session["players"]:
-                if player["playername"] == playername:
-                    print("Spieler existiert bereits.")
-                    emit("player_already_exists", playername, broadcast=False)
-                    raise Exception
+            # Spieler zu Session hinzufügen
+            quiz_session = quiz_sessions[session_code]
             quiz_id = quiz_session["quiz_id"]
             quiz_name = quiz_session["quiz_name"]
-            points = 0
-            place = len(quiz_session["players"]) + 1
-            quiz_session["players"].append({"session_id": request.sid, "playername": playername, "points": points, "place": place})
-            print(f"'{playername}' mit Session-ID '{request.sid}' ist Quiz '{quiz_name}' beigetreten.")
+            
+            # Neuaufname, falls noch nicht vorhanden
+            if playername not in quiz_session["players"]:  
+                points = 0
+                place = 1
+                
+                quiz_session["players"][playername] = {"points": points, "place": place, "answers": {}}
+                emit("new_player", (session_code, quiz_id, quiz_name, playername, points, place), to=session_code)
+                
+            # Spieler tritt Room bei (auch bei Wiedereinstieg)
+            join_room(session_code)
+            emit("joined_session", (session_code, quiz_id, quiz_name), broadcast=False)
+            print(f"'{playername}' ist Session {session_code} und Quiz '{quiz_name}' beigetreten.")
             print(quiz_session)
-            emit("new_player", (quiz_id, quiz_name, playername, points, place), broadcast=True)
+            
     except Exception as e:
         print("An exception occurred:", type(e).__name__, e)
 
 
 @socketio.on("ask_question")
-def handle_question(quiz_id, question_id):
+def handle_question(session_code, quiz_id, question_id):
     with sqlite3.connect('quizzy.db') as con:
         cur = con.cursor()
 
@@ -358,59 +401,73 @@ def handle_question(quiz_id, question_id):
         points = question[7]
         image = question[5]
         
-    emit("send_question", (question_id, question_text, category, points, image), broadcast=True)
+    emit("send_question", (question_id, question_text, category, points, image), to=session_code)
 
     
 @socketio.on("submit_answer")
-def handle_answer(question_id, playername, answer):
-    emit("send_answer", (question_id, playername, answer), broadcast=True)
+def handle_answer(session_code, question_id, playername, answer):
+    emit("send_answer", (question_id, playername, answer), to=session_code)
 
 
 @socketio.on("calculate_points")
-def handle_calculate_points(playername, points):
+def handle_calculate_points(session_code, playername, points):
+    quiz_session = quiz_sessions[session_code]
     for player in quiz_session["players"]:
-        if player["playername"] == playername:
-            player["points"] = points
+        if player == playername:
+            quiz_session["players"][player]["points"] = points
 
 
 @socketio.on("calculate_leaderboard")
-def handle_calc_leaderboard():
-    calculateLeaderboard()
+def handle_calc_leaderboard(session_code):
+    quiz_session = quiz_sessions[session_code]
+    calculateLeaderboard(session_code)
     print(quiz_session)
     # Sende das Leaderboard-Update für jeden Spieler einzeln
     for player in quiz_session["players"]:
-        place = player["place"]
-        playername = player["playername"]
-        points = player["points"]
-        emit("update_leaderboard", (place, playername, points), broadcast=True)
+        playername = player
+        place = quiz_session["players"][player]["place"]
+        points = quiz_session["players"][player]["points"]
+        emit("update_leaderboard", (place, playername, points), to=session_code)
     
 
 
-def calculateLeaderboard():
+def calculateLeaderboard(session_code):
     # Sortiere Spieler nach Punkten absteigend
-    quiz_session["players"].sort(key=lambda player: player["points"], reverse=True)
+    quiz_session = quiz_sessions[session_code]
+    
+    # Spieler aus dem Dictionary extrahieren und sortieren
+    sorted_players = sorted(
+        quiz_session["players"].items(),
+        key=lambda item: item[1]["points"],
+        reverse=True
+    )
 
     # Aktualisiere die Plätze basierend auf der Sortierung
     current_place = 1
-    for i, player in enumerate(quiz_session["players"]):
-        if i > 0 and player["points"] == quiz_session["players"][i-1]["points"]:
+    for i, (player_name, player_data) in enumerate(sorted_players):
+        if i > 0 and player_data["points"] == sorted_players[i-1][1]["points"]:
             # Spieler mit gleichen Punkten haben denselben Platz
-            player["place"] = quiz_session["players"][i-1]["place"]
+            player_data["place"] = sorted_players[i-1][1]["place"]
         else:
             # Ansonsten: Platz entsprechend der Position setzen
-            player["place"] = current_place
+            player_data["place"] = current_place
         current_place += 1
+
+    # Zurück in das ursprüngliche Dictionary schreiben
+    quiz_session["players"] = dict(sorted_players)
 
 
 @socketio.on("share_leaderboard")
-def handle_share_leaderboard():
-    emit("clear_leaderboard", broadcast=True)
-    calculateLeaderboard()
+def handle_share_leaderboard(session_code):
+    quiz_session = quiz_sessions[session_code]
+    
+    emit("clear_leaderboard", to=session_code)
+    calculateLeaderboard(session_code)
     for player in quiz_session["players"]:
-        place = player["place"]
-        playername = player["playername"]
-        points = player["points"]
-        emit("send_leaderboard", (place, playername, points), broadcast=True)
+        playername = player
+        place = quiz_session["players"][player]["place"]
+        points = quiz_session["players"][player]["points"]
+        emit("send_leaderboard", (place, playername, points), to=session_code)
 
 
 # App starten
