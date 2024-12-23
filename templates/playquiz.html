@@ -66,9 +66,9 @@
                                 id="question_text"></span></p>
 
                         <div id="image"></div>
-                        <div>
+                        <div id="player_answer">
                             <label class="form-label fw-bold fs-5">Deine Antwort</label>
-                            <textarea class="form-control" type="text" id="answer"
+                            <textarea class="form-control" id="answer" type="text"
                                 placeholder="Eine Antwort eingeben..." style="margin-bottom: 12px;" required></textarea>
 
                             <!-- Button trigger modal -->
@@ -100,13 +100,14 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
+                    <p class="fs-5 with-line" id="correct_answer"></p>
                 </div>
-
             </div>
+
         </div>
+
 
         <div id="leaderboard" class="pb-4 mb-4 with-background"
             style="background-color: rgb(149 129 219); color: rgb(37 1 91); display: none;">
@@ -125,10 +126,6 @@
                 </div>
             </div>
         </div>
-
-    </div>
-
-
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
@@ -162,30 +159,6 @@
             `
         })
 
-        // socket.on("player_already_exists", function (playername) {
-        //     socket.disconnect();
-        //     document.getElementById("active_session").style.display = "none";
-        //     document.getElementById("new_session").style.display = "block";
-        //     document.getElementById("alert_placeholder").innerHTML = `
-        //     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        //         <strong>Ups!</strong> Spielername <i>${playername}</i> existiert bereits! Bitte wähle einen anderen Namen.
-        //         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        //     </div>
-        //     `
-        // })
-
-        // socket.on("new_session", function (quiz_id, quiz_name) {
-        //     socket.disconnect();
-        //     document.getElementById("active_session").style.display = "none";
-        //     document.getElementById("new_session").style.display = "block";
-        //     document.getElementById("alert_placeholder").innerHTML = `
-        //     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        //         <strong>Ups!</strong> Diese Session wurde vom Host beendet. Du kannst aber hier erneut beitreten.
-        //         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        //     </div>
-        //     `
-        // })
-
         socket.on("joined_session", function (session_code, quiz_id, quiz_name) {
             document.getElementById("active_session").style.display = "block";
             document.getElementById("new_session").style.display = "none";
@@ -205,6 +178,8 @@
             document.getElementById("category").innerText = category;
             document.getElementById("points").innerText = points;
             document.getElementById("question_text").innerText = question_text;
+            document.getElementById("player_answer").style.display = "block";
+            document.getElementById("correct_answer").style.display = "none";
 
             if (image != null) {
                 document.getElementById("image").style.display = "block";
@@ -233,6 +208,32 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             `
+        })
+
+        socket.on("send_correct_answer", function (question_id, question_text, category, points, image, answer) {
+            document.getElementById("leaderboard").style.display = "none";
+            document.getElementById("no_current_question").style.display = "none";
+            document.getElementById("current_question").style.display = "block";
+            document.getElementById("question_number").innerText = "Frage " + question_id;
+            document.getElementById("category").innerText = category;
+            document.getElementById("points").innerText = points;
+            document.getElementById("question_text").innerText = question_text;
+            document.getElementById("player_answer").style.display = "none";
+            document.getElementById("correct_answer").style.display = "block";
+            document.getElementById("correct_answer").innerHTML = `
+                <span class="fw-bold fs-5">Richtige
+                                Antwort</span><br><span>${answer}</span>
+            `
+
+            if (image != null) {
+                document.getElementById("image").style.display = "block";
+                document.getElementById("image").innerHTML = `
+                <p class="fs-5 with-line"><span class="fw-bold fs-5">Bild</span><br>
+                    <img class="img-fluid" style="max-width: 100%; margin-top: 12px;" src="../static/FileUploads/${image}"></img>
+                `
+            } else {
+                document.getElementById("image").style.display = "none";
+            }
         })
 
         socket.on("clear_leaderboard", function () {

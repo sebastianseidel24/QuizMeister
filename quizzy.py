@@ -409,6 +409,24 @@ def handle_answer(session_code, question_id, playername, answer):
     emit("send_answer", (question_id, playername, answer), to=session_code)
 
 
+@socketio.on("share_correct_answer")
+def handle_share_answer(session_code, quiz_id, question_id):
+    with sqlite3.connect('quizzy.db') as con:
+        cur = con.cursor()
+
+        # Frage-Daten laden
+        cur.execute("SELECT * FROM questions WHERE quiz_id = (?) AND question_id = (?)", (quiz_id, question_id))
+        question = cur.fetchone()
+        
+        question_text = question[2]
+        category = question[3]
+        points = question[7]
+        image = question[5]
+        answer = question[6]
+        
+    emit("send_correct_answer", (question_id, question_text, category, points, image, answer), to=session_code)
+
+
 @socketio.on("calculate_points")
 def handle_calculate_points(session_code, playername, points):
     quiz_session = quiz_sessions[session_code]
