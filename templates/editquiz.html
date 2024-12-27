@@ -46,6 +46,7 @@
                                 <label for="inputCategory" class="form-label">Kategorie</label>
                                 <select class="form-select" id="category" name="questions[{{ question[1]-1 }}][category]" required>
                                     <option {{ "selected" if question[3]=="Allgemeinwissen" }}>Allgemeinwissen</option>
+                                    <option {{ "selected" if question[3]=="Essen und Trinken" }}>Essen und Trinken</option>
                                     <option {{ "selected" if question[3]=="Geschichte" }}>Geschichte</option>
                                     <option {{ "selected" if question[3]=="Geografie" }}>Geografie</option>
                                     <option {{ "selected" if question[3]=="Kunst" }}>Kunst</option>
@@ -162,6 +163,7 @@
                             <label for="inputCategory" class="form-label">Kategorie</label>
                             <select class="form-select" id="category" name="questions[${questionIndex}][category]" required>
                                 <option selected>Allgemeinwissen</option>
+                                <option>Essen und Trinken</option>
                                 <option>Geschichte</option>
                                 <option>Geografie</option>
                                 <option>Kunst</option>
