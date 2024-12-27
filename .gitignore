@@ -8,3 +8,6 @@ __pycache__/
 
 # Umgebungsdateien (z. B. für sensible Daten)
 *.env
+
+# Python Skript für DB
+create_table.py
