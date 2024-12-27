@@ -28,7 +28,15 @@
             <div id="questions">
                 <div class="question" id="question-0">
                     <div class="row justify-content-center with-background" style="padding-top: 12px;">
-                        <div class="col-2"></div>
+                        <div class="col-2 position-relative">
+                            <div class="position-absolute top-0 start-0"><button class="btn btn-primary" id="move-up-btn-0" type="button"
+                                    style="margin-left: 12px;" onclick="moveQuestionUp(0)" disabled><i
+                                        class="fa-solid fa-arrow-up"></i></button></div>
+                            <div class="position-absolute bottom-0 start-0"><button class="btn btn-primary" id="move-down-btn-0"
+                                    type="button" style="margin-left: 12px; margin-bottom: 12px;"
+                                    onclick="moveQuestionDown(0)" disabled><i
+                                        class="fa-solid fa-arrow-down"></i></button></div>
+                        </div>
                         <div class="col-8">
 
                             <div class="mb-3">
@@ -66,8 +74,7 @@
 
                             <div class="mb-3">
                                 <label for="inputImage" class="form-label">Bild</label>
-                                <input class="form-control" type="file"
-                                    name="questions[0][image]"></input>
+                                <input class="form-control" type="file" name="questions[0][image]"></input>
                             </div>
 
                             <div class="mb-3">
@@ -85,7 +92,7 @@
 
                         </div>
                         <div class="col-2 text-end">
-                            <button class="btn btn-primary" type="button" onclick="deleteQuestion(0)"><i
+                            <button class="btn btn-primary" id="delete-question-btn-0" type="button" onclick="deleteQuestion(0)" disabled><i
                                     class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
@@ -117,6 +124,17 @@
             questionCounter.innerText = questionDivs.length;
         }
 
+        function updateDisabledButtons() {
+            document.getElementById(`move-up-btn-0`).disabled = true;
+            document.getElementById(`move-down-btn-${questionIndex-1}`).disabled = true;
+
+            if(questionIndex == 1) {
+                document.getElementById(`delete-question-btn-0`).disabled = true;
+            } else {
+                document.getElementById(`delete-question-btn-0`).disabled = false;
+            }
+        }
+
         function addQuestion() {
             const questionsDiv = document.getElementById("questions");
             const newQuestionDiv = document.createElement("div");
@@ -124,7 +142,15 @@
             newQuestionDiv.setAttribute("id", `question-${questionIndex}`);
             newQuestionDiv.innerHTML = `
                 <div class="row justify-content-center with-background" style="padding-top: 12px; margin-top: 12px">
-                    <div class="col-2"></div>
+                    <div class="col-2 position-relative">
+                        <div class="position-absolute top-0 start-0"><button class="btn btn-primary" id="move-up-btn-${questionIndex}"
+                                type="button" style="margin-left: 12px;" onclick="moveQuestionUp(${questionIndex})"><i
+                                    class="fa-solid fa-arrow-up"></i></button></div>
+                        <div class="position-absolute bottom-0 start-0"><button class="btn btn-primary" id="move-down-btn-${questionIndex}"
+                                type="button" style="margin-left: 12px; margin-bottom: 12px;" onclick="moveQuestionDown(${questionIndex})" disabled><i
+                                    class="fa-solid fa-arrow-down"></i></button></div>
+                    </div>
+
                     <div class="col-8">
 
                         <div class="mb-3">
@@ -180,14 +206,18 @@
 
                     </div>
                     <div class="col-2 text-end">
-                        <button class="btn btn-primary" type="button" onclick="deleteQuestion(${questionIndex})"><i
+                        <button class="btn btn-primary" id="delete-question-btn-${questionIndex}" type="button" onclick="deleteQuestion(${questionIndex})"><i
                                 class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
                 `;
             questionsDiv.appendChild(newQuestionDiv);
+
+            document.getElementById(`move-down-btn-${questionIndex - 1}`).disabled = false;
+
             questionIndex++;
             updateQuestionCounter();
+            updateDisabledButtons();
         }
 
         function deleteQuestion(qid) {
@@ -218,12 +248,18 @@
                 questionDiv.querySelector(".form-select").setAttribute("name", `questions[${index}][category]`);
 
                 // Aktualisiere den "Diese Frage entfernen"-Button
-                questionDiv.querySelector("button").setAttribute("onclick", `deleteQuestion(${index})`);
+                questionDiv.querySelectorAll("button")[0].setAttribute("onclick", `moveQuestionUp(${index})`);
+                questionDiv.querySelectorAll("button")[0].setAttribute("id", `move-up-btn-${index}`);
+                questionDiv.querySelectorAll("button")[1].setAttribute("onclick", `moveQuestionDown(${index})`);
+                questionDiv.querySelectorAll("button")[1].setAttribute("id", `move-down-btn-${index}`);
+                questionDiv.querySelectorAll("button")[2].setAttribute("onclick", `deleteQuestion(${index})`);
+                questionDiv.querySelectorAll("button")[2].setAttribute("id", `delete-question-btn-${index}`);
             });
 
             // Frageindex zurücksetzen, falls erforderlich
             questionIndex = questionDivs.length;
             updateQuestionCounter();
+            updateDisabledButtons();
         }
     </script>
 

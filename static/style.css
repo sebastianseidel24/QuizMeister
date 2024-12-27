@@ -67,6 +67,15 @@ ul {
     font-weight: 500;
 }
 
+.btn-primary:disabled {
+    background-color: #ccccfd;
+    border-color: rgb(52, 0, 130);
+    border-width: 2px;
+    color: rgb(52, 0, 130);
+    font-weight: 500;
+    opacity: 40%;
+}
+
 :not(.btn-check)+.btn:active {
     background-color: rgb(111, 51, 201);
     border-color: rgb(111, 51, 201);

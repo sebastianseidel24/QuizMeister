@@ -31,7 +31,16 @@
                 <!-- Bearbeiten der Fragen -->
                 <div class="question" id="question-{{ question[1]-1 }}">
                     <div class="row justify-content-center with-background" style="padding-top: 12px;margin-top: 12px;">
-                        <div class="col-2"></div>
+                        <div class="col-2 position-relative">
+                            <div class="position-absolute top-0 start-0"><button class="btn btn-primary" id="move-up-btn-{{ question[1]-1 }}" type="button"
+                                    style="margin-left: 12px;" onclick="moveQuestionUp('{{ question[1]-1 }}')" {{ "disabled" if question[1]-1 == 0 }}><i
+                                        class="fa-solid fa-arrow-up"></i></button></div>
+                            <div class="position-absolute bottom-0 start-0"><button class="btn btn-primary" id="move-down-btn-{{ question[1]-1 }}"
+                                    type="button" style="margin-left: 12px; margin-bottom: 12px;"
+                                    onclick="moveQuestionDown('{{ question[1]-1 }}')" {{ "disabled" if questions|length == 1 }}><i
+                                        class="fa-solid fa-arrow-down"></i></button></div>
+                        </div>
+
                         <div class="col-8">
 
                             <div class="mb-3">
@@ -107,8 +116,8 @@
 
                         </div>
                         <div class="col-2 text-end">
-                            <button class="btn btn-primary" type="button" id="deleteQuestionButton"
-                                onclick="deleteQuestion('{{ question[1]-1 }}')"><i
+                            <button class="btn btn-primary" type="button" id="delete-question-btn-{{ question[1]-1 }}"
+                                onclick="deleteQuestion('{{ question[1]-1 }}')" {{ "disabled" if questions|length == 1 }}><i
                                     class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
@@ -134,13 +143,23 @@
         const questionsDiv = document.getElementById("questions");
         const questionDivs = questionsDiv.getElementsByClassName("question");
         let questionIndex = questionDivs.length;
-        console.log(questionIndex);
 
         function updateQuestionCounter() {
             const questionCounter = document.getElementById("question-counter");
             const questionsDiv = document.getElementById("questions");
             const questionDivs = questionsDiv.getElementsByClassName("question");
             questionCounter.innerText = questionDivs.length;
+        }
+
+        function updateDisabledButtons() {
+            document.getElementById(`move-up-btn-0`).disabled = true;
+            document.getElementById(`move-down-btn-${questionIndex-1}`).disabled = true;
+
+            if(questionIndex == 1) {
+                document.getElementById(`delete-question-btn-0`).disabled = true;
+            } else {
+                document.getElementById(`delete-question-btn-0`).disabled = false;
+            }
         }
 
         function addQuestion() {
@@ -150,7 +169,15 @@
             newQuestionDiv.setAttribute("id", `question-${questionIndex}`);
             newQuestionDiv.innerHTML = `
                 <div class="row justify-content-center with-background" style="padding-top: 12px; margin-top: 12px">
-                    <div class="col-2"></div>
+                    <div class="col-2 position-relative">
+                        <div class="position-absolute top-0 start-0"><button class="btn btn-primary" id="move-up-btn-${questionIndex}"
+                                type="button" style="margin-left: 12px;" onclick="moveQuestionUp(${questionIndex})"><i
+                                    class="fa-solid fa-arrow-up"></i></button></div>
+                        <div class="position-absolute bottom-0 start-0"><button class="btn btn-primary" id="move-down-btn-${questionIndex}"
+                                type="button" style="margin-left: 12px; margin-bottom: 12px;" onclick="moveQuestionDown(${questionIndex})" disabled><i
+                                    class="fa-solid fa-arrow-down"></i></button></div>
+                    </div>
+
                     <div class="col-8">
 
                         <div class="mb-3">
@@ -206,19 +233,23 @@
 
                     </div>
                     <div class="col-2 text-end">
-                        <button class="btn btn-primary" type="button" id="deleteQuestionButton" onclick="deleteQuestion(${questionIndex})"><i
+                        <button class="btn btn-primary" type="button" id="delete-question-btn" onclick="deleteQuestion(${questionIndex})"><i
                                 class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
                 `;
             questionsDiv.appendChild(newQuestionDiv);
+
+            document.getElementById(`move-down-btn-${questionIndex - 1}`).disabled = false;
+
             questionIndex++;
             console.log(questionIndex);
             updateQuestionCounter();
+            updateDisabledButtons();
         }
 
         function deleteQuestion(qid) {
-            var question_id = Number(qid);
+            let question_id = Number(qid);
 
             // Entferne die Frage
             const question_to_delete = document.getElementById(`question-${question_id}`);
@@ -252,14 +283,20 @@
                 questionDiv.querySelector("#answer").setAttribute("name", `questions[${index}][answer]`);
                 questionDiv.querySelector("#points").setAttribute("name", `questions[${index}][points]`);
 
-                // Aktualisiere den "Diese Frage entfernen"-Button
-                questionDiv.querySelector("#deleteQuestionButton").setAttribute("onclick", `deleteQuestion(${index})`);
+                // Aktualisiere die Buttons
+                questionDiv.querySelectorAll("button")[0].setAttribute("onclick", `moveQuestionUp(${index})`);
+                questionDiv.querySelectorAll("button")[0].setAttribute("id", `move-up-btn-${index}`);
+                questionDiv.querySelectorAll("button")[1].setAttribute("onclick", `moveQuestionDown(${index})`);
+                questionDiv.querySelectorAll("button")[1].setAttribute("id", `move-down-btn-${index}`);
+                questionDiv.querySelectorAll("button")[2].setAttribute("onclick", `deleteQuestion(${index})`);
+                questionDiv.querySelectorAll("button")[2].setAttribute("id", `delete-question-btn-${index}`);
             });
 
             // Frageindex zurücksetzen, falls erforderlich
             questionIndex = questionDivs.length;
             console.log(questionIndex);
             updateQuestionCounter();
+            updateDisabledButtons();
         }
 
         function deleteImage(qid) {
