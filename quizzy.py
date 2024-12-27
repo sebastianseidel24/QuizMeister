@@ -6,13 +6,15 @@ import string
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 
 UPLOAD_FOLDER = 'static\\FileUploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+load_dotenv()
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_fallback_key')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 socketio = SocketIO(app)
 
 def allowed_file(filename):
