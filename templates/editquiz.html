@@ -37,7 +37,7 @@
                                         class="fa-solid fa-arrow-up"></i></button></div>
                             <div class="position-absolute bottom-0 start-0"><button class="btn btn-primary" id="move-down-btn-{{ question[1]-1 }}"
                                     type="button" style="margin-left: 12px; margin-bottom: 12px;"
-                                    onclick="moveQuestionDown('{{ question[1]-1 }}')" {{ "disabled" if questions|length == 1 }}><i
+                                    onclick="moveQuestionDown('{{ question[1]-1 }}')" {{ "disabled" if question[1] == questions|length }}><i
                                         class="fa-solid fa-arrow-down"></i></button></div>
                         </div>
 
@@ -144,22 +144,66 @@
         const questionDivs = questionsDiv.getElementsByClassName("question");
         let questionIndex = questionDivs.length;
 
+        function updateQuestionNumbering() {
+            // Alle verbleibenden Fragen neu nummerieren
+            // const questionsDiv = document.getElementById("questions");
+            // const questionDivs = questionsDiv.getElementsByClassName("question");
+
+            Array.from(questionDivs).forEach((questionDiv, index) => {
+
+                // Aktualisiere die ID des Frage-Divs
+                questionDiv.id = `question-${index}`;
+
+                //Aktualisiere die Nummerierung der Frage
+                const inputQuestion = questionDiv.querySelector('label[name="inputQuestion"]')
+                inputQuestion.innerText = `Frage ${index + 1}`;
+
+                // Aktualisiere die Nummerierung und Name-Attribute der Felder
+                questionDiv.querySelector("#question").setAttribute("name", `questions[${index}][question]`);
+                questionDiv.querySelector("#category").setAttribute("name", `questions[${index}][category]`);
+                questionDiv.querySelector("#description").setAttribute("name", `questions[${index}][description]`);
+                if (questionDiv.querySelector("#image-filename")) {
+                    questionDiv.querySelector("#image-filename").setAttribute("name", `questions[${index}][image-filename]`);
+                }
+                if (questionDiv.querySelector("#image")) {
+                    questionDiv.querySelector("#image").setAttribute("name", `questions[${index}][image]`);
+                }
+                questionDiv.querySelector("#answer").setAttribute("name", `questions[${index}][answer]`);
+                questionDiv.querySelector("#points").setAttribute("name", `questions[${index}][points]`);
+
+                // Aktualisiere die Buttons
+                questionDiv.querySelectorAll("button")[0].setAttribute("onclick", `moveQuestionUp(${index})`);
+                questionDiv.querySelectorAll("button")[0].setAttribute("id", `move-up-btn-${index}`);
+                questionDiv.querySelectorAll("button")[0].disabled = false;
+                questionDiv.querySelectorAll("button")[1].setAttribute("onclick", `moveQuestionDown(${index})`);
+                questionDiv.querySelectorAll("button")[1].setAttribute("id", `move-down-btn-${index}`);
+                questionDiv.querySelectorAll("button")[1].disabled = false;
+                questionDiv.querySelectorAll("button")[2].setAttribute("onclick", `deleteQuestion(${index})`);
+                questionDiv.querySelectorAll("button")[2].setAttribute("id", `delete-question-btn-${index}`);
+            });
+
+            // Frageindex zurücksetzen, falls erforderlich
+            questionIndex = questionDivs.length; 
+            
+            // Ersten und letzten Verschiebe-Button disablen
+            document.getElementById(`move-up-btn-0`).disabled = true;
+            document.getElementById(`move-down-btn-${questionIndex - 1}`).disabled = true;
+
+            // Löschen-Button disablen, wenn nur eine Frage existiert
+            if (questionIndex == 1) {
+                document.getElementById(`delete-question-btn-0`).disabled = true;
+            } else {
+                document.getElementById(`delete-question-btn-0`).disabled = false;
+            }
+
+            updateQuestionCounter();
+        }
+
         function updateQuestionCounter() {
             const questionCounter = document.getElementById("question-counter");
             const questionsDiv = document.getElementById("questions");
             const questionDivs = questionsDiv.getElementsByClassName("question");
             questionCounter.innerText = questionDivs.length;
-        }
-
-        function updateDisabledButtons() {
-            document.getElementById(`move-up-btn-0`).disabled = true;
-            document.getElementById(`move-down-btn-${questionIndex-1}`).disabled = true;
-
-            if(questionIndex == 1) {
-                document.getElementById(`delete-question-btn-0`).disabled = true;
-            } else {
-                document.getElementById(`delete-question-btn-0`).disabled = false;
-            }
         }
 
         function addQuestion() {
@@ -243,9 +287,7 @@
             document.getElementById(`move-down-btn-${questionIndex - 1}`).disabled = false;
 
             questionIndex++;
-            console.log(questionIndex);
             updateQuestionCounter();
-            updateDisabledButtons();
         }
 
         function deleteQuestion(qid) {
@@ -257,46 +299,7 @@
                 question_to_delete.parentNode.removeChild(question_to_delete);
             }
 
-            // Alle verbleibenden Fragen neu nummerieren
-            const questionsDiv = document.getElementById("questions");
-            const questionDivs = questionsDiv.getElementsByClassName("question");
-
-            Array.from(questionDivs).forEach((questionDiv, index) => {
-
-                // Aktualisiere die ID des Frage-Divs
-                questionDiv.id = `question-${index}`;
-
-                //Aktualisiere die Nummerierung der Frage
-                const inputQuestion = questionDiv.querySelector('label[name="inputQuestion"]')
-                inputQuestion.innerText = `Frage ${index + 1}`;
-
-                // Aktualisiere die Nummerierung und Name-Attribute der Felder
-                questionDiv.querySelector("#question").setAttribute("name", `questions[${index}][question]`);
-                questionDiv.querySelector("#category").setAttribute("name", `questions[${index}][category]`);
-                questionDiv.querySelector("#description").setAttribute("name", `questions[${index}][description]`);
-                if (questionDiv.querySelector("#image-filename")) {
-                    questionDiv.querySelector("#image-filename").setAttribute("name", `questions[${index}][image-filename]`);
-                }
-                if (questionDiv.querySelector("#image")) {
-                    questionDiv.querySelector("#image").setAttribute("name", `questions[${index}][image]`);
-                }
-                questionDiv.querySelector("#answer").setAttribute("name", `questions[${index}][answer]`);
-                questionDiv.querySelector("#points").setAttribute("name", `questions[${index}][points]`);
-
-                // Aktualisiere die Buttons
-                questionDiv.querySelectorAll("button")[0].setAttribute("onclick", `moveQuestionUp(${index})`);
-                questionDiv.querySelectorAll("button")[0].setAttribute("id", `move-up-btn-${index}`);
-                questionDiv.querySelectorAll("button")[1].setAttribute("onclick", `moveQuestionDown(${index})`);
-                questionDiv.querySelectorAll("button")[1].setAttribute("id", `move-down-btn-${index}`);
-                questionDiv.querySelectorAll("button")[2].setAttribute("onclick", `deleteQuestion(${index})`);
-                questionDiv.querySelectorAll("button")[2].setAttribute("id", `delete-question-btn-${index}`);
-            });
-
-            // Frageindex zurücksetzen, falls erforderlich
-            questionIndex = questionDivs.length;
-            console.log(questionIndex);
-            updateQuestionCounter();
-            updateDisabledButtons();
+            updateQuestionNumbering();
         }
 
         function deleteImage(qid) {
@@ -312,6 +315,55 @@
                 </div>
                 `
             }
+        }
+
+        function moveQuestionDown(que_id) {
+            let qid = Number(que_id)
+            //const questionsDiv = document.getElementById("questions");
+            const currentQuestionDiv = document.getElementById(`question-${qid}`);
+
+            if (!currentQuestionDiv) {
+                console.error(`Frage mit ID question-${qid} nicht gefunden.`);
+                return;
+            }
+
+            // Finde das nächste Frage-Div
+            const nextQuestionDiv = currentQuestionDiv.nextElementSibling;
+
+            if (!nextQuestionDiv || !nextQuestionDiv.classList.contains("question")) {
+                console.warn(`Kein nächstes Frage-Div vorhanden für question-${qid}.`);
+                return;
+            }
+
+            // Tausche die Position der beiden Divs
+            questionsDiv.insertBefore(nextQuestionDiv, currentQuestionDiv);
+
+            // Fragen und Felder neu nummerieren
+            updateQuestionNumbering();
+        }
+
+        function moveQuestionUp(que_id) {
+            let qid = Number(que_id)
+            //const questionsDiv = document.getElementById("questions");
+            const currentQuestionDiv = document.getElementById(`question-${qid}`);
+
+            if (!currentQuestionDiv) {
+                console.error(`Frage mit ID question-${qid} nicht gefunden.`);
+                return;
+            }
+
+            // Finde das vorhergehende Frage-Div
+            const previousQuestionDiv = currentQuestionDiv.previousElementSibling;
+
+            if (!previousQuestionDiv || !previousQuestionDiv.classList.contains("question")) {
+                console.warn(`Kein vorhergehendes Frage-Div vorhanden für question-${qid}.`);
+                return;
+            }
+
+            // Tausche die Position der beiden Divs
+            questionsDiv.insertBefore(currentQuestionDiv, previousQuestionDiv);
+            // Fragen und Felder neu nummerieren
+            updateQuestionNumbering();
         }
     </script>
 
