@@ -282,22 +282,11 @@ def editquiz(quiz_id):
         
         return render_template("editquiz.html", quiz=quiz, questions=questions)
 
+
 # Gemini-API Konfiguration
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 MODEL = genai.GenerativeModel("gemini-1.5-flash")
-
-# Struktur für Output festlegen
-class Question(typing.TypedDict):
-    question_id: int
-    category: str
-    question_text: str
-    answer: str
-
-# Generation Config
-GENERATION_CONFIG  = genai.GenerationConfig(
-        response_mime_type="application/json", 
-        response_schema=list[Question]
-    )
+GENERATION_CONFIG  = genai.GenerationConfig(response_mime_type="application/json")
 
 # Mittels Gemini-API Fragen generieren lassen
 def generate_questions(number_of_questions: int, difficulty: str):
@@ -312,11 +301,28 @@ def generate_questions(number_of_questions: int, difficulty: str):
             Zusätzliche Anforderungen:  
             - Die Fragen sollten eine {difficulty} Schwierigkeit haben.  
             - Vermeide Wiederholungen in den Fragen oder Antworten.
+            - Nutze eine klare und präzise Sprache.
+            
+            Beispiel-Ausgabe:
+            [
+                {{
+                "question_id": 0,
+                "category": "Geografie",
+                "question_text": "Welches ist das größte Land der Welt nach Fläche?",
+                "answer": "Russland"
+                }},
+                {{
+                "question_id": 1,
+                "category": "Musik",
+                "question_text": "Welcher Künstler hat das Album Thriller veröffentlicht?",
+                "answer": "Michael Jackson"
+                }},
+                ...
+            ]
             '''
     
     generated_questions = MODEL.generate_content(prompt, generation_config=GENERATION_CONFIG)
-    print(generated_questions)
-    # return generated_questions
+    return(eval(generated_questions.text))
 
 # Sessions-Logik
 
