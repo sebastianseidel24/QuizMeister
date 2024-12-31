@@ -289,12 +289,12 @@ MODEL = genai.GenerativeModel("gemini-1.5-flash")
 GENERATION_CONFIG  = genai.GenerationConfig(response_mime_type="application/json")
 
 # Mittels Gemini-API Fragen generieren lassen
-def generate_questions(number_of_questions: int, difficulty: str):
+def generate_questions(number_of_questions: int, categories: str, difficulty: str):
     prompt = f'''
             Erstelle eine Liste, die aus genau {number_of_questions} vielseitigen und kreativen Quiz-Fragen für ein Pub-Quiz besteht. Jede Frage muss folgende Felder enthalten:
 
             1. "question_id" (Typ: Integer): Eine fortlaufende ID, beginnend mit 0.  
-            2. "category" (Typ: String): Eine zufällig gewählte Kategorie aus den folgenden Optionen: Allgemeinwissen, Essen und Trinken, Geschichte, Geografie, Kunst, Literatur, Musik, Naturwissenschaften, Politik, Sport, Technik, Tiere, Unterhaltung, Weltkulturen, Wirtschaft.  
+            2. "category" (Typ: String): Eine zufällig gewählte Kategorie aus den folgenden Optionen: {categories}.  
             3. "question_text" (Typ: String): Der Fragetext, formuliert als vollständiger Satz, ohne die Verwendung von Anführungszeichen.  
             4. "answer" (Typ: String): Die korrekte Antwort auf die Frage, ebenfalls ohne die Verwendung von Anführungszeichen.
 

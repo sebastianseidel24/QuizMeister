@@ -19,15 +19,46 @@
 
                     <!-- Counter-Anzeige für die Anzahl der Fragen -->
                     <div class="text-center">
-                        <strong>Anzahl Fragen: <span id="question-counter">1</span></strong>
+                        <div class="fw-bold mb-3">Anzahl Fragen: <span id="question-counter">1</span></div>
+
+                        <button type="button" class="btn btn-secondary mb-3" data-bs-toggle="modal"
+                            data-bs-target="#generateQuestionsModal"><i class="fa-solid fa-wand-magic-sparkles"></i>
+                            Fragen
+                            generieren lassen</button>
+
+                        <div class="modal fade" id="generateQuestionsModal" tabindex="-1"
+                            aria-labelledby="generateQuestionsModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="generateQuestionsModalLabel">Hier kannst du
+                                            Fragen per KI generieren lassen</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="numberOfQuestions" class="form-label">Anzahl Fragen</label>
+                                        <input type="range" class="form-range" id="numberOfQuestions" name="numberOfQuestions" value="10" min="1" max="20"
+                                            oninput="this.nextElementSibling.value = this.value">
+                                        <output>10</output>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary"
+                                            data-bs-dismiss="modal">Zurück</button>
+                                        <button type="button" class="btn btn-secondary"><i
+                                                class="fa-solid fa-wand-magic-sparkles"></i> Generieren</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <br>
                 </div>
             </div>
             <!-- Hinzufügen der Fragen -->
             <div id="questions">
                 <div class="question" id="question-0">
-                    <div class="row justify-content-center with-background" style="padding-top: 12px; margin-top: 12px;">
+                    <div class="row justify-content-center with-background"
+                        style="padding-top: 12px; margin-top: 12px;">
                         <div class="col-2 position-relative">
                             <div class="position-absolute top-0 start-0"><button class="btn btn-primary"
                                     id="move-up-btn-0" type="button" style="margin-left: 12px;"
