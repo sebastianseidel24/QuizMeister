@@ -476,14 +476,19 @@ def handle_host_session(quiz_id):
         quiz_session["players"] = {}
         
         print(f"Host hat Room '{session_code}' für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
+        players_answers = None
         
     else:
+        players_answers = {}
+        for playername, player_data in quiz_sessions[session_code]["players"].items():
+            players_answers[playername] = player_data.get("answers", {})
+        print(players_answers)
         print(f"Host hat Room '{session_code}' für Quiz '{quiz_name}' mit ID {quiz_id} wieder betreten.")
         
     # Host tritt dem Room bei (auch bei Wiedereinstieg)
     join_room(session_code)
     print(quiz_sessions)
-    emit("session_created", session_code, broadcast=False)
+    emit("session_created", {"session_code": session_code, "players_answers": players_answers}, broadcast=False)
 
 
 

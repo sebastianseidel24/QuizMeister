@@ -61,9 +61,7 @@
                             <span>Bisher wurden keine Antworten abgegeben.</span>
                         </div>
 
-                        <div class="fs-5" id="answers_Q{{ question[1] }}" style="display: none;">
-                            <!-- Platzhalter für Antworten -->
-                        </div>
+                        <div class="fs-5" id="answers_Q{{ question[1] }}" style="display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -117,9 +115,55 @@
             socket.emit("host_session", quiz_id);
         });
 
-        socket.on("session_created", function (session_code) {
+        socket.on("session_created", function (data) {
+            const session_code = data.session_code;
+            const players_answers = data.players_answers;
+
             document.getElementById("session_code").innerText = "Aktive Session: " + session_code;
             session_id = session_code;
+
+            // Antworten anzeigen, falls Session neu gestartet wurde
+            if (players_answers != null) {
+                for (const playername in players_answers) {
+                    const answers_of_player = players_answers[playername];
+
+                    for (const question_id in answers_of_player) {
+                        const answer = answers_of_player[question_id];
+
+                        document.getElementById(`no_answers_Q${question_id}`).style.display = "none";
+                        document.getElementById(`answers_Q${question_id}`).style.display = "block";
+
+                        // Überschiften für Antwort-Tabelle, falls noch nicht vorhanden
+                        if (document.getElementById(`answers_Q${question_id}`).innerHTML.trim() === "") {
+                            document.getElementById(`answers_Q${question_id}`).innerHTML = `
+                                <div class="row row-cols-3" style="margin-bottom: 12px;">
+                                    <div class="col-2 fw-bold">Spieler</div>
+                                    <div class="col-6 col-md-8 fw-bold">Antworten</div>
+                                    <div class="col-4 col-md-2 fw-bold">Wertung</div>
+                                </div>
+                                `;
+                        }
+
+                        let points = document.getElementById(`points_Q${question_id}`).innerText;
+                        points = Number(points);
+
+                        document.getElementById(`answers_Q${question_id}`).innerHTML += `
+                            <div class="row row-cols-3 with-border" style="margin-bottom: 8px; padding-left: 0px; padding-right: 0px;">
+                                <div class="col-2">${playername}</div>
+                                <div class="col-6 col-md-8">${answer}</div>
+                                <div class="col-4 col-md-2" style="padding-left: 8px; padding-right: 8px;">
+                                    <div class="input-group input-group-sm">
+                                        <input type="radio" class="btn-check" name="options_${question_id}_${playername}" id="correct_${question_id}_${playername}" autocomplete="off">
+                                        <label class="btn btn-outline-success rounded-start" for="correct_${question_id}_${playername}" style="border-width: 2px; margin-left: 0px;" onclick="setPoints(true, ${question_id}, '${playername}', ${points})"><i class="fa-solid fa-check"></i></label>
+                                        <input type="radio" class="btn-check" name="options_${question_id}_${playername}" id="wrong_${question_id}_${playername}" autocomplete="off">
+                                        <label class="btn btn-outline-danger" for="wrong_${question_id}_${playername}" style="border-width: 2px; margin-left: 0px;" onclick="setPoints(false, ${question_id}, '${playername}', ${points})"><i class="fa-solid fa-xmark"></i></label>
+                                        <input class="form-control" id="points_${question_id}_${playername}" type="number" value="" min="0" max="5" step="0.5" disabled>
+                                    </div>
+                                </div>
+                            </div>`;
+                    }
+                }
+            }
         });
 
         socket.on("new_player", function (session_code, quiz_id, quiz_name, playername, points, place) {
@@ -171,7 +215,7 @@
             let points = document.getElementById(`points_Q${question_id}`).innerText;
             points = Number(points);
 
-            document.getElementById(`answers_Q${question_id}`).innerHTML = document.getElementById(`answers_Q${question_id}`).innerHTML + `
+            document.getElementById(`answers_Q${question_id}`).innerHTML += `
             <div class="row row-cols-3 with-border" style="margin-bottom: 8px; padding-left: 0px; padding-right: 0px;">
                 <div class="col-2">${playername}</div>
                 <div class="col-6 col-md-8">${answer}</div>
