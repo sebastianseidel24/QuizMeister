@@ -366,9 +366,12 @@ def generate_questions(number_of_questions: int, categories: str, difficulty: st
                 ]
                 '''
     print(prompt)
-    generated_questions = MODEL.generate_content(prompt, generation_config=GENERATION_CONFIG)
-    print(generated_questions.text)
-    return(eval(generated_questions.text))
+    
+    generated_questions = MODEL.generate_content(prompt, generation_config=GENERATION_CONFIG).text
+    
+    generated_questions = generated_questions[generated_questions.index("["):] # Falls die Antwort nicht mit einer Liste beginnt, wird der Anfang der Liste gesucht
+    print(generated_questions)
+    return(eval(generated_questions)) # Die Antwort wird in ein Python-Objekt (Liste) umgewandelt und zurückgegeben
 
 # Sessions-Logik
 
