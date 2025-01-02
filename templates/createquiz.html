@@ -123,11 +123,11 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5  pt-0 pb-0" id="generateQuestionsModalLabel">Fragen
+                        <h1 class="modal-title fs-5 pt-0 pb-0" id="generateQuestionsModalLabel">Fragen
                             mittels KI generieren lassen</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body text-center">
                         <form id="generateQuestionsForm">
                             <div class="with-line">
                                 <label for="numberOfQuestions" class="form-label fw-bold">Anzahl
@@ -432,7 +432,8 @@
             event.preventDefault(); // Verhindert das Standardverhalten (Seiten-Neuladen)
 
             // Lade-Animation anzeigen
-            document.getElementById("alert_placeholder").innerHTML = `
+            document.getElementById("alert_placeholder").innerHTML = `    
+                <h5>Fragen werden generiert...</h5>
                 <div class="spinner-border" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -583,7 +584,6 @@
             updateQuestionNumbering();
         }
 
-        // document.addEventListener('DOMContentLoaded', fetchQuestions);
     </script>
 
     <script>

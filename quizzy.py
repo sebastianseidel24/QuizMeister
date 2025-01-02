@@ -313,7 +313,7 @@ GENERATION_CONFIG  = genai.GenerationConfig(response_mime_type="application/json
 
 # Mittels Gemini-API Fragen generieren lassen
 def generate_questions(number_of_questions: int, categories: str, difficulty: str):
-    if (number_of_questions == 1):
+    if (number_of_questions == "1"):
         prompt = f'''
                 Erstelle eine Liste, die aus genau einer kreativen Quiz-Frage für ein Pub-Quiz besteht. Die Frage muss folgende Felder enthalten:
 
