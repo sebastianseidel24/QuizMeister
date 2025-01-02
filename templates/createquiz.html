@@ -9,6 +9,7 @@
     <h1>Neues Quiz erstellen</h1>
 
     <div class="container text-start">
+        <div id="alert_placeholder" class="text-center"></div>
         <form action="{{ url_for('createquiz') }}" method="POST" enctype="multipart/form-data">
             <div class="row justify-content-center">
                 <div class="col-8">
@@ -25,123 +26,6 @@
                             data-bs-target="#generateQuestionsModal"><i class="fa-solid fa-wand-magic-sparkles"></i>
                             Fragen generieren lassen</button>
 
-                        <div class="modal fade" id="generateQuestionsModal" tabindex="-1"
-                            aria-labelledby="generateQuestionsModalLabel">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5  pt-0 pb-0" id="generateQuestionsModalLabel">Fragen
-                                            mittels KI generieren lassen</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="with-line">
-                                            <label for="numberOfQuestions" class="form-label fw-bold">Anzahl
-                                                Fragen</label>
-                                            <input type="range" class="form-range custom-slider" id="numberOfQuestions"
-                                                name="numberOfQuestions" value="10" min="1" max="19"
-                                                oninput="this.nextElementSibling.value = this.value">
-                                            <output>10</output>
-                                        </div>
-                                        <div class="with-line pt-3">
-                                            <label for="difficulty" class="form-label fw-bold">Schwierigkeit</label>
-                                            <select class="form-select" id="difficulty" name="difficulty">
-                                                <option value="Gering">Gering</option>
-                                                <option value="Mittel" selected>Mittel</option>
-                                                <option value="Hoch">Hoch</option>
-                                            </select>
-                                        </div>
-                                        <div class="pt-3">
-                                            <label class="form-label fw-bold" data-bs-toggle="tooltip"
-                                                title="Die Kategorien werden zufällig aus den unten ausgewählten Kategorien gewählt.">Kategorien</label>
-                                            <div>
-                                                <input type="checkbox" class="btn-check" id="btn-check-allgemeinwissen"
-                                                    name="btn-check-allgemeinwissen" value="Allgemeinwissen" checked
-                                                    autocomplete="off">
-                                                <label class="btn mb-1"
-                                                    for="btn-check-allgemeinwissen">Allgemeinwissen</label>
-
-                                                <input type="checkbox" class="btn-check"
-                                                    id="btn-check-essen-und-trinken" name="btn-check-essen-und-trinken"
-                                                    value="Essen und Trinken" checked autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-essen-und-trinken">Essen und
-                                                    Trinken</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-geschichte"
-                                                    name="btn-check-geschichte" value="Geschichte" checked
-                                                    autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-geschichte">Geschichte</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-geografie"
-                                                    name="btn-check-geografie" value="Geografie" checked
-                                                    autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-geografie">Geografie</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-kunst"
-                                                    name="btn-check-kunst" value="Kunst" checked autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-kunst">Kunst</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-literatur"
-                                                    name="btn-check-literatur" value="Literatur" checked
-                                                    autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-literatur">Literatur</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-musik"
-                                                    name="btn-check-musik" value="Musik" checked autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-musik">Musik</label>
-
-                                                <input type="checkbox" class="btn-check"
-                                                    id="btn-check-naturwissenschaften"
-                                                    name="btn-check-naturwissenschaften" value="Naturwissenschaften"
-                                                    checked autocomplete="off">
-                                                <label class="btn mb-1"
-                                                    for="btn-check-naturwissenschaften">Naturwissenschaften</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-politik"
-                                                    name="btn-check-politik" value="Politik" checked autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-politik">Politik</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-sport"
-                                                    name="btn-check-sport" value="Sport" checked autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-sport">Sport</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-technik"
-                                                    name="btn-check-technik" value="Technik" checked autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-technik">Technik</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-tiere"
-                                                    name="btn-check-tiere" value="Tiere" checked autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-tiere">Tiere</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-unterhaltung"
-                                                    name="btn-check-unterhaltung" value="Unterhaltung" checked
-                                                    autocomplete="off">
-                                                <label class="btn mb-1"
-                                                    for="btn-check-unterhaltung">Unterhaltung</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-weltkulturen"
-                                                    name="btn-check-weltkulturen" value="Weltkulturen" checked
-                                                    autocomplete="off">
-                                                <label class="btn mb-1"
-                                                    for="btn-check-weltkulturen">Weltkulturen</label>
-
-                                                <input type="checkbox" class="btn-check" id="btn-check-wirtschaft"
-                                                    name="btn-check-wirtschaft" value="Wirtschaft" checked
-                                                    autocomplete="off">
-                                                <label class="btn mb-1" for="btn-check-wirtschaft">Wirtschaft</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary"
-                                            data-bs-dismiss="modal">Zurück</button>
-                                        <button type="button" class="btn btn-secondary"><i
-                                                class="fa-solid fa-wand-magic-sparkles"></i> Generieren</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -233,7 +117,114 @@
                 <button class="btn btn-success" type="submit">Quiz erstellen</button>
             </div>
         </form>
-    </div>
+
+        <!-- Modal zum Generieren von Fragen -->
+        <div class="modal fade" id="generateQuestionsModal" tabindex="-1" aria-labelledby="generateQuestionsModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5  pt-0 pb-0" id="generateQuestionsModalLabel">Fragen
+                            mittels KI generieren lassen</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="generateQuestionsForm">
+                            <div class="with-line">
+                                <label for="numberOfQuestions" class="form-label fw-bold">Anzahl
+                                    Fragen</label>
+                                <input type="range" class="form-range custom-slider" id="numberOfQuestions"
+                                    name="numberOfQuestions" value="10" min="1" max="19"
+                                    oninput="this.nextElementSibling.value = this.value" required>
+                                <output>10</output>
+                            </div>
+                            <div class="with-line pt-3">
+                                <label for="difficulty" class="form-label fw-bold">Schwierigkeit</label>
+                                <select class="form-select" id="difficulty" name="difficulty">
+                                    <option value="geringe">Gering</option>
+                                    <option value="mittlere" selected>Mittel</option>
+                                    <option value="hohe">Hoch</option>
+                                </select>
+                            </div>
+                            <div class="pt-3 with-line">
+                                <label class="form-label fw-bold" data-bs-toggle="tooltip"
+                                    title="Die Kategorien werden zufällig aus den unten ausgewählten Kategorien gewählt.">Kategorien</label>
+                                <div>
+                                    <input type="checkbox" class="btn-check" id="btn-check-allgemeinwissen"
+                                        name="btn-check-allgemeinwissen" value="Allgemeinwissen" checked
+                                        autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-allgemeinwissen">Allgemeinwissen</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-essen-und-trinken"
+                                        name="btn-check-essen-und-trinken" value="Essen und Trinken" checked
+                                        autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-essen-und-trinken">Essen und
+                                        Trinken</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-geschichte"
+                                        name="btn-check-geschichte" value="Geschichte" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-geschichte">Geschichte</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-geografie"
+                                        name="btn-check-geografie" value="Geografie" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-geografie">Geografie</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-kunst" name="btn-check-kunst"
+                                        value="Kunst" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-kunst">Kunst</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-literatur"
+                                        name="btn-check-literatur" value="Literatur" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-literatur">Literatur</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-musik" name="btn-check-musik"
+                                        value="Musik" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-musik">Musik</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-naturwissenschaften"
+                                        name="btn-check-naturwissenschaften" value="Naturwissenschaften" checked
+                                        autocomplete="off">
+                                    <label class="btn mb-1"
+                                        for="btn-check-naturwissenschaften">Naturwissenschaften</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-politik"
+                                        name="btn-check-politik" value="Politik" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-politik">Politik</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-sport" name="btn-check-sport"
+                                        value="Sport" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-sport">Sport</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-technik"
+                                        name="btn-check-technik" value="Technik" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-technik">Technik</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-tiere" name="btn-check-tiere"
+                                        value="Tiere" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-tiere">Tiere</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-unterhaltung"
+                                        name="btn-check-unterhaltung" value="Unterhaltung" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-unterhaltung">Unterhaltung</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-weltkulturen"
+                                        name="btn-check-weltkulturen" value="Weltkulturen" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-weltkulturen">Weltkulturen</label>
+
+                                    <input type="checkbox" class="btn-check" id="btn-check-wirtschaft"
+                                        name="btn-check-wirtschaft" value="Wirtschaft" checked autocomplete="off">
+                                    <label class="btn mb-1" for="btn-check-wirtschaft">Wirtschaft</label>
+                                </div>
+                            </div>
+                            <div class="pt-3 text-end">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Zurück</button>
+                                <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                                        class="fa-solid fa-wand-magic-sparkles"></i> Generieren</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -437,6 +428,162 @@
             updateQuestionNumbering();
         }
 
+        document.getElementById("generateQuestionsForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Verhindert das Standardverhalten (Seiten-Neuladen)
+
+            // Lade-Animation anzeigen
+            document.getElementById("alert_placeholder").innerHTML = `
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                `;
+
+            // Formulardaten sammeln
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            // Spezielle Verarbeitung für die Checkboxen: Array der Kategorien
+            const categories = [];
+            document.querySelectorAll("input[type=checkbox]:checked").forEach((checkbox) => {
+                categories.push(checkbox.value);
+            });
+            if (categories.length == 0) {
+                categories.push("Allgemeinwissen");  // Standardwert, falls keine Kategorie ausgewählt: Allgemeinwissen
+            }
+            data.categories = categories;
+
+            try {
+                // Sende die Daten per POST-Request an das Backend
+                const response = await fetch("/generate_questions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data), // JSON-Daten senden
+                });
+
+                // Verarbeite die Antwort des Backends
+                const result = await response.json();
+                if (response.ok) {
+                    const questions = result.questions; // Extrahiere das Array "questions"
+                    if (Array.isArray(questions)) {     // Prüfe, ob es tatsächlich ein Array ist
+                        questions.forEach((item, index) => {
+                            addQuestionDiv(item);       // Arbeite mit jedem Element des Arrays
+                        });
+                        document.getElementById("alert_placeholder").innerHTML = `
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Yeah!</strong> Das hat geklappt. Die Fragen wurden generiert.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        `; 
+                    } else {
+                        // Fehler: Zeige die Fehlermeldung
+                        document.getElementById("alert_placeholder").innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Ups!</strong> Leider ist ein Fehler aufgetreten. Bitte versuche es erneut.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        `;  
+                    }
+                }
+            } catch (error) {
+                console.error("Fehler beim Senden der Anfrage:", error);
+                document.getElementById("alert_placeholder").innerHTML = `
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Ups!</strong> Leider ist ein Fehler aufgetreten. Bitte versuche es erneut.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    `; 
+            }
+        });
+
+        function addQuestionDiv(item) {
+            const questionsContainer = document.getElementById("questions");
+            const questionDiv = document.createElement("div");
+            questionDiv.className = "question";
+            questionDiv.id = `question-${questionIndex}`;
+            questionDiv.innerHTML = `
+            <div class="row justify-content-center with-background" style="padding-top: 12px; margin-top: 12px;">
+                <div class="col-2 position-relative">
+                    <div class="position-absolute top-0 start-0">
+                        <button class="btn btn-primary" id="move-up-btn-${questionIndex}" type="button" style="margin-left: 12px;" onclick="moveQuestionUp(${questionIndex})">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </button>
+                    </div>
+                    <div class="position-absolute bottom-0 start-0">
+                        <button class="btn btn-primary" id="move-down-btn-${questionIndex}" type="button" style="margin-left: 12px; margin-bottom: 12px;" onclick="moveQuestionDown(${questionIndex})">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-8">
+                    <div class="mb-3">
+                        <label name="inputQuestion" class="form-label">Frage ${questionIndex + 1}</label>
+                        <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][question]" required>${item.question_text}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Kategorie</label>
+                        <select class="form-select" name="questions[${questionIndex}][category]" required>
+                            <option ${item.category === 'Allgemeinwissen' ? 'selected' : ''}>Allgemeinwissen</option>
+                            <option ${item.category === 'Essen und Trinken' ? 'selected' : ''}>Essen und Trinken</option>
+                            <option ${item.category === 'Geschichte' ? 'selected' : ''}>Geschichte</option>
+                            <option ${item.category === 'Geografie' ? 'selected' : ''}>Geografie</option>
+                            <option ${item.category === 'Kunst' ? 'selected' : ''}>Kunst</option>
+                            <option ${item.category === 'Literatur' ? 'selected' : ''}>Literatur</option>
+                            <option ${item.category === 'Musik' ? 'selected' : ''}>Musik</option>
+                            <option ${item.category === 'Naturwissenschaften' ? 'selected' : ''}>Naturwissenschaften</option>
+                            <option ${item.category === 'Politik' ? 'selected' : ''}>Politik</option>
+                            <option ${item.category === 'Sport' ? 'selected' : ''}>Sport</option>
+                            <option ${item.category === 'Technik' ? 'selected' : ''}>Technik</option>
+                            <option ${item.category === 'Tiere' ? 'selected' : ''}>Tiere</option>
+                            <option ${item.category === 'Unterhaltung' ? 'selected' : ''}>Unterhaltung</option>
+                            <option ${item.category === 'Weltkulturen' ? 'selected' : ''}>Weltkulturen</option>
+                            <option ${item.category === 'Wirtschaft' ? 'selected' : ''}>Wirtschaft</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Beschreibung</label>
+                        <textarea class="form-control" type="text" rows="2"
+                            name="questions[${questionIndex}][description]"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                            <label class="form-label">Bild</label>
+                            <input class="form-control" type="file"
+                                name="questions[${questionIndex}][image]"></input>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Antwort</label>
+                        <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][answer]" required>${item.answer}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Punkte</label>
+                        <input class="form-control" type="number" name="questions[${questionIndex}][points]" value="1" min="0"
+                            max="5" step="0.5" required></input>
+                    </div>
+
+                </div>
+                <div class="col-2 text-end">
+                    <button class="btn btn-primary" id="delete-question-btn-${questionIndex}" type="button" onclick="deleteQuestion(${questionIndex})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            `;
+            questionsContainer.appendChild(questionDiv);
+
+            document.getElementById(`move-down-btn-${questionIndex - 1}`).disabled = false;
+            questionIndex++;
+            updateQuestionCounter();
+            updateQuestionNumbering();
+        }
+
+        // document.addEventListener('DOMContentLoaded', fetchQuestions);
     </script>
 
     <script>
