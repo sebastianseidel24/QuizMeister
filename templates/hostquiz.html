@@ -127,41 +127,46 @@
                 for (const playername in players_answers) {
                     const answers_of_player = players_answers[playername];
 
-                    for (const question_id in answers_of_player) {
-                        const answer = answers_of_player[question_id];
+                    answers_of_player.forEach(answer_data => {
+                        const question_id = answer_data["question_id"];
+                        const answer = answer_data["player_answer"];
+                        const points = answer_data["question_points"];
 
-                        document.getElementById(`no_answers_Q${question_id}`).style.display = "none";
-                        document.getElementById(`answers_Q${question_id}`).style.display = "block";
+                        // Verstecke den Platzhaltertext und zeige die Antworttabelle
+                        const noAnswersElement = document.getElementById(`no_answers_Q${question_id}`);
+                        const answersElement = document.getElementById(`answers_Q${question_id}`);
 
-                        // Überschiften für Antwort-Tabelle, falls noch nicht vorhanden
-                        if (document.getElementById(`answers_Q${question_id}`).innerHTML.trim() === "") {
-                            document.getElementById(`answers_Q${question_id}`).innerHTML = `
-                                <div class="row row-cols-3" style="margin-bottom: 12px;">
-                                    <div class="col-2 fw-bold">Spieler</div>
-                                    <div class="col-6 col-md-8 fw-bold">Antworten</div>
-                                    <div class="col-4 col-md-2 fw-bold">Wertung</div>
-                                </div>
-                                `;
-                        }
+                        if (noAnswersElement) noAnswersElement.style.display = "none";
+                        if (answersElement) {
+                            answersElement.style.display = "block";
 
-                        let points = document.getElementById(`points_Q${question_id}`).innerText;
-                        points = Number(points);
-
-                        document.getElementById(`answers_Q${question_id}`).innerHTML += `
-                            <div class="row row-cols-3 with-border" style="margin-bottom: 8px; padding-left: 0px; padding-right: 0px;">
-                                <div class="col-2">${playername}</div>
-                                <div class="col-6 col-md-8">${answer}</div>
-                                <div class="col-4 col-md-2" style="padding-left: 8px; padding-right: 8px;">
-                                    <div class="input-group input-group-sm">
-                                        <input type="radio" class="btn-check" name="options_${question_id}_${playername}" id="correct_${question_id}_${playername}" autocomplete="off">
-                                        <label class="btn btn-outline-success rounded-start" for="correct_${question_id}_${playername}" style="border-width: 2px; margin-left: 0px;" onclick="setPoints(true, ${question_id}, '${playername}', ${points})"><i class="fa-solid fa-check"></i></label>
-                                        <input type="radio" class="btn-check" name="options_${question_id}_${playername}" id="wrong_${question_id}_${playername}" autocomplete="off">
-                                        <label class="btn btn-outline-danger" for="wrong_${question_id}_${playername}" style="border-width: 2px; margin-left: 0px;" onclick="setPoints(false, ${question_id}, '${playername}', ${points})"><i class="fa-solid fa-xmark"></i></label>
-                                        <input class="form-control" id="points_${question_id}_${playername}" type="number" value="" min="0" max="5" step="0.5" disabled>
+                            // Überschrift nur hinzufügen, wenn noch keine vorhanden ist
+                            if (answersElement.innerHTML.trim() === "") {
+                                answersElement.innerHTML = `
+                                    <div class="row row-cols-3" style="margin-bottom: 12px;">
+                                        <div class="col-2 fw-bold">Spieler</div>
+                                        <div class="col-6 col-md-8 fw-bold">Antworten</div>
+                                        <div class="col-4 col-md-2 fw-bold">Wertung</div>
                                     </div>
-                                </div>
-                            </div>`;
-                    }
+                                `;
+                            }
+
+                            answersElement.innerHTML += `
+                                <div class="row row-cols-3 with-border" style="margin-bottom: 8px; padding-left: 0px; padding-right: 0px;">
+                                    <div class="col-2">${playername}</div>
+                                    <div class="col-6 col-md-8">${answer}</div>
+                                    <div class="col-4 col-md-2" style="padding-left: 8px; padding-right: 8px;">
+                                        <div class="input-group input-group-sm">
+                                            <input type="radio" class="btn-check" name="options_${question_id}_${playername}" id="correct_${question_id}_${playername}" autocomplete="off">
+                                            <label class="btn btn-outline-success rounded-start" for="correct_${question_id}_${playername}" style="border-width: 2px; margin-left: 0px;" onclick="setPoints(true, ${question_id}, '${playername}', ${points})"><i class="fa-solid fa-check"></i></label>
+                                            <input type="radio" class="btn-check" name="options_${question_id}_${playername}" id="wrong_${question_id}_${playername}" autocomplete="off">
+                                            <label class="btn btn-outline-danger" for="wrong_${question_id}_${playername}" style="border-width: 2px; margin-left: 0px;" onclick="setPoints(false, ${question_id}, '${playername}', ${points})"><i class="fa-solid fa-xmark"></i></label>
+                                            <input class="form-control" id="points_${question_id}_${playername}" type="number" value="${points}" min="0" max="5" step="0.5">
+                                        </div>
+                                    </div>
+                                </div>`;
+                        }
+                    });
                 }
             }
         });

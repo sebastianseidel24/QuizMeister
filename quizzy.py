@@ -401,7 +401,7 @@ quiz_sessions = {}
 #     "quiz_id": <Quiz-ID>,                                         # ID des Quizzes
 #     "quiz_name": <Quiz-Name>,                                     # Name des Quizzes
 #     "host": <Host-Name>,                                          # Host der Session (repräsentiert durch Benutzername)
-#     "players": {<Spielername>: {                                  # Liste der teilnehmenden Spieler mit Benutzername als Key
+#     "players": {<Spielername>: {                                  # Dictionary der teilnehmenden Spieler mit Benutzername als Key
 #             "points": <Punkte>,                                   # Aktuelle Punktzahl
 #             "place": <Platzierung>,                               # Aktuelle Platzierung
 #             "answers": {<Question-ID>: {"player_answer": <Antwort>, "question_points":<Punkte>}}     # Antworten und gesammelte Punkte zu den Fragen
@@ -480,8 +480,16 @@ def handle_host_session(quiz_id):
         
     else:
         players_answers = {}
-        for playername, player_data in quiz_sessions[session_code]["players"].items():
-            players_answers[playername] = player_data.get("answers", {})
+        quiz_session = quiz_sessions[session_code]
+        for player, answers in quiz_session["players"].items():
+            players_answers[player] = []
+            for question_id, answer_values in answers["answers"].items():
+                players_answers[player].append({
+                    "question_id": question_id,
+                    "player_answer": answer_values['player_answer'],
+                    "question_points": answer_values['question_points']
+                })
+
         print(players_answers)
         print(f"Host hat Room '{session_code}' für Quiz '{quiz_name}' mit ID {quiz_id} wieder betreten.")
         
