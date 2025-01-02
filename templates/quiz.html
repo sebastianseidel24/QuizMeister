@@ -10,7 +10,8 @@
         <div class="row justify-content-center">
             <div class="col-4 text-start">
                 <a class="btn btn-primary" type="button" href="{{ url_for('hostquiz', quiz_id=quiz[0]) }}"
-                    style="margin-top: 25px; margin-bottom: 25px;"><i class="fa-solid fa-gamepad"></i> Quiz hosten</a>
+                    onclick="hostSession('{{ quiz[0] }}')" style="margin-top: 25px; margin-bottom: 25px;"><i
+                        class="fa-solid fa-gamepad"></i> Quiz hosten</a>
 
             </div>
             <div class="col-4">
@@ -64,7 +65,8 @@
             {% endfor %}
         </div>
         <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
-            <form action="/delete_quiz" method="POST" onsubmit="return confirm('Sind Sie sicher, dass Sie dieses Quiz löschen möchten?');">
+            <form action="/delete_quiz" method="POST"
+                onsubmit="return confirm('Sind Sie sicher, dass Sie dieses Quiz löschen möchten?');">
                 <input type="hidden" name="quiz_id" value="{{ quiz[0] }}">
                 <button type="submit" class="btn btn-outline-danger">Quiz löschen</button>
             </form>

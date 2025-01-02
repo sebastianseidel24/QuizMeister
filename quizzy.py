@@ -465,7 +465,7 @@ def handle_host_session(quiz_id):
     # Host tritt dem Room bei
     join_room(session_code)
     print(f"Host hat Room '{session_code}' für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
-    print(quiz_session)
+    print(quiz_sessions)
     emit("session_created", session_code, broadcast=False)
 
 

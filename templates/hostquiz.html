@@ -6,15 +6,7 @@
 <body>
     {% include 'navbar.html' %}
 
-    <div class="container text-center" id="start_session" style="display: block;">
-        <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
-
-        <button class="btn btn-primary btn-lg" type="button" onclick="hostSession('{{ quiz[0] }}')">
-            Dieses Quiz starten
-        </button>
-    </div>
-
-    <div class="container text-center" id="active_session" style="display: none;">
+    <div class="container text-center" id="active_session" style="display: block;">
         <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
         <h3>[Host]</h3>
         <h4 id="session_code"></h4>
@@ -118,13 +110,11 @@
         const socket = io({ autoConnect: false });
         let session_id = null;
 
-        function hostSession(qui_id) {
+        document.addEventListener("DOMContentLoaded", function () {
             socket.connect();
-            let quiz_id = Number(qui_id)
-            document.getElementById(`start_session`).style.display = "none";
-            document.getElementById(`active_session`).style.display = "block";
-            socket.emit("host_session", quiz_id)
-        }
+            let quiz_id = Number('{{ quiz[0] }}');
+            socket.emit("host_session", quiz_id);
+        });
 
         socket.on("session_created", function (session_code) {
             document.getElementById("session_code").innerText = "Aktive Session: " + session_code;
