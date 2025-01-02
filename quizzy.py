@@ -397,14 +397,14 @@ def generate_questions(number_of_questions: int, categories: str, difficulty: st
 
 quiz_sessions = {}
 
-# quiz_sessions = {<Quiz-Session-ID>: {                 # Dictionary für jede Quiz-Session mit Quiz-Session-ID als Key
-#     "quiz_id": <Quiz-ID>,                             # ID des Quizzes
-#     "quiz_name": <Quiz-Name>,                         # Name des Quizzes
-#     "host": <Host-Name>,                              # Host der Session (repräsentiert durch Benutzername)
-#     "players": {<Spielername>: {                      # Liste der teilnehmenden Spieler mit Benutzername als Key
-#             "points": <Punkte>,                       # Aktuelle Punktzahl
-#             "place": <Platzierung>,                   # Aktuelle Platzierung
-#             "answers": {<Question-ID>: <Antwort>}     # Antworten zu den Fragen
+# quiz_sessions = {<Quiz-Session-ID>: {                             # Dictionary für jede Quiz-Session mit Quiz-Session-ID als Key
+#     "quiz_id": <Quiz-ID>,                                         # ID des Quizzes
+#     "quiz_name": <Quiz-Name>,                                     # Name des Quizzes
+#     "host": <Host-Name>,                                          # Host der Session (repräsentiert durch Benutzername)
+#     "players": {<Spielername>: {                                  # Liste der teilnehmenden Spieler mit Benutzername als Key
+#             "points": <Punkte>,                                   # Aktuelle Punktzahl
+#             "place": <Platzierung>,                               # Aktuelle Platzierung
+#             "answers": {<Question-ID>: {"player_answer": <Antwort>, "question_points":<Punkte>}}     # Antworten und gesammelte Punkte zu den Fragen
 #         }},
 # }}
 
@@ -541,7 +541,8 @@ def handle_question(session_code, quiz_id, question_id):
     
 @socketio.on("submit_answer")
 def handle_answer(session_code, question_id, playername, answer):
-    quiz_sessions[session_code]["players"][playername]["answers"][question_id] = answer
+    quiz_sessions[session_code]["players"][playername]["answers"][question_id] = {}
+    quiz_sessions[session_code]["players"][playername]["answers"][question_id]["player_answer"] = answer
     emit("send_answer", (question_id, playername, answer), to=session_code)
 
 
@@ -562,6 +563,13 @@ def handle_share_answer(session_code, quiz_id, question_id):
         
     emit("send_correct_answer", (question_id, question_text, category, points, image, answer), to=session_code)
 
+
+@socketio.on("update_points")
+def handle_update_points(session_code, playername, question_id, points_to_add):
+    quiz_session = quiz_sessions[session_code]
+    quiz_session["players"][playername]["answers"][question_id].update({"question_points": points_to_add})
+    
+    
 
 @socketio.on("calculate_points")
 def handle_calculate_points(session_code, playername, points):

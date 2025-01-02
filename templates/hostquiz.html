@@ -253,6 +253,9 @@
                     if (document.getElementById(`points_${i + 1}_${playername}`)) {
                         let points_to_add = document.getElementById(`points_${i + 1}_${playername}`).value;
                         points_to_add = Number(points_to_add);
+                        const question_id = i + 1;
+                        socket.emit("update_points", session_id, playername, question_id, points_to_add);
+
                         points = points + points_to_add;
                     }
                 });
