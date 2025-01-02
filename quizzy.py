@@ -551,6 +551,7 @@ def handle_question(session_code, quiz_id, question_id):
 def handle_answer(session_code, question_id, playername, answer):
     quiz_sessions[session_code]["players"][playername]["answers"][question_id] = {}
     quiz_sessions[session_code]["players"][playername]["answers"][question_id]["player_answer"] = answer
+    quiz_sessions[session_code]["players"][playername]["answers"][question_id]["question_points"] = 0
     emit("send_answer", (question_id, playername, answer), to=session_code)
 
 

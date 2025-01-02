@@ -129,7 +129,7 @@
 
                     answers_of_player.forEach(answer_data => {
                         const question_id = answer_data["question_id"];
-                        const answer = answer_data["player_answer"];
+                        const answer = answer_data["player_answer"].replace(/\n/g, "<br>");
                         const points = answer_data["question_points"];
 
                         // Verstecke den Platzhaltertext und zeige die Antworttabelle
@@ -187,7 +187,6 @@
                     </div>
                 </div>
             `
-
         });
 
         function askQuestion(qui_id, que_id) {
@@ -223,7 +222,7 @@
             document.getElementById(`answers_Q${question_id}`).innerHTML += `
             <div class="row row-cols-3 with-border" style="margin-bottom: 8px; padding-left: 0px; padding-right: 0px;">
                 <div class="col-2">${playername}</div>
-                <div class="col-6 col-md-8">${answer}</div>
+                <div class="col-6 col-md-8">${answer.replace(/\n/g, "<br>")}</div>
                 <div class="col-4 col-md-2" style="padding-left: 8px; padding-right: 8px;">
                     <div class="input-group input-group-sm">
                         <input type="radio" class="btn-check" name="options_${question_id}_${playername}" id="correct_${question_id}_${playername}" autocomplete="off">

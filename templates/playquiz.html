@@ -214,7 +214,7 @@
             document.getElementById("alert_placeholder").innerHTML = `
             <div class="alert alert-info alert-dismissible fade show" role="alert">
                 <strong>Ob das richtig ist?</strong> Du hast folgende Antwort abgegeben:<br><br>
-                ${answer}
+                ${answer.replace(/\n/g, "<br>")}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             `;
