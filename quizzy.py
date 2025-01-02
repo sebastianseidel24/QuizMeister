@@ -283,6 +283,18 @@ def editquiz(quiz_id):
         return render_template("editquiz.html", quiz=quiz, questions=questions)
 
 
+# Quiz löschen
+@app.route('/delete_quiz', methods=['POST'])
+def delete_quiz():
+    quiz_id = request.form['quiz_id']
+    with sqlite3.connect("quizzy.db") as con:
+        cur = con.cursor()
+        cur.execute("DELETE FROM quizzes WHERE quiz_id = (?)", (quiz_id))
+        con.commit()
+        print(f"Quiz '{quiz_id}' aus Datenbank entfernt.")
+    return redirect(url_for('quizoverview'))
+
+
 # Fragen mit Gemini generieren lassen
 @app.route("/generate_questions", methods=["POST"])
 def process_question_generation():

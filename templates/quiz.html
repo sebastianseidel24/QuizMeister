@@ -63,24 +63,18 @@
             </div>
             {% endfor %}
         </div>
+        <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
+            <form action="/delete_quiz" method="POST" onsubmit="return confirm('Sind Sie sicher, dass Sie dieses Quiz löschen möchten?');">
+                <input type="hidden" name="quiz_id" value="{{ quiz[0] }}">
+                <button type="submit" class="btn btn-outline-danger">Quiz löschen</button>
+            </form>
+        </div>
     </div>
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
-    <!-- <script>
-        const socket = io({ autoConnect: false });
-
-        function hostSession(quiz_id, quiz_name) {
-            socket.connect();
-            var quiz_id = Number(quiz_id)
-            socket.emit("host_session", quiz_id, quiz_name)
-        }
-
-    </script> -->
 
     {% include 'footer.html' %}
 </body>
