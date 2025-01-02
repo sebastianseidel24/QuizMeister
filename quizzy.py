@@ -536,6 +536,7 @@ def handle_question(session_code, quiz_id, question_id):
     
 @socketio.on("submit_answer")
 def handle_answer(session_code, question_id, playername, answer):
+    quiz_sessions[session_code]["players"][playername]["answers"][question_id] = answer
     emit("send_answer", (question_id, playername, answer), to=session_code)
 
 
