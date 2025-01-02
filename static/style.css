@@ -219,3 +219,30 @@ a.card:hover h6 {
 .spinner-border {
     color: rgb(52, 0, 130);
 }
+
+/* Slider Farbe */
+.custom-slider::-webkit-slider-thumb {
+    background: rgb(52, 0, 130); /* Farbe des Schiebereglers */
+}
+
+.custom-slider::-moz-range-thumb {
+    background: rgb(52, 0, 130); /* Farbe des Schiebereglers */
+}
+
+.custom-slider::-ms-thumb {
+    background: rgb(52, 0, 130); /* Farbe des Schiebereglers */
+}
+
+/* Slider Farbe beim Klicken */
+.custom-slider:active::-webkit-slider-thumb {
+    background: rgb(100, 0, 200); /* Farbe des Schiebereglers beim Klicken */
+}
+
+.custom-slider:active::-moz-range-thumb {
+    background: rgb(100, 0, 200); /* Farbe des Schiebereglers beim Klicken */
+}
+
+.custom-slider:active::-ms-thumb {
+    background: rgb(100, 0, 200); /* Farbe des Schiebereglers beim Klicken */
+}
+
