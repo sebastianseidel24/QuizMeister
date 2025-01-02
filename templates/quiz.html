@@ -9,10 +9,13 @@
     <div class="container text-center">
         <div class="row justify-content-center">
             <div class="col-4 text-start">
-                <a class="btn btn-primary" type="button" href="{{ url_for('hostquiz', quiz_id=quiz[0]) }}"
-                    onclick="hostSession('{{ quiz[0] }}')" style="margin-top: 25px; margin-bottom: 25px;"><i
+                {% if session_active == False %}
+                <a class="btn btn-primary" type="button" href="{{ url_for('hostquiz', quiz_id=quiz[0]) }}" style="margin-top: 25px; margin-bottom: 25px;"><i
                         class="fa-solid fa-gamepad"></i> Quiz hosten</a>
-
+                {% else %}
+                <a class="btn btn-primary" type="button" href="{{ url_for('hostquiz', quiz_id=quiz[0]) }}" style="margin-top: 25px; margin-bottom: 25px;"><i
+                        class="fa-solid fa-gamepad"></i> Aktive Session</a>
+                {% endif %}
             </div>
             <div class="col-4">
                 <h1>{{ quiz[1] }}</h1>

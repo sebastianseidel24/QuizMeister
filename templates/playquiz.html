@@ -162,10 +162,20 @@
         socket.on("joined_session", function (session_code, quiz_id, quiz_name) {
             document.getElementById("active_session").style.display = "block";
             document.getElementById("new_session").style.display = "none";
+            document.getElementById("no_current_question").style.display = "block";
+            document.getElementById("current_question").style.display = "none";
+            document.getElementById("leaderboard").style.display = "none";
+            
             document.getElementById("quiz_name").innerText = quiz_name;
             active_quiz_id = quiz_id;
             active_quiz_name = quiz_name;
             session_id = session_code;
+            document.getElementById("alert_placeholder").innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Top!</strong> Du bist einer Quiz-Session beigetreten.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            `;
         })
 
         socket.on("send_question", function (question_id, question_text, category, points, image) {
@@ -207,7 +217,7 @@
                 ${answer}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            `
+            `;
         })
 
         socket.on("send_correct_answer", function (question_id, question_text, category, points, image, answer) {
@@ -312,6 +322,18 @@
             document.getElementById("no_current_question").style.display = "none";
             document.getElementById("current_question").style.display = "none";
             document.getElementById("leaderboard").style.display = "block";
+        });
+
+        socket.on("session_ended", function (redirect_url) {
+            document.getElementById("alert_placeholder").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Quiz beendet!</strong> Das Quiz wurde vom Host beendet.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            `
+            document.getElementById("active_session").style.display = "none";
+            document.getElementById("new_session").style.display = "block";
+            socket.disconnect();
         });
 
         document.addEventListener("DOMContentLoaded", function () {

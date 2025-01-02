@@ -96,7 +96,8 @@
         </div>
         <button class="btn btn-primary mb-3" type="button" id="share_leaderboard_btn"><i class="fa-solid fa-trophy"></i>
             Punktestand teilen
-        </button>
+        </button><br>
+        <button type="button" id="end_session" class="btn btn-outline-danger">Session beenden</button>
     </div>
 
 
@@ -292,6 +293,16 @@
 
         document.getElementById("share_leaderboard_btn").addEventListener("click", function () {
             socket.emit("share_leaderboard", session_id);
+        });
+
+        document.getElementById("end_session").addEventListener("click", function () {
+            confirm('Bist du sicher, dass du dieses Quiz beenden möchtest?');
+            socket.emit("end_session", session_id);
+        });
+
+        socket.on("session_ended", (redirect_url) => {
+            socket.disconnect();
+            window.location.href = redirect_url; // Leite zur Quiz-Seite weiter
         });
 
     </script>

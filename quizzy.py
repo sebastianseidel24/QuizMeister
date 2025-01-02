@@ -195,7 +195,15 @@ def quiz(quiz_id):
         questions = cur.fetchall()
 
     if quiz != None and quiz[3] == session["user_id"]:
-        return render_template("quiz.html", quiz=quiz, questions=questions)
+        
+        # Prüfen ob Session bereits existiert
+        session_active = False
+        for quiz_session in quiz_sessions:
+            if quiz_sessions[quiz_session]["quiz_id"] == quiz_id:
+                session_active = True
+                return render_template("quiz.html", quiz=quiz, questions=questions, session_active=session_active)
+        
+        return render_template("quiz.html", quiz=quiz, questions=questions, session_active=session_active)
     else:
         return "Quiz nicht gefunden oder keine Zugriffsberechtigung.", 404
 
@@ -427,11 +435,11 @@ def playquiz():
 
 @socketio.on("connect")
 def handle_connect():
-    print("Teilnehmer verbunden: " + request.sid)
+    print("Teilnehmer verbunden: " + session["username"])
     
 @socketio.on("disconnect")
 def handle_disconnect():
-    print("Teilnehmer getrennt")
+    print("Teilnehmer getrennt: " + session["username"])
     
 
 # Funktion zum Generieren eines zufälligen Session-Codes
@@ -441,30 +449,39 @@ def generate_session_code():
 
 @socketio.on("host_session")
 def handle_host_session(quiz_id):
-    # Session-Code generieren
-    session_code = generate_session_code()
+    # Prüfen ob Session bereits läuft und ob aktueller User der Host ist
+    session_active = False
+    for quiz_session in quiz_sessions:
+        if quiz_sessions[quiz_session]["quiz_id"] == quiz_id and quiz_sessions[quiz_session]["host"] == session["username"]:
+            session_active = True
+            session_code = quiz_session    
     
-    # Neue Quiz-Session erstellen
-    quiz_sessions[session_code] = {}
-    quiz_session = quiz_sessions[session_code]
-    
-    quiz_session["quiz_id"] = quiz_id
-    
+    # Quiz Namen abrufen
     with sqlite3.connect('quizzy.db') as con:
-        cur = con.cursor()
-        cur.execute("SELECT title FROM quizzes WHERE quiz_id = (?)", (quiz_id,))
-        quiz = cur.fetchone()
-        quiz_name = quiz[0]
+            cur = con.cursor()
+            cur.execute("SELECT title FROM quizzes WHERE quiz_id = (?)", (quiz_id,))
+            quiz = cur.fetchone()
+            quiz_name = quiz[0]
     
-    quiz_session["quiz_name"] = quiz_name
-    
-    quiz_session["host"] = session["username"]
-    
-    quiz_session["players"] = {}
-    
-    # Host tritt dem Room bei
+    if not session_active:
+        # Session-Code generieren
+        session_code = generate_session_code()
+
+        # Neue Quiz-Session erstellen
+        quiz_sessions[session_code] = {}
+        quiz_session = quiz_sessions[session_code]
+        quiz_session["quiz_id"] = quiz_id
+        quiz_session["quiz_name"] = quiz_name
+        quiz_session["host"] = session["username"]
+        quiz_session["players"] = {}
+        
+        print(f"Host hat Room '{session_code}' für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
+        
+    else:
+        print(f"Host hat Room '{session_code}' für Quiz '{quiz_name}' mit ID {quiz_id} wieder betreten.")
+        
+    # Host tritt dem Room bei (auch bei Wiedereinstieg)
     join_room(session_code)
-    print(f"Host hat Room '{session_code}' für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
     print(quiz_sessions)
     emit("session_created", session_code, broadcast=False)
 
@@ -599,6 +616,19 @@ def handle_share_leaderboard(session_code):
         place = quiz_session["players"][player]["place"]
         points = quiz_session["players"][player]["points"]
         emit("send_leaderboard", (place, playername, points), to=session_code)
+
+@socketio.on("end_session")
+def handle_end_session(session_code):
+    quiz_session = quiz_sessions[session_code]
+    quiz_id = quiz_session["quiz_id"]
+    quiz_name = quiz_session["quiz_name"]
+    redirect_url = url_for("quiz", quiz_id=quiz_id)
+    
+    # Session beenden
+    emit("session_ended", redirect_url, to=session_code)
+    quiz_sessions.pop(session_code)
+    print(f"Session {session_code} für Quiz '{quiz_name}' mit ID {quiz_id} beendet.")
+    print(quiz_sessions)
 
 
 # App starten
