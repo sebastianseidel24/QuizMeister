@@ -54,11 +54,11 @@
                 <div class="accordion-collapse collapse show" data-bs-parent="#current_question">
                     <div class="accordion-body">
                         <div class="row row-cols-2 row-cols-md-4 justify-content-center">
-                            <div class="col col-md-3">
+                            <div class="col col-md-3 category-mobile">
                                 <p class="with-border"><span class="fw-bold">Kategorie</span><br><span
                                         id="category"></span></p>
                             </div>
-                            <div class="col col-md-3">
+                            <div class="col col-md-3 category-mobile">
                                 <p class="with-border"><span class="fw-bold">Punkte</span><br><span id="points"></span>
                                 </p>
                             </div>
@@ -201,7 +201,7 @@
             console.error("Room nicht gefunden! Bitte erneut versuchen.");
             document.getElementById("alert_placeholder").innerHTML = `
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Oh!</strong> Die Verbindung zum Room konnte nicht wiederhergestellt werden. Bitte neu laden...
+            <strong>Oh!</strong> Die Verbindung zur Quiz-Session konnte nicht wiederhergestellt werden. Bitte lade die Seite neu...
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;

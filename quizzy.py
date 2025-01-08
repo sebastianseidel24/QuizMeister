@@ -405,6 +405,7 @@ quiz_sessions = {}
 #     "quiz_id": <Quiz-ID>,                                         # ID des Quizzes
 #     "quiz_name": <Quiz-Name>,                                     # Name des Quizzes
 #     "host": <Host-Name>,                                          # Host der Session (repräsentiert durch Benutzername)
+#     "current_question": <Aktuelle-Frage-ID>,                      # ID der aktuellen Frage	
 #     "players": {<Spielername>: {                                  # Dictionary der teilnehmenden Spieler mit Benutzername als Key
 #             "points": <Punkte>,                                   # Aktuelle Punktzahl
 #             "place": <Platzierung>,                               # Aktuelle Platzierung
@@ -465,6 +466,20 @@ def handle_reconnect_to_room():
             join_room(room)
             user_room_map[sid] = room
             emit("reconnected_to_room", {"room": room, "username": username}, broadcast=False)
+            
+            # ggf. aktuelle Frage erneut senden, wenn noch nicht beantwortet
+            if data["current_question"] is not None and data["players"][username]["answers"].get(data["current_question"]) is None:
+                question_id = data["current_question"]
+                with sqlite3.connect('quizzy.db') as con:
+                    cur = con.cursor()
+                    cur.execute("SELECT * FROM questions WHERE quiz_id = (?) AND question_id = (?)", (data["quiz_id"], question_id))
+                    question = cur.fetchone()
+                    question_text = question[2]
+                    category = question[3]
+                    points = question[7]
+                    image = question[5]
+                emit("send_question", (question_id, question_text, category, points, image), broadcast=False)
+            
             print(f"Teilnehmer {username} wurde nach Wiederverbindung Room {room} zugeordnet.")
             return
 
@@ -503,6 +518,7 @@ def handle_host_session(quiz_id):
         quiz_session["quiz_id"] = quiz_id
         quiz_session["quiz_name"] = quiz_name
         quiz_session["host"] = session["username"]
+        quiz_session["current_question"] = None
         quiz_session["players"] = {}
         
         print(f"Host hat Room '{session_code}' für Quiz '{quiz_name}' mit ID {quiz_id} erstellt.")
@@ -574,7 +590,8 @@ def handle_question(session_code, quiz_id, question_id):
         category = question[3]
         points = question[7]
         image = question[5]
-        
+    
+    quiz_sessions[session_code]["current_question"] = question_id    
     emit("send_question", (question_id, question_text, category, points, image), to=session_code)
 
     
@@ -600,7 +617,8 @@ def handle_share_answer(session_code, quiz_id, question_id):
         points = question[7]
         image = question[5]
         answer = question[6]
-        
+    
+    quiz_sessions[session_code]["current_question"] = None    
     emit("send_correct_answer", (question_id, question_text, category, points, image, answer), to=session_code)
 
 
