@@ -31,6 +31,7 @@
         <h1 id="quiz_name" style="padding-bottom: 10px;"></h1>
         <div class="row">
             <h4 id="active_playername" style="font-variant: small-caps;"></h4>
+            <div id="status"></div><br><br>
         </div>
 
         <div id="no_current_question" class="with-border"
@@ -135,12 +136,26 @@
         crossorigin="anonymous"></script>
 
     <script>
-        const socket = io({ autoConnect: false });
+        const socket = io({ autoConnect: false, pingInterval: 10000, pingTimeout: 20000, reconnection: true, reconnectionAttempts: 10, reconnectionDelay: 5000, reconnectionDelayMax: 10000, });
         const playername = "{{ session['username'] }}";
         let session_id = null;
         let active_quiz_id = null;
         let active_quiz_name = null;
         let active_question_id = null;
+
+        socket.on("connect", () => {
+            document.getElementById("status").innerHTML = '<span class="fw-bold" style="color: green">Verbunden</span>';
+
+            if (session_id && playername) {
+                // Nach Wiederverbindung automatisch den Room erneut beitreten
+                socket.emit("reconnect_to_room");
+                console.log("Versuche, Room erneut zu betreten...");
+            }
+        });
+
+        socket.on("disconnect", () => {
+            document.getElementById("status").innerHTML = '<span class="fw-bold" style="color: red">Nicht verbunden. Bitte warten...</span>';
+        });
 
         document.getElementById("join_session_btn").addEventListener("click", function () {
             socket.connect();
@@ -156,7 +171,7 @@
                 <strong>Ups!</strong> Es gibt derzeit kein aktives Quiz mit diesem Session-Code.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            `
+            `;
         })
 
         socket.on("joined_session", function (session_code, quiz_id, quiz_name) {
@@ -165,7 +180,7 @@
             document.getElementById("no_current_question").style.display = "block";
             document.getElementById("current_question").style.display = "none";
             document.getElementById("leaderboard").style.display = "none";
-            
+
             document.getElementById("quiz_name").innerText = quiz_name;
             active_quiz_id = quiz_id;
             active_quiz_name = quiz_name;
@@ -177,6 +192,20 @@
             </div>
             `;
         })
+
+        socket.on("reconnected_to_room", (data) => {
+            console.log(`Erfolgreich mit Room ${data.room} erneut verbunden.`);
+        });
+
+        socket.on("room_not_found", () => {
+            console.error("Room nicht gefunden! Bitte erneut versuchen.");
+            document.getElementById("alert_placeholder").innerHTML = `
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Oh!</strong> Die Verbindung zum Room konnte nicht wiederhergestellt werden.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+        });
 
         socket.on("send_question", function (question_id, question_text, category, points, image) {
             //Logik, wenn Frage ankommt

@@ -10,6 +10,7 @@
         <h1 style="padding-bottom: 0px;">- {{ quiz[1] }} -</h1>
         <h3>[Host]</h3>
         <h4 id="session_code"></h4>
+        <div id="status"></div><br>
 
         <div class="accordion accordion-flush mb-4" id="accordionQuiz">
             {% for question in questions %}
@@ -106,8 +107,22 @@
         crossorigin="anonymous"></script>
 
     <script>
-        const socket = io({ autoConnect: false });
+        const socket = io({ autoConnect: false, pingInterval: 10000, pingTimeout: 20000, reconnection: true, reconnectionAttempts: 10, reconnectionDelay: 5000, reconnectionDelayMax: 10000, });
         let session_id = null;
+
+        socket.on("connect", () => {
+            document.getElementById("status").innerHTML = '<span class="fw-bold" style="color: green">Verbunden</span>';
+
+            if (session_id) {
+                // Nach Wiederverbindung automatisch den Room erneut beitreten
+                socket.emit("reconnect_to_room");
+                console.log("Versuche, Room erneut zu betreten...");
+            }
+        });
+
+        socket.on("disconnect", () => {
+            document.getElementById("status").innerHTML = '<span class="fw-bold" style="color: red">Nicht verbunden. Bitte warten...</span>';
+        });
 
         document.addEventListener("DOMContentLoaded", function () {
             socket.connect();

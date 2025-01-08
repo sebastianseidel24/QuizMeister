@@ -26,7 +26,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 async_mode = "eventlet"
 
 # SocketIO konfigurieren
-socketio = SocketIO(app, async_mode=async_mode, cors_allowed_origins="*")
+socketio = SocketIO(app, async_mode=async_mode, cors_allowed_origins="*", ping_interval=10, ping_timeout=20)
 
 # Prüfen ob Dateiname für Bild-Uplad erlaubt ist
 def allowed_file(filename):
@@ -398,6 +398,7 @@ def generate_questions(number_of_questions: int, categories: str, difficulty: st
 
 # Sessions-Logik
 
+# Speichern der laufenden Quiz-Sessions
 quiz_sessions = {}
 
 # quiz_sessions = {<Quiz-Session-ID>: {                             # Dictionary für jede Quiz-Session mit Quiz-Session-ID als Key
@@ -410,6 +411,9 @@ quiz_sessions = {}
 #             "answers": {<Question-ID>: {"player_answer": <Antwort>, "question_points":<Punkte>}}     # Antworten und gesammelte Punkte zu den Fragen
 #         }},
 # }}
+
+# Speichert die Zuordnung der Clients zu den Rooms
+user_room_map = {}
 
 
 @app.route("/hostquiz/<int:quiz_id>")
@@ -442,8 +446,31 @@ def handle_connect():
     
 @socketio.on("disconnect")
 def handle_disconnect():
-    print("Teilnehmer getrennt: " + session["username"])
+    sid = request.sid
+    if sid in user_room_map:
+        room = user_room_map.pop(sid, None)  # Room-Zuordnung entfernen
+        print(f"Teilnehmer {session['username']} aus Room {room} getrennt.")
+    else:
+        print(f"Teilnehmer {session['username']} hat Verbindung getrennt.")
     
+# Reconnect    
+@socketio.on("reconnect_to_room")
+def handle_reconnect_to_room():
+    sid = request.sid
+    username = session["username"]
+
+    # Prüfen, ob es eine alte Room-Zuordnung für diesen Teilnehmer gibt
+    for room, data in quiz_sessions.items():
+        if username in data["players"]:
+            join_room(room)
+            user_room_map[sid] = room
+            emit("reconnected_to_room", {"room": room, "username": username}, broadcast=False)
+            print(f"Teilnehmer {username} wurde nach Wiederverbindung Room {room} zugeordnet.")
+            return
+
+    # Kein zugeordneter Room gefunden
+    emit("room_not_found", {"username": username}, broadcast=False)
+    print(f"Keine Room-Zuordnung für Teilnehmer {username} gefunden.")
 
 # Funktion zum Generieren eines zufälligen Session-Codes
 def generate_session_code():
@@ -525,6 +552,7 @@ def handle_player_join(session_code, playername):
                 
             # Spieler tritt Room bei (auch bei Wiedereinstieg)
             join_room(session_code)
+            user_room_map[request.sid] = session_code  # Room-Zuordnung aktualisieren
             emit("joined_session", (session_code, quiz_id, quiz_name), broadcast=False)
             print(f"'{playername}' ist Session {session_code} und Quiz '{quiz_name}' beigetreten.")
             print(quiz_session)
