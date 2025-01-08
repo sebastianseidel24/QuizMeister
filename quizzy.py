@@ -4,9 +4,8 @@ import bcrypt
 import random
 import string
 import google.generativeai as genai
-import typing_extensions as typing
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from flask_socketio import SocketIO, join_room, leave_room, emit
+from flask_socketio import SocketIO, join_room, emit
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
@@ -23,8 +22,11 @@ app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
-# SocketIO 
-socketio = SocketIO(app)
+# async_mode auf "eventlet" setzen
+async_mode = "eventlet"
+
+# SocketIO konfigurieren
+socketio = SocketIO(app, async_mode=async_mode, cors_allowed_origins="*")
 
 # Prüfen ob Dateiname für Bild-Uplad erlaubt ist
 def allowed_file(filename):
@@ -297,7 +299,8 @@ def delete_quiz():
     quiz_id = request.form['quiz_id']
     with sqlite3.connect("quizzy.db") as con:
         cur = con.cursor()
-        cur.execute("DELETE FROM quizzes WHERE quiz_id = (?)", (quiz_id))
+        cur.execute("DELETE FROM quizzes WHERE quiz_id = (?)", (quiz_id,))
+        cur.execute("DELETE FROM questions WHERE quiz_id = (?)", (quiz_id,))
         con.commit()
         print(f"Quiz '{quiz_id}' aus Datenbank entfernt.")
     return redirect(url_for('quizoverview'))
