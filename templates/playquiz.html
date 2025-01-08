@@ -34,7 +34,7 @@
             <div id="status"></div><br><br>
         </div>
 
-        <div id="no_current_question" class="with-border"
+        <div id="no_current_question" class="with-border mb-3"
             style="border-width: 4px; padding-top: 30px; padding-bottom: 30px;">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden">Bitte warten...</span>
@@ -201,7 +201,7 @@
             console.error("Room nicht gefunden! Bitte erneut versuchen.");
             document.getElementById("alert_placeholder").innerHTML = `
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Oh!</strong> Die Verbindung zum Room konnte nicht wiederhergestellt werden.
+            <strong>Oh!</strong> Die Verbindung zum Room konnte nicht wiederhergestellt werden. Bitte neu laden...
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
@@ -251,7 +251,7 @@
 
         socket.on("send_correct_answer", function (question_id, question_text, category, points, image, answer) {
             document.getElementById("leaderboard").style.display = "none";
-            document.getElementById("no_current_question").style.display = "none";
+            document.getElementById("no_current_question").style.display = "block";
             document.getElementById("current_question").style.display = "block";
             document.getElementById("question_number").innerText = "Frage " + question_id;
             document.getElementById("category").innerText = category;
@@ -261,7 +261,7 @@
             document.getElementById("correct_answer").style.display = "block";
             document.getElementById("correct_answer").innerHTML = `
                 <span class="fw-bold fs-5">Richtige
-                                Antwort</span><br><span>${answer}</span>
+                                Antwort</span><br><span style="color: green;">${answer.replace(/\n/g, "<br>")}</span>
             `
 
             if (image != null) {
