@@ -8,7 +8,7 @@
 
     <div class="container text-center">
         <div class="row justify-content-center">
-            <div class="col-4 text-start">
+            <div class="col-6 col-md-4 text-start order-1 order-md-1">
                 {% if session_active == False %}
                 <a class="btn btn-primary" type="button" href="{{ url_for('hostquiz', quiz_id=quiz[0]) }}" style="margin-top: 25px; margin-bottom: 25px;"><i
                         class="fa-solid fa-gamepad"></i> Quiz hosten</a>
@@ -17,15 +17,14 @@
                         class="fa-solid fa-gamepad"></i> Aktive Session</a>
                 {% endif %}
             </div>
-            <div class="col-4">
-                <h1>{{ quiz[1] }}</h1>
+            <div class="col-12 col-md-4 order-3 order-md-2 pt-0 pt-md-4">
+                <h1 style="padding-top: 0px;">{{ quiz[1] }}</h1>
             </div>
-            <div class="col-4 text-end">
+            <div class="col-6 col-md-4 text-end order-2 order-md-3">
                 <a class="btn btn-primary" type="button" href="{{ url_for('editquiz', quiz_id=quiz[0]) }}"
                     style="margin-top: 25px; margin-bottom: 25px;"><i class="fa-regular fa-pen-to-square"></i> Quiz
                     bearbeiten</a>
             </div>
-
         </div>
 
         <div class="accordion accordion-flush" id="accordionQuiz">
