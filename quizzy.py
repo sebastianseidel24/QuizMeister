@@ -4,7 +4,7 @@ import bcrypt
 import random
 import string
 import google.generativeai as genai
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash, get_flashed_messages
 from flask_socketio import SocketIO, join_room, emit
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -64,9 +64,11 @@ def register():
                 cur.execute("INSERT INTO users (username, password) VALUES (?, ?)",
                             (username, hashed_password))
                 con.commit()
+            flash("Registrierung erfolgreich! Du kannst dich jetzt anmelden.", "success")
             return redirect(url_for("login"))
         except sqlite3.IntegrityError:
-            return "Benutzername bereits vergeben.", 400
+            flash("Benutzername bereits vergeben. Bitte wähle einen anderen Namen.", "danger")
+            return redirect(url_for("register"))
 
     return render_template("register.html")
 
@@ -88,7 +90,8 @@ def login():
                 session["username"] = username
                 return redirect(url_for("index"))
             else:
-                return "Falscher Benutzername oder Passwort.", 401
+                flash("Falscher Benutzername oder Passwort. Bitte erneut versuchen.", "danger")
+                return redirect(url_for("login"))
 
     return render_template("login.html")
 
