@@ -43,7 +43,7 @@ Die Teilnehmer können nun eine **Antwort abgeben**.
 
 <img src="/docu/Quiz_spielen_Spieler_2.PNG" width="250">
 
-Der Host kann die abgegebenen Antworten einsehen und als **richtig oder falsch markieren** und ggf. die Punkte manuell anpassen.
+Der Host kann die abgegebenen Antworten einsehen und als **richtig oder falsch markieren** und ggf. die Punkte manuell anpassen. Außerdem kann die richtige Antwort an die Spieler gesendet werden.
 
 ![Antwort bewerten](/docu/Quiz_spielen_Host_2.png)
 
