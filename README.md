@@ -47,7 +47,7 @@ Der Host kann die abgegebenen Antworten einsehen und als **richtig oder falsch m
 
 !(/docu/Quiz_spielen_Host_2.png)
 
-**Wichtig**: Per Klick auf _Punktestand aktualisieren_ werden die vom Host vergebenen **Punkte gespeichert und das Leaderboard aktualisiert**. Nach jeder Fragerunde - sobald alle Punkte vergeben wurden - sollte der Host also auf diesen Button klicken.
+> **Wichtig**: Per Klick auf _Punktestand aktualisieren_ werden die vom Host vergebenen **Punkte gespeichert und das Leaderboard aktualisiert**. Nach jeder Fragerunde - sobald alle Punkte vergeben wurden - sollte der Host also auf diesen Button klicken.
 
 Das Leaderboard kann per Klick auf _Punktestand teilen_ mit den Spielern geteilt werden.
 
