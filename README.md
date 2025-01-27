@@ -2,7 +2,7 @@
 
 QuizMeister ist eine responsive Web-App zum KI-basierten **Erstellen, Hosten und Spielen von Quizzes**, wie zum Beispiel Pub-Quizzes.
 
-Web-Link: (https://quizmeister.eu.pythonanywhere.com/)
+**Web-Link: https://quizmeister.eu.pythonanywhere.com/**
 
 ![Startseite](/docu/home.png)
 
