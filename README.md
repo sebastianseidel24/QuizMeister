@@ -29,7 +29,7 @@ Per Klick auf _Quiz hosten_ in der Quiz-Ansicht, kann dieses Quiz gestartet werd
 
 Jeder Teilnehmer kann über sein oder ihr eigenes Endgerät den oben stehenden Link aufrufen. Jeder eingeloggte Nutzer kann an einer aktiven Quiz-Session teilnehmen, sofern er oder sie über den Session-Code verfügt. Nach dem Klicken auf _An Quiz teilnehmen_ auf der Startseite, muss der Session-Code eingegeben werden. Der Nutzer landet so in der Teilnehmer-Ansicht des Quiz und wird dem Host in der Rangliste angezeigt.
 
-![Spieleransicht](/docu/Quiz_spielen_Spieler.png)
+![Spieleransicht](/docu/Quiz_spielen_Spieler.PNG)
 
 ## Ein Quiz spielen
 
@@ -41,7 +41,7 @@ Sobald alle Teilnehmer der Quiz-Session beigetreten sind, wählt der Host eine F
 
 Die Teilnehmer können nun eine **Antwort abgeben**.
 
-![Antwort abgeben](/docu/Quiz_spielen_Spieler_2.png)
+![Antwort abgeben](/docu/Quiz_spielen_Spieler_2.PNG)
 
 Der Host kann die abgegebenen Antworten einsehen und als **richtig oder falsch markieren** und ggf. die Punkte manuell anpassen.
 
