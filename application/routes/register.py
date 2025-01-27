@@ -1,8 +1,9 @@
-from quizmeister import app
+from application import app
 from flask import render_template, request, redirect, url_for, flash
 import sqlite3
 import bcrypt
 
+# Nutzerregistrierung
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":

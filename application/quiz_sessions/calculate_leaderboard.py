@@ -1,6 +1,6 @@
-from quizmeister import socketio
+from application import socketio
 from flask_socketio import emit
-from quiz_sessions import quiz_sessions
+from application.quiz_sessions import quiz_sessions
 
 # Hilfsfunktion, um das Leaderboard zu berechnen
 def calculateLeaderboard(session_code):

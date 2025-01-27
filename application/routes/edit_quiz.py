@@ -1,10 +1,9 @@
-from quizmeister import app
+from application import app
 from flask import render_template, request, redirect, url_for
 import sqlite3
 import os
 from werkzeug.utils import secure_filename
-from routes.create_quiz import allowed_file
-
+from application.routes.create_quiz import allowed_file
 
 # Ein Quiz bearbeiten
 @app.route("/editquiz/<int:quiz_id>", methods=["GET", "POST"])
@@ -85,6 +84,6 @@ def edit_quiz(quiz_id):
                 print(msg1 + " | " + msg2)
 
                 # Umleitung zur Quiz-Übersicht
-                return redirect(url_for("quizoverview"))
+                return redirect(url_for("quiz_overview"))
         
         return render_template("editquiz.html", quiz=quiz, questions=questions)

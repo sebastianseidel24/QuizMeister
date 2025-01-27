@@ -1,7 +1,8 @@
-from quizmeister import app
+from application import app
 from flask import render_template, session
 import sqlite3
 
+# Von User erstellte Quiz anzeigen
 @app.route("/quizoverview")
 def quiz_overview():
     user_id = session["user_id"]

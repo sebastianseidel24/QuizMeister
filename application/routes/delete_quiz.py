@@ -1,4 +1,4 @@
-from quizmeister import app
+from application import app
 from flask import request, redirect, url_for
 import sqlite3
 
@@ -12,4 +12,4 @@ def delete_quiz():
         cur.execute("DELETE FROM questions WHERE quiz_id = (?)", (quiz_id,))
         con.commit()
         print(f"Quiz '{quiz_id}' aus Datenbank entfernt.")
-    return redirect(url_for('quizoverview'))
+    return redirect(url_for('quiz_overview'))

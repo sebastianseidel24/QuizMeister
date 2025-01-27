@@ -1,5 +1,5 @@
-from quizmeister import socketio
-from quiz_sessions import quiz_sessions
+from application import socketio
+from application.quiz_sessions import quiz_sessions
 from flask_socketio import emit
 
 # Eine Antwort abschicken

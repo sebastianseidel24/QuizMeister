@@ -1,4 +1,4 @@
-from quizmeister import socketio
+from application import socketio
 from flask import session
 
 # Teilnehmer verbindet sich

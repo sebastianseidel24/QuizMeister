@@ -1,4 +1,4 @@
-from quizmeister import app
+from application import app
 from flask import request, jsonify
 from dotenv import load_dotenv
 import os

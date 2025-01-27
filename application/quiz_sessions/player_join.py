@@ -1,8 +1,9 @@
-from quizmeister import socketio
-from quiz_sessions import quiz_sessions, user_room_map
+from application import socketio
+from application.quiz_sessions import quiz_sessions, user_room_map
 from flask_socketio import join_room, emit
 from flask import request
 
+# Spieler tritt Session bei
 @socketio.on("player_join")
 def handle_player_join(session_code, playername):    
     try:

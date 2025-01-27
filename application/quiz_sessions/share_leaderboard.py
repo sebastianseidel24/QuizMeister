@@ -1,8 +1,9 @@
-from quizmeister import socketio
+from application import socketio
 from flask_socketio import emit
-from quiz_sessions import quiz_sessions
-from calculate_leaderboard import calculateLeaderboard
+from application.quiz_sessions import quiz_sessions
+from application.quiz_sessions.calculate_leaderboard import calculateLeaderboard
 
+# Leaderboard an Teilnehmer senden
 @socketio.on("share_leaderboard")
 def handle_share_leaderboard(session_code):
     quiz_session = quiz_sessions[session_code]

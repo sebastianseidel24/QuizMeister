@@ -1,5 +1,5 @@
 from flask import flash, redirect, render_template, request, session, url_for
-from quizmeister import app
+from application import app
 import bcrypt
 import sqlite3
 

@@ -1,9 +1,8 @@
-from quizmeister import app
+from application import app
 from flask import render_template, request, redirect, url_for, session
 import sqlite3
 import os
 from werkzeug.utils import secure_filename
-
 
 # Prüfen ob Dateiname für Bild-Uplad erlaubt ist
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
@@ -72,7 +71,6 @@ def create_quiz():
             print(msg1 + " | " + msg2)
 
             # Umleitung zur Quiz-Übersicht
-            return redirect(url_for("quizoverview"))
+            return redirect(url_for("quiz_overview"))
 
     return render_template("createquiz.html")
-

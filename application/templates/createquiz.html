@@ -6,135 +6,106 @@
 <body>
     {% include 'navbar.html' %}
 
-    <h1>Quiz bearbeiten</h1>
+    <h1>Neues Quiz erstellen</h1>
 
     <div class="container text-start">
         <div id="alert_placeholder" class="text-center"></div>
-        <form action="{{ url_for('editquiz', quiz_id=quiz[0]) }}" method="POST" enctype="multipart/form-data">
-
+        <form action="{{ url_for('create_quiz') }}" method="POST" enctype="multipart/form-data">
             <div class="row justify-content-center">
                 <div class="col-8">
                     <div class="mb-3">
                         <label class="form-label">Quiz-Titel</label>
-                        <input class="form-control" type="text" name="title" value="{{ quiz[1] }}" required></input>
+                        <input class="form-control" type="text" name="title" required></input>
                     </div>
 
                     <!-- Counter-Anzeige für die Anzahl der Fragen -->
                     <div class="text-center">
-                        <div class="mb-3"><strong>Anzahl Fragen: <span id="question-counter">{{ quiz[2]
-                                    }}</span></strong></div>
+                        <div class="fw-bold mb-3">Anzahl Fragen: <span id="question-counter">1</span></div>
 
                         <button type="button" class="btn btn-secondary mb-3" data-bs-toggle="modal"
                             data-bs-target="#generateQuestionsModal"><i class="fa-solid fa-wand-magic-sparkles"></i>
-                            Weitere Fragen generieren lassen</button>
+                            Fragen generieren lassen</button>
+
                     </div>
                 </div>
             </div>
-
+            <!-- Hinzufügen der Fragen -->
             <div id="questions">
-                {% for question in questions %}
-                <!-- Bearbeiten der Fragen -->
-                <div class="question" id="question-{{ question[1]-1 }}">
-                    <div class="row justify-content-center with-background" style="padding-top: 12px;margin-top: 12px;">
+                <div class="question" id="question-0">
+                    <div class="row justify-content-center with-background"
+                        style="padding-top: 12px; margin-top: 12px;">
                         <div class="col-2 position-relative">
                             <div class="position-absolute top-0 start-0"><button class="btn btn-primary"
-                                    id="move-up-btn-{{ question[1]-1 }}" type="button" style="margin-left: 12px;"
-                                    onclick="moveQuestionUp('{{ question[1]-1 }}')" {{ "disabled" if question[1]-1==0
-                                    }}><i class="fa-solid fa-arrow-up"></i></button></div>
-                            <div class="position-absolute bottom-0 start-0"><button class="btn btn-primary"
-                                    id="move-down-btn-{{ question[1]-1 }}" type="button"
-                                    style="margin-left: 12px; margin-bottom: 12px;"
-                                    onclick="moveQuestionDown('{{ question[1]-1 }}')" {{ "disabled" if
-                                    question[1]==questions|length }}><i class="fa-solid fa-arrow-down"></i></button>
+                                    id="move-up-btn-0" type="button" style="margin-left: 12px;"
+                                    onclick="moveQuestionUp(0)" disabled><i class="fa-solid fa-arrow-up"></i></button>
                             </div>
+                            <div class="position-absolute bottom-0 start-0"><button class="btn btn-primary"
+                                    id="move-down-btn-0" type="button" style="margin-left: 12px; margin-bottom: 12px;"
+                                    onclick="moveQuestionDown(0)" disabled><i
+                                        class="fa-solid fa-arrow-down"></i></button></div>
                         </div>
-
                         <div class="col-8">
 
                             <div class="mb-3">
-                                <label name="inputQuestion" class="form-label">Frage {{ question[1]
-                                    }}</label>
-                                <textarea class="form-control" type="text" id="question" rows="2"
-                                    name="questions[{{ question[1]-1 }}][question]"
-                                    required>{{  question[2] }}</textarea>
+                                <label name="inputQuestion" class="form-label">Frage 1</label>
+                                <textarea class="form-control" type="text" rows="2" name="questions[0][question]"
+                                    required></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Kategorie</label>
-                                <select class="form-select" id="category"
-                                    name="questions[{{ question[1]-1 }}][category]" required>
-                                    <option {{ "selected" if question[3]=="Allgemeinwissen" }}>Allgemeinwissen</option>
-                                    <option {{ "selected" if question[3]=="Essen und Trinken" }}>Essen und Trinken
-                                    </option>
-                                    <option {{ "selected" if question[3]=="Geschichte" }}>Geschichte</option>
-                                    <option {{ "selected" if question[3]=="Geografie" }}>Geografie</option>
-                                    <option {{ "selected" if question[3]=="Kunst" }}>Kunst</option>
-                                    <option {{ "selected" if question[3]=="Literatur" }}>Literatur</option>
-                                    <option {{ "selected" if question[3]=="Musik" }}>Musik</option>
-                                    <option {{ "selected" if question[3]=="Naturwissenschaften" }}>Naturwissenschaften
-                                    </option>
-                                    <option {{ "selected" if question[3]=="Politik" }}>Politik</option>
-                                    <option {{ "selected" if question[3]=="Sport" }}>Sport</option>
-                                    <option {{ "selected" if question[3]=="Technik" }}>Technik</option>
-                                    <option {{ "selected" if question[3]=="Tiere" }}>Tiere</option>
-                                    <option {{ "selected" if question[3]=="Unterhaltung" }}>Unterhaltung</option>
-                                    <option {{ "selected" if question[3]=="Weltkulturen" }}>Weltkulturen</option>
-                                    <option {{ "selected" if question[3]=="Wirtschaft" }}>Wirtschaft</option>
+                                <select class="form-select" name="questions[0][category]" required>
+                                    <option selected>Allgemeinwissen</option>
+                                    <option>Essen und Trinken</option>
+                                    <option>Geschichte</option>
+                                    <option>Geografie</option>
+                                    <option>Kunst</option>
+                                    <option>Literatur</option>
+                                    <option>Musik</option>
+                                    <option>Naturwissenschaften</option>
+                                    <option>Politik</option>
+                                    <option>Sport</option>
+                                    <option>Technik</option>
+                                    <option>Tiere</option>
+                                    <option>Unterhaltung</option>
+                                    <option>Weltkulturen</option>
+                                    <option>Wirtschaft</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Beschreibung</label>
-                                <textarea class="form-control" type="text" id="description" rows="2"
-                                    name="questions[{{ question[1]-1 }}][description]">{{ question[4] }}</textarea>
+                                <textarea class="form-control" type="text" rows="2"
+                                    name="questions[0][description]"></textarea>
                             </div>
 
-                            {% if question[5] != None %}
-                            <div class="mb-3" id="image-{{ question[1]-1 }}">
-                                <input class="form-control" type="text" id="image-filename"
-                                    name="questions[{{ question[1]-1 }}][image-filename]" value="{{ question[5] }}"
-                                    hidden></input>
-                                <label class="form-label">Bild</label><br>
-                                <img class="img-fluid" style="max-width: 60%;"
-                                    src="../static/FileUploads/{{ question[5] }}"></img></p>
-                                <button class="btn btn-primary" type="button"
-                                    onclick="deleteImage('{{ question[1]-1 }}')"><i class="fa-solid fa-trash"></i> Bild
-                                    löschen oder ändern</button>
-                            </div>
-                            {% else %}
                             <div class="mb-3">
-                                <input class="form-control" type="text" id="image-filename"
-                                    name="questions[{{ question[1]-1 }}][image-filename]" value="None" hidden></input>
                                 <label class="form-label">Bild</label>
-                                <input class="form-control" type="file" id="image"
-                                    name="questions[{{ question[1]-1 }}][image]"></input>
+                                <input class="form-control" type="file" name="questions[0][image]"></input>
                             </div>
-                            {% endif %}
 
                             <div class="mb-3">
                                 <label class="form-label">Antwort</label>
-                                <textarea class="form-control" type="text" id="answer" rows="2"
-                                    name="questions[{{ question[1]-1 }}][answer]" required>{{ question[6] }}</textarea>
+                                <textarea class="form-control" type="text" rows="2" name="questions[0][answer]"
+                                    required></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Punkte</label>
-                                <input class="form-control" type="number" id="points"
-                                    name="questions[{{ question[1]-1 }}][points]" value="{{ question[7] }}" min="0"
+                                <input class="form-control" type="number" name="questions[0][points]" value="1" min="0"
                                     max="5" step="0.5" required></input>
                             </div>
 
 
                         </div>
                         <div class="col-2 text-end">
-                            <button class="btn btn-primary" type="button" id="delete-question-btn-{{ question[1]-1 }}"
-                                onclick="deleteQuestion('{{ question[1]-1 }}')" {{ "disabled" if questions|length==1
-                                }}><i class="fa-solid fa-trash"></i></button>
+                            <button class="btn btn-primary" id="delete-question-btn-0" type="button"
+                                onclick="deleteQuestion(0)" disabled><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
+
             <!-- Button zum Hinzufügen weiterer Fragen -->
             <div class="d-flex col-12 justify-content-center">
                 <div class="btn-add" type="button" onclick="addQuestion()">
@@ -143,7 +114,7 @@
             </div>
 
             <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 18px;">
-                <button class="btn btn-success" type="submit">Quiz speichern</button>
+                <button class="btn btn-success" type="submit">Quiz erstellen</button>
             </div>
         </form>
 
@@ -184,63 +155,63 @@
                                     <label class="btn mb-1" for="btn-check-allgemeinwissen">Allgemeinwissen</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-essen-und-trinken"
-                                        name="btn-check-essen-und-trinken" value="Essen und Trinken" checked
+                                        name="btn-check-essen-und-trinken" value="Essen und Trinken"
                                         autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-essen-und-trinken">Essen und
                                         Trinken</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-geschichte"
-                                        name="btn-check-geschichte" value="Geschichte" checked autocomplete="off">
+                                        name="btn-check-geschichte" value="Geschichte" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-geschichte">Geschichte</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-geografie"
-                                        name="btn-check-geografie" value="Geografie" checked autocomplete="off">
+                                        name="btn-check-geografie" value="Geografie" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-geografie">Geografie</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-kunst" name="btn-check-kunst"
-                                        value="Kunst" checked autocomplete="off">
+                                        value="Kunst" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-kunst">Kunst</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-literatur"
-                                        name="btn-check-literatur" value="Literatur" checked autocomplete="off">
+                                        name="btn-check-literatur" value="Literatur" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-literatur">Literatur</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-musik" name="btn-check-musik"
-                                        value="Musik" checked autocomplete="off">
+                                        value="Musik" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-musik">Musik</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-naturwissenschaften"
-                                        name="btn-check-naturwissenschaften" value="Naturwissenschaften" checked
+                                        name="btn-check-naturwissenschaften" value="Naturwissenschaften"
                                         autocomplete="off">
                                     <label class="btn mb-1"
                                         for="btn-check-naturwissenschaften">Naturwissenschaften</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-politik"
-                                        name="btn-check-politik" value="Politik" checked autocomplete="off">
+                                        name="btn-check-politik" value="Politik" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-politik">Politik</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-sport" name="btn-check-sport"
-                                        value="Sport" checked autocomplete="off">
+                                        value="Sport" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-sport">Sport</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-technik"
-                                        name="btn-check-technik" value="Technik" checked autocomplete="off">
+                                        name="btn-check-technik" value="Technik" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-technik">Technik</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-tiere" name="btn-check-tiere"
-                                        value="Tiere" checked autocomplete="off">
+                                        value="Tiere" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-tiere">Tiere</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-unterhaltung"
-                                        name="btn-check-unterhaltung" value="Unterhaltung" checked autocomplete="off">
+                                        name="btn-check-unterhaltung" value="Unterhaltung" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-unterhaltung">Unterhaltung</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-weltkulturen"
-                                        name="btn-check-weltkulturen" value="Weltkulturen" checked autocomplete="off">
+                                        name="btn-check-weltkulturen" value="Weltkulturen" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-weltkulturen">Weltkulturen</label>
 
                                     <input type="checkbox" class="btn-check" id="btn-check-wirtschaft"
-                                        name="btn-check-wirtschaft" value="Wirtschaft" checked autocomplete="off">
+                                        name="btn-check-wirtschaft" value="Wirtschaft" autocomplete="off">
                                     <label class="btn mb-1" for="btn-check-wirtschaft">Wirtschaft</label>
                                 </div>
                             </div>
@@ -257,17 +228,15 @@
     </div>
 
     <script>
-        const questionsDiv = document.getElementById("questions");
-        const questionDivs = questionsDiv.getElementsByClassName("question");
-        let questionIndex = questionDivs.length;
+        // JavaScript zum Hinzufügen und Entfernen von Fragenfeldern
+        let questionIndex = 1;
 
         function updateQuestionNumbering() {
             // Alle verbleibenden Fragen neu nummerieren
-            // const questionsDiv = document.getElementById("questions");
-            // const questionDivs = questionsDiv.getElementsByClassName("question");
+            const questionsDiv = document.getElementById("questions");
+            const questionDivs = questionsDiv.getElementsByClassName("question");
 
             Array.from(questionDivs).forEach((questionDiv, index) => {
-
                 // Aktualisiere die ID des Frage-Divs
                 questionDiv.id = `question-${index}`;
 
@@ -276,19 +245,14 @@
                 inputQuestion.innerText = `Frage ${index + 1}`;
 
                 // Aktualisiere die Nummerierung und Name-Attribute der Felder
-                questionDiv.querySelector("#question").setAttribute("name", `questions[${index}][question]`);
-                questionDiv.querySelector("#category").setAttribute("name", `questions[${index}][category]`);
-                questionDiv.querySelector("#description").setAttribute("name", `questions[${index}][description]`);
-                if (questionDiv.querySelector("#image-filename")) {
-                    questionDiv.querySelector("#image-filename").setAttribute("name", `questions[${index}][image-filename]`);
-                }
-                if (questionDiv.querySelector("#image")) {
-                    questionDiv.querySelector("#image").setAttribute("name", `questions[${index}][image]`);
-                }
-                questionDiv.querySelector("#answer").setAttribute("name", `questions[${index}][answer]`);
-                questionDiv.querySelector("#points").setAttribute("name", `questions[${index}][points]`);
+                questionDiv.querySelectorAll(".form-control")[0].setAttribute("name", `questions[${index}][question]`);
+                questionDiv.querySelectorAll(".form-control")[1].setAttribute("name", `questions[${index}][description]`);
+                questionDiv.querySelectorAll(".form-control")[2].setAttribute("name", `questions[${index}][image]`);
+                questionDiv.querySelectorAll(".form-control")[3].setAttribute("name", `questions[${index}][answer]`);
+                questionDiv.querySelectorAll(".form-control")[4].setAttribute("name", `questions[${index}][points]`);
+                questionDiv.querySelector(".form-select").setAttribute("name", `questions[${index}][category]`);
 
-                // Aktualisiere die Buttons
+                // Aktualisiere den "Diese Frage entfernen"-Button
                 questionDiv.querySelectorAll("button")[0].setAttribute("onclick", `moveQuestionUp(${index})`);
                 questionDiv.querySelectorAll("button")[0].setAttribute("id", `move-up-btn-${index}`);
                 questionDiv.querySelectorAll("button")[0].disabled = false;
@@ -343,13 +307,13 @@
 
                         <div class="mb-3">
                             <label name="inputQuestion" class="form-label">Frage ${questionIndex + 1}</label>
-                            <textarea class="form-control" type="text" id="question" rows="2" name="questions[${questionIndex}][question]"
+                            <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][question]"
                                 required></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Kategorie</label>
-                            <select class="form-select" id="category" name="questions[${questionIndex}][category]" required>
+                            <select class="form-select" name="questions[${questionIndex}][category]" required>
                                 <option selected>Allgemeinwissen</option>
                                 <option>Essen und Trinken</option>
                                 <option>Geschichte</option>
@@ -370,31 +334,31 @@
 
                         <div class="mb-3">
                             <label class="form-label">Beschreibung</label>
-                            <textarea class="form-control" type="text" id="description" rows="2"
+                            <textarea class="form-control" type="text" rows="2"
                                 name="questions[${questionIndex}][description]"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Bild</label>
-                            <input class="form-control" type="file" id="image"
-                                name="questions[${questionIndex}][image]"></input>
+                                <label class="form-label">Bild</label>
+                                <input class="form-control" type="file"
+                                    name="questions[${questionIndex}][image]"></input>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Antwort</label>
-                            <textarea class="form-control" type="text" id="answer" rows="2" name="questions[${questionIndex}][answer]"
+                            <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][answer]"
                                 required></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Punkte</label>
-                            <input class="form-control" type="number" id="points" name="questions[${questionIndex}][points]" value="1" min="0"
+                            <input class="form-control" type="number" name="questions[${questionIndex}][points]" value="1" min="0"
                                 max="5" step="0.5" required></input>
                         </div>
 
                     </div>
                     <div class="col-2 text-end">
-                        <button class="btn btn-primary" type="button" id="delete-question-btn-${questionIndex}" onclick="deleteQuestion(${questionIndex})"><i
+                        <button class="btn btn-primary" id="delete-question-btn-${questionIndex}" type="button" onclick="deleteQuestion(${questionIndex})"><i
                                 class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
@@ -408,10 +372,8 @@
         }
 
         function deleteQuestion(qid) {
-            let question_id = Number(qid);
-
             // Entferne die Frage
-            const question_to_delete = document.getElementById(`question-${question_id}`);
+            const question_to_delete = document.getElementById(`question-${qid}`);
             if (question_to_delete) {
                 question_to_delete.parentNode.removeChild(question_to_delete);
             }
@@ -419,24 +381,8 @@
             updateQuestionNumbering();
         }
 
-        function deleteImage(qid) {
-            var question_id = Number(qid);
-
-            const image_to_delete = document.getElementById(`image-${question_id}`);
-            if (image_to_delete) {
-                image_to_delete.innerHTML = `
-                <div class="mb-3">
-                    <label class="form-label">Bild</label>
-                    <input class="form-control" type="file"
-                        name="questions[${question_id}][image]"></input>
-                </div>
-                `
-            }
-        }
-
-        function moveQuestionDown(que_id) {
-            let qid = Number(que_id)
-            //const questionsDiv = document.getElementById("questions");
+        function moveQuestionDown(qid) {
+            const questionsDiv = document.getElementById("questions");
             const currentQuestionDiv = document.getElementById(`question-${qid}`);
 
             if (!currentQuestionDiv) {
@@ -459,9 +405,8 @@
             updateQuestionNumbering();
         }
 
-        function moveQuestionUp(que_id) {
-            let qid = Number(que_id)
-            //const questionsDiv = document.getElementById("questions");
+        function moveQuestionUp(qid) {
+            const questionsDiv = document.getElementById("questions");
             const currentQuestionDiv = document.getElementById(`question-${qid}`);
 
             if (!currentQuestionDiv) {
@@ -531,7 +476,7 @@
                             <strong>Yeah!</strong> Das hat geklappt. Die Fragen wurden generiert.
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                        `;
+                        `; 
                     } else {
                         // Fehler: Zeige die Fehlermeldung
                         document.getElementById("alert_placeholder").innerHTML = `
@@ -539,7 +484,7 @@
                             <strong>Ups!</strong> Leider ist ein Fehler aufgetreten. Bitte versuche es erneut.
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                        `;
+                        `;  
                     }
                 }
             } catch (error) {
@@ -549,7 +494,7 @@
                         <strong>Ups!</strong> Leider ist ein Fehler aufgetreten. Bitte versuche es erneut.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    `;
+                    `; 
             }
         });
 
@@ -576,12 +521,12 @@
                 <div class="col-8">
                     <div class="mb-3">
                         <label name="inputQuestion" class="form-label">Frage ${questionIndex + 1}</label>
-                        <textarea class="form-control" id="question" type="text" rows="2" name="questions[${questionIndex}][question]" required>${item.question_text}</textarea>
+                        <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][question]" required>${item.question_text}</textarea>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Kategorie</label>
-                        <select class="form-select" id="category" name="questions[${questionIndex}][category]" required>
+                        <select class="form-select" name="questions[${questionIndex}][category]" required>
                             <option ${item.category === 'Allgemeinwissen' ? 'selected' : ''}>Allgemeinwissen</option>
                             <option ${item.category === 'Essen und Trinken' ? 'selected' : ''}>Essen und Trinken</option>
                             <option ${item.category === 'Geschichte' ? 'selected' : ''}>Geschichte</option>
@@ -602,24 +547,24 @@
 
                     <div class="mb-3">
                         <label class="form-label">Beschreibung</label>
-                        <textarea class="form-control" id="description" type="text" rows="2"
+                        <textarea class="form-control" type="text" rows="2"
                             name="questions[${questionIndex}][description]"></textarea>
                     </div>
 
                     <div class="mb-3">
                             <label class="form-label">Bild</label>
-                            <input class="form-control" id="image" type="file"
+                            <input class="form-control" type="file"
                                 name="questions[${questionIndex}][image]"></input>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Antwort</label>
-                        <textarea class="form-control" id="answer" type="text" rows="2" name="questions[${questionIndex}][answer]" required>${item.answer}</textarea>
+                        <textarea class="form-control" type="text" rows="2" name="questions[${questionIndex}][answer]" required>${item.answer}</textarea>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Punkte</label>
-                        <input class="form-control" id="points" type="number" name="questions[${questionIndex}][points]" value="1" min="0"
+                        <input class="form-control" type="number" name="questions[${questionIndex}][points]" value="1" min="0"
                             max="5" step="0.5" required></input>
                     </div>
 
@@ -638,6 +583,16 @@
             updateQuestionCounter();
             updateQuestionNumbering();
         }
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
 
         document.addEventListener("DOMContentLoaded", function () {
             document.addEventListener('hide.bs.modal', function (event) {

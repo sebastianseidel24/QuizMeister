@@ -1,8 +1,9 @@
-from quizmeister import socketio
+from application import socketio
 from flask_socketio import emit
 import sqlite3
-from quiz_sessions import quiz_sessions
+from application.quiz_sessions import quiz_sessions
 
+# Frage an Teilnehmer senden
 @socketio.on("ask_question")
 def handle_question(session_code, quiz_id, question_id):
     with sqlite3.connect('quizzy.db') as con:

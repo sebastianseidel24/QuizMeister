@@ -1,8 +1,9 @@
-from quizmeister import app
+from application import app
 from flask import render_template, session
 import sqlite3
 from application.quiz_sessions import quiz_sessions
 
+# Ein erstelltes Quiz anzeigen
 @app.route("/quiz/<int:quiz_id>")
 def quiz(quiz_id):
 

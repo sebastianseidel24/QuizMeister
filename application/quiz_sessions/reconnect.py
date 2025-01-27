@@ -1,7 +1,7 @@
-from quizmeister import socketio
+from application import socketio
 from flask_socketio import emit, join_room
 from flask import session, request
-from quiz_sessions import quiz_sessions, user_room_map
+from application.quiz_sessions import quiz_sessions, user_room_map
 import sqlite3
 
 # Reconnect eines Teilnehmers

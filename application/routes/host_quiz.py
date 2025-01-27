@@ -1,9 +1,10 @@
-from quizmeister import app
+from application import app
 from flask import render_template
 import sqlite3
 
+# Route für das Hosten einer Quiz-Session
 @app.route("/hostquiz/<int:quiz_id>")
-def hostquiz(quiz_id):
+def host_quiz(quiz_id):
     with sqlite3.connect("quizzy.db") as con:
         cur = con.cursor()
 

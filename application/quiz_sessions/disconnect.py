@@ -1,7 +1,8 @@
-from quizmeister import socketio
+from application import socketio
 from flask import session, request
-from quiz_sessions import user_room_map
+from application.quiz_sessions import user_room_map
 
+# Teilnehmer trennen
 @socketio.on("disconnect")
 def handle_disconnect():
     sid = request.sid

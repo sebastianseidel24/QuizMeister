@@ -1,10 +1,10 @@
-from quizmeister import socketio
+from application import socketio
 import random
 import string
 import sqlite3
 from flask_socketio import join_room, emit
 from flask import session
-from quiz_sessions import quiz_sessions
+from application.quiz_sessions import quiz_sessions
 
 # Funktion zum Generieren eines zufälligen Session-Codes
 def generate_session_code():

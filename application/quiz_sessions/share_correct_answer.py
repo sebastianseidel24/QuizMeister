@@ -1,8 +1,9 @@
-from quizmeister import socketio
+from application import socketio
 from flask_socketio import emit
 import sqlite3
-from quiz_sessions import quiz_sessions
+from application.quiz_sessions import quiz_sessions
 
+# Korrekte Antwort an Teilnehmer senden
 @socketio.on("share_correct_answer")
 def handle_share_answer(session_code, quiz_id, question_id):
     with sqlite3.connect('quizzy.db') as con:
