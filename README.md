@@ -8,10 +8,10 @@ QuizMeister ist eine responsive Web-App zum KI-basierten **Erstellen, Hosten und
 
 ## Ein Quiz erstellen
 
-Ein Quiz kann entweder manuell erstellt werden, oder per Klick auf _Fragen generieren_ mittels Anbindung an Google Gemini per KI generiert werden. Die Fragen können in drei verschiedenen Schwierigkeitsgraden und passend zu 14 verschiedenen Kategorien generiert werden. Die generierten Fragen können im Nachhinein noch angepasst werden. So kann ein Quiz auch teilweise KI-generiert und teilweise manuell erstellt werden. Es ist außerdem möglich ein Bild zu einer Frage hochzuladen, um z.B. eine Frage zu diesem Bild zu stellen.
+Ein Quiz kann entweder manuell erstellt werden, oder per Klick auf _Fragen generieren lassen_ mittels Anbindung an Google Gemini per KI generiert werden. Die Fragen können in drei verschiedenen Schwierigkeitsgraden und passend zu 14 verschiedenen Kategorien generiert werden. Die generierten Fragen können im Nachhinein noch angepasst werden. So kann ein Quiz auch teilweise KI-generiert und teilweise manuell erstellt werden. Es ist außerdem möglich ein Bild zu einer Frage hochzuladen, um z.B. eine Frage zu diesem Bild zu stellen.
 
 ![Quiz erstellen](/docu/Quiz_erstellen.png)
-![Fragen generieren](/docu/Fragen_generieren.png)
+<img src="/docu/Fragen_generieren.png" width="400">
 
 ## Ein Quiz anzeigen
 
@@ -29,7 +29,7 @@ Per Klick auf _Quiz hosten_ in der Quiz-Ansicht, kann dieses Quiz gestartet werd
 
 Jeder Teilnehmer kann über sein oder ihr eigenes Endgerät den oben stehenden Link aufrufen. Jeder eingeloggte Nutzer kann an einer aktiven Quiz-Session teilnehmen, sofern er oder sie über den Session-Code verfügt. Nach dem Klicken auf _An Quiz teilnehmen_ auf der Startseite, muss der Session-Code eingegeben werden. Der Nutzer landet so in der Teilnehmer-Ansicht des Quiz und wird dem Host in der Rangliste angezeigt.
 
-![Spieleransicht](/docu/Quiz_spielen_Spieler.PNG)
+<img src="/docu/Quiz_spielen_Spieler.PNG" width="250">
 
 ## Ein Quiz spielen
 
@@ -41,7 +41,7 @@ Sobald alle Teilnehmer der Quiz-Session beigetreten sind, wählt der Host eine F
 
 Die Teilnehmer können nun eine **Antwort abgeben**.
 
-![Antwort abgeben](/docu/Quiz_spielen_Spieler_2.PNG)
+<img src="/docu/Quiz_spielen_Spieler_2.PNG" width="250">
 
 Der Host kann die abgegebenen Antworten einsehen und als **richtig oder falsch markieren** und ggf. die Punkte manuell anpassen.
 
